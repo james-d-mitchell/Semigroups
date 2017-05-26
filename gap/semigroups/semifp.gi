@@ -8,28 +8,17 @@
 #############################################################################
 ##
 
-SEMIGROUPS.InitFpSemigroup := function(S)
-  local semi, rels, F;
+InstallMethod(FreeSemigroupCongruence, "for an fp semigroup", [IsFpSemigroup],
+function(S)
+  return SemigroupCongruenceByGeneratingPairs(FreeSemigroupOfFpSemigroup(S),
+                                              RelationsOfFpSemigroup(S));
+end);
 
-  Assert(1, IsFpSemigroup(S) or IsFpMonoid(S));
-
-  if IsBound(S!.cong) then
-    return;
-  fi;
-
-  if IsFpMonoid(S) then
-    S!.iso := IsomorphismSemigroup(IsFpSemigroup, S);
-    semi := Range(S!.iso);
-    rels := RelationsOfFpSemigroup(semi);
-    F := FreeSemigroupOfFpSemigroup(semi);
-  else
-    rels := RelationsOfFpSemigroup(S);
-    F := FreeSemigroupOfFpSemigroup(S);
-  fi;
-
-  S!.cong := SemigroupCongruenceByGeneratingPairs(F, rels);
-  S!.report := SEMIGROUPS.DefaultOptionsRec.report;
-end;
+InstallMethod(FreeMonoidCongruence, "for an fp monoid", [IsFpMonoid],
+function(S)
+  return SemigroupCongruenceByGeneratingPairs(FreeMonoidOfFpMonoid(S),
+                                              RelationsOfFpMonoid(S));
+end);
 
 InstallMethod(ExtRepOfObj, "for an element of an fp semigroup",
 [IsElementOfFpSemigroup],
@@ -45,14 +34,12 @@ end);
 
 InstallMethod(Size, "for an fp semigroup", [IsFpSemigroup],
 function(S)
-  SEMIGROUPS.InitFpSemigroup(S);
-  return NrEquivalenceClasses(S!.cong);
+  return NrEquivalenceClasses(FreeSemigroupCongruence(S));
 end);
 
 InstallMethod(Size, "for an fp monoid", [IsFpMonoid],
 function(S)
-  SEMIGROUPS.InitFpSemigroup(S);
-  return NrEquivalenceClasses(S!.cong);
+  return Size(Range(IsomorphismFpSemigroup(S)));
 end);
 
 InstallMethod(\=, "for two elements of an f.p. semigroup",
@@ -60,17 +47,17 @@ IsIdenticalObj, [IsElementOfFpSemigroup, IsElementOfFpSemigroup],
 function(x1, x2)
   local S;
   S := FpSemigroupOfElementOfFpSemigroup(x1);
-  SEMIGROUPS.InitFpSemigroup(S);
-  return [UnderlyingElement(x1), UnderlyingElement(x2)] in S!.cong;
+  return [UnderlyingElement(x1), UnderlyingElement(x2)]
+         in FreeSemigroupCongruence(S);
 end);
 
 InstallMethod(\=, "for two elements of an f.p. monoid",
 IsIdenticalObj, [IsElementOfFpMonoid, IsElementOfFpMonoid],
 function(x1, x2)
-  local M;
+  local M, map;
   M := FpMonoidOfElementOfFpMonoid(x1);
-  SEMIGROUPS.InitFpSemigroup(M);
-  return x1 ^ M!.iso = x2 ^ M!.iso;
+  map := IsomorphismFpSemigroup(M);
+  return x1 ^ map = x2 ^ map;
 end);
 
 InstallMethod(\<, "for two elements of a f.p. semigroup",
@@ -78,9 +65,10 @@ IsIdenticalObj, [IsElementOfFpSemigroup, IsElementOfFpSemigroup],
 function(x1, x2)
   local S, class1, class2;
   S := FpSemigroupOfElementOfFpSemigroup(x1);
-  SEMIGROUPS.InitFpSemigroup(S);
-  class1 := EquivalenceClassOfElement(S!.cong, UnderlyingElement(x1));
-  class2 := EquivalenceClassOfElement(S!.cong, UnderlyingElement(x2));
+  class1 := EquivalenceClassOfElement(FreeSemigroupCongruence(S),
+                                      UnderlyingElement(x1));
+  class2 := EquivalenceClassOfElement(FreeSemigroupCongruence(S),
+                                      UnderlyingElement(x2));
   return class1 < class2;
 end);
 
