@@ -14,6 +14,31 @@
 ## congruence.
 ##
 
+# The argument <cong> is a congruence on an fp monoid, and this function
+# returns the class of <cong> corresponding to <semiclass>.
+
+SEMIGROUPS.FpMonClassFromFpSemiClass := function(cong, semiclass)
+  local filt, fam, class, map;
+
+  if IsCongruenceClass(semiclass) then
+    filt := IsCongruenceClass;
+  elif IsLeftCongruenceClass(semiclass) then
+    filt := IsLeftCongruenceClass;
+  else
+    filt := IsRightCongruenceClass;
+  fi;
+
+  fam := FamilyObj(Range(cong));
+  class := Objectify(NewType(fam, IsFpMonoidCongruenceClass and filt),
+                     rec(semiclass := semiclass));
+  map := InverseGeneralMapping(IsomorphismFpSemigroup(Range(cong)));
+
+  SetParentAttr(class, Range(cong));
+  SetEquivalenceClassRelation(class, cong);
+  SetRepresentative(class, Representative(semiclass) ^ map);
+  return class;
+end;
+
 InstallMethod(SemigroupCongruenceByGeneratingPairs,
 "for an fp monoid and a list of generating pairs",
 [IsFpMonoid, IsList], RankFilter(IsList and IsEmpty),
@@ -31,7 +56,7 @@ function(M, genpairs)
   od;
 
   # Make an isomorphism to an fp semigroup
-  iso := IsomorphismSemigroup(IsFpSemigroup, M);
+  iso := IsomorphismFpSemigroup(M);
   semipairs := List(genpairs, p -> [p[1] ^ iso, p[2] ^ iso]);
   semicong := SemigroupCongruenceByGeneratingPairs(Range(iso), semipairs);
 
@@ -40,7 +65,7 @@ function(M, genpairs)
                                ElementsFamily(FamilyObj(M)));
   cong := Objectify(NewType(fam, IsFpMonoidCongruence
                                  and IsSemigroupCongruence),
-                    rec(iso := iso, semicong := semicong));
+                    rec(semicong := semicong));
   SetSource(cong, M);
   SetRange(cong, M);
   SetGeneratingPairsOfMagmaCongruence(cong, genpairs);
@@ -73,7 +98,7 @@ function(M, genpairs)
                                ElementsFamily(FamilyObj(M)));
   cong := Objectify(NewType(fam, IsFpMonoidCongruence
                                  and IsLeftSemigroupCongruence),
-                    rec(iso := iso, semicong := semicong));
+                    rec(semicong := semicong));
   SetSource(cong, M);
   SetRange(cong, M);
   SetGeneratingPairsOfLeftMagmaCongruence(cong, genpairs);
@@ -106,7 +131,7 @@ function(M, genpairs)
                                ElementsFamily(FamilyObj(M)));
   cong := Objectify(NewType(fam, IsFpMonoidCongruence
                                  and IsRightSemigroupCongruence),
-                    rec(iso := iso, semicong := semicong));
+                    rec(semicong := semicong));
   SetSource(cong, M);
   SetRange(cong, M);
   SetGeneratingPairsOfRightMagmaCongruence(cong, genpairs);
@@ -117,8 +142,8 @@ InstallMethod(\=,
 "for two fp monoid congruences",
 [IsFpMonoidCongruence, IsFpMonoidCongruence],
 function(cong1, cong2)
-  return Range(cong1) = Range(cong2) and
-         cong1!.semicong = cong2!.semicong;
+  return IsIdenticalObj(Range(cong1), Range(cong2))
+         and cong1!.semicong = cong2!.semicong;
 end);
 
 InstallMethod(JoinSemigroupCongruences,
@@ -126,15 +151,27 @@ InstallMethod(JoinSemigroupCongruences,
 [IsFpMonoidCongruence and IsSemigroupCongruence,
  IsFpMonoidCongruence and IsSemigroupCongruence],
 function(cong1, cong2)
-  local M, iso, join;
-  M := Range(cong1);
-  iso := cong1!.iso;
-  if M <> Range(cong2) or iso <> cong2!.iso then
+  local join, fam, map, pairs;
+  if not IsIdenticalObj(Range(cong1), Range(cong2)) then
     ErrorNoReturn("Semigroups: JoinSemigroupCongruences: usage,\n",
                   "<cong1> and <cong2> must be over the same semigroup,");
   fi;
-  join := JoinSemigroupCongruences(cong1!.semicong, cong2!.semicong);
-  return SEMIGROUPS.FpMonCongFromFpSemiCong(M, iso, join);
+  join  := JoinSemigroupCongruences(cong1!.semicong, cong2!.semicong);
+  map   := InverseGeneralMapping(IsomorphismFpSemigroup(Range(cong1)));
+  pairs := List(GeneratingPairsOfSemigroupCongruence(join),
+                pair -> [pair[1] ^ map, pair[2] ^ map]);
+
+  fam := GeneralMappingsFamily(ElementsFamily(FamilyObj(Range(cong1))),
+                               ElementsFamily(FamilyObj(Range(cong1))));
+  join := Objectify(NewType(fam,
+                            IsFpMonoidCongruence and IsSemigroupCongruence),
+                    rec(semicong := join));
+
+  SetSource(join, Source(cong1));
+  SetRange(join, Range(cong1));
+  SetGeneratingPairsOfMagmaCongruence(join, pairs);
+
+  return join;
 end);
 
 InstallMethod(JoinLeftSemigroupCongruences,
@@ -142,15 +179,28 @@ InstallMethod(JoinLeftSemigroupCongruences,
 [IsFpMonoidCongruence and IsLeftSemigroupCongruence,
  IsFpMonoidCongruence and IsLeftSemigroupCongruence],
 function(cong1, cong2)
-  local M, iso, join;
-  M := Range(cong1);
-  iso := cong1!.iso;
-  if M <> Range(cong2) or iso <> cong2!.iso then
+  local join, fam, map, pairs;
+  if not IsIdenticalObj(Range(cong1), Range(cong2)) then
     ErrorNoReturn("Semigroups: JoinLeftSemigroupCongruences: usage,\n",
                   "<cong1> and <cong2> must be over the same semigroup,");
   fi;
   join := JoinLeftSemigroupCongruences(cong1!.semicong, cong2!.semicong);
-  return SEMIGROUPS.FpMonCongFromFpSemiCong(M, iso, join);
+  map   := InverseGeneralMapping(IsomorphismFpSemigroup(Range(cong1)));
+  pairs := List(GeneratingPairsOfLeftSemigroupCongruence(join),
+                pair -> [pair[1] ^ map, pair[2] ^ map]);
+
+  fam := GeneralMappingsFamily(ElementsFamily(FamilyObj(Range(cong1))),
+                               ElementsFamily(FamilyObj(Range(cong1))));
+  join := Objectify(NewType(fam,
+                            IsFpMonoidCongruence
+                            and IsLeftSemigroupCongruence),
+                    rec(semicong := join));
+
+  SetSource(join, Source(cong1));
+  SetRange(join, Range(cong1));
+  SetGeneratingPairsOfLeftMagmaCongruence(join, pairs);
+
+  return join;
 end);
 
 InstallMethod(JoinRightSemigroupCongruences,
@@ -158,15 +208,29 @@ InstallMethod(JoinRightSemigroupCongruences,
 [IsFpMonoidCongruence and IsRightSemigroupCongruence,
  IsFpMonoidCongruence and IsRightSemigroupCongruence],
 function(cong1, cong2)
-  local M, iso, join;
-  M := Range(cong1);
-  iso := cong1!.iso;
-  if M <> Range(cong2) or iso <> cong2!.iso then
+  local join, fam, map, pairs;
+
+  if not IsIdenticalObj(Range(cong1), Range(cong2)) then
     ErrorNoReturn("Semigroups: JoinRightSemigroupCongruences: usage,\n",
                   "<cong1> and <cong2> must be over the same semigroup,");
   fi;
+
   join := JoinRightSemigroupCongruences(cong1!.semicong, cong2!.semicong);
-  return SEMIGROUPS.FpMonCongFromFpSemiCong(M, iso, join);
+  map   := InverseGeneralMapping(IsomorphismFpSemigroup(Range(cong1)));
+  pairs := List(GeneratingPairsOfRightSemigroupCongruence(join),
+                pair -> [pair[1] ^ map, pair[2] ^ map]);
+
+  fam := GeneralMappingsFamily(ElementsFamily(FamilyObj(Range(cong1))),
+                               ElementsFamily(FamilyObj(Range(cong1))));
+  join := Objectify(NewType(fam,
+                            IsFpMonoidCongruence
+                            and IsRightSemigroupCongruence),
+                    rec(semicong := join));
+
+  SetSource(join, Source(cong1));
+  SetRange(join, Range(cong1));
+  SetGeneratingPairsOfRightMagmaCongruence(join, pairs);
+  return join;
 end);
 
 InstallMethod(\in,
@@ -185,15 +249,18 @@ function(pair, cong)
                   "elements of the first arg <pair> must be\n",
                   "in the range of the second arg <cong>,");
   fi;
-  return [pair[1] ^ cong!.iso, pair[2] ^ cong!.iso] in cong!.semicong;
+  return [pair[1] ^ IsomorphismFpSemigroup(Range(cong)),
+          pair[2] ^ IsomorphismFpSemigroup(Range(cong))] in cong!.semicong;
 end);
 
 InstallMethod(ImagesElm,
 "for an fp monoid congruence and a multiplicative element",
 [IsFpMonoidCongruence, IsMultiplicativeElement],
 function(cong, elm)
-  return List(ImagesElm(cong!.semicong, elm ^ cong!.iso),
-              x -> x ^ InverseGeneralMapping(cong!.iso));
+  local map, inv;
+  map := IsomorphismFpSemigroup(Range(cong));
+  inv := InverseGeneralMapping(map);
+  return List(ImagesElm(cong!.semicong, elm ^ map), x -> x ^ inv);
 end);
 
 InstallMethod(EquivalenceClasses,
@@ -219,8 +286,9 @@ InstallMethod(EquivalenceClassOfElementNC,
 "for an fp monoid congruence and multiplicative element",
 [IsFpMonoidCongruence, IsMultiplicativeElement],
 function(cong, elm)
-  local class;
-  class := EquivalenceClassOfElementNC(cong!.semicong, elm ^ cong!.iso);
+  local map, class;
+  map := IsomorphismFpSemigroup(Range(cong));
+  class := EquivalenceClassOfElementNC(cong!.semicong, elm ^ map);
   return SEMIGROUPS.FpMonClassFromFpSemiClass(cong, class);
 end);
 
@@ -235,23 +303,23 @@ InstallMethod(\in,
 "for a multiplicative element and an fp monoid congruence class",
 [IsMultiplicativeElement, IsFpMonoidCongruenceClass],
 function(elm, class)
-  return (elm ^ EquivalenceClassRelation(class)!.iso in class!.semiclass);
+  local map;
+  map := IsomorphismFpSemigroup(Range(EquivalenceClassRelation(class)));
+  return (elm ^ map in class!.semiclass);
 end);
 
 InstallMethod(Enumerator,
 "for an fp monoid congruence class",
 [IsFpMonoidCongruenceClass],
 function(class)
-  local iso, semienum, conv_out, conv_in;
-  iso := EquivalenceClassRelation(class)!.iso;
-  semienum := Enumerator(class!.semiclass);
-  conv_out := function(enum, elt)
-    return elt ^ InverseGeneralMapping(iso);
-  end;
-  conv_in := function(enum, elt)
-    return elt ^ iso;
-  end;
-  return EnumeratorByEnumerator(class, semienum, conv_out, conv_in, [], rec());
+  local map;
+  map := IsomorphismFpSemigroup(Range(EquivalenceClassRelation(class)));
+  return EnumeratorByEnumerator(class,
+                                Enumerator(class!.semiclass),
+                                {enum, elt} -> elt ^ InverseGeneralMapping(map),
+                                {enum, elt} -> elt ^ map,
+                                [],
+                                rec());
 end);
 
 InstallMethod(\*,
@@ -290,9 +358,9 @@ InstallMethod(EquivalenceRelationLookup,
 [IsFpMonoidCongruence],
 function(cong)
   local iso, mon_enum, semi_enum, semilookup;
-  iso := cong!.iso;
-  mon_enum := AsSet(Range(cong));
-  semi_enum := AsSet(Range(iso));
+  iso        := IsomorphismFpSemigroup(Range(cong));
+  mon_enum   := AsSet(Range(cong));
+  semi_enum  := AsSet(Range(iso));
   semilookup := EquivalenceRelationLookup(cong!.semicong);
   return List(mon_enum, elm -> semilookup[Position(semi_enum, elm ^ iso)]);
 end);
@@ -303,6 +371,6 @@ InstallMethod(EquivalenceRelationPartition,
 function(cong)
   local semi_part, inv_map;
   semi_part := EquivalenceRelationPartition(cong!.semicong);
-  inv_map := InverseGeneralMapping(cong!.iso);
+  inv_map := InverseGeneralMapping(IsomorphismFpSemigroup(Range(cong)));
   return List(semi_part, block -> List(block, elm -> elm ^ inv_map));
 end);
