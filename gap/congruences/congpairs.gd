@@ -15,7 +15,7 @@
 DeclareOperation("AsSemigroupCongruenceByGeneratingPairs",
                  [IsSemigroupCongruence]);
 
-# This is a representation for left/right/two-sided congruences of a finite
+# This is a representation for left/right/two-sided congruences of a
 # semigroup by generating pairs.
 #
 # The components are:
