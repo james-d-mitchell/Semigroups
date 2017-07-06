@@ -85,6 +85,7 @@ ReadPackage("semigroups", "gap/ideals/ideallam.gd");
 ReadPackage("semigroups", "gap/greens/gree.gd");
 ReadPackage("semigroups", "gap/greens/gren.gd");
 ReadPackage("semigroups", "gap/greens/grac.gd");
+ReadPackage("semigroups", "gap/greens/greenstar.gd");
 
 ReadPackage("semigroups", "gap/tools/display.gd");
 ReadPackage("semigroups", "gap/tools/io.gd");

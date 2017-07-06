@@ -60,6 +60,7 @@ ReadPackage("semigroups", "gap/greens/gren.gi");
 ReadPackage("semigroups", "gap/greens/grac.gi");
 ReadPackage("semigroups", "gap/greens/gracreg.gi");
 ReadPackage("semigroups", "gap/greens/gracinv.gi");
+ReadPackage("semigroups", "gap/greens/greenstar.gi");
 
 ReadPackage("semigroups", "gap/tools/display.gi");
 ReadPackage("semigroups", "gap/tools/io.gi");
