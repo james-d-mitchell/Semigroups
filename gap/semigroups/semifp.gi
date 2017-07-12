@@ -464,6 +464,50 @@ SEMIGROUPS.ExtRepObjToWord := function(ext_rep_obj)
   return word;
 end;
 
+SEMIGROUPS.WordToExtRepObj := function(word)
+  local n, ext_rep_obj, i, j;
+  n           := Length(word);
+  ext_rep_obj := [];
+  i           := 1;
+  j           := 1;
+
+  while i <= Length(word) do  
+    Add(ext_rep_obj, word[i]);
+    Add(ext_rep_obj, 1);
+    i := i + 1;
+    while i <= Length(word) and word[i] = ext_rep_obj[j] do 
+      ext_rep_obj[j + 1] := ext_rep_obj[j + 1] + 1;
+      i := i + 1;
+    od;
+    j := j + 2;
+  od;
+  return ext_rep_obj;
+end;
+
+SEMIGROUPS.ExtRepObjToString := function(ext_rep_obj)
+  local alphabet, out, i;
+  alphabet := "abcdefghijklmnopqrstuvwxyz";
+  out := "";
+  for i in [1, 3 .. Length(ext_rep_obj) - 1] do 
+    Append(out, [alphabet[ext_rep_obj[i]]]);
+    if ext_rep_obj[i + 1] > 1 then 
+      Append(out, " ^ ");
+      Append(out, String(ext_rep_obj[i + 1]));
+    fi;
+  od;
+  return out;
+end;
+
+SEMIGROUPS.WordToString := function(word)
+  local alphabet, out, letter;
+  alphabet := "abcdefghijklmnopqrstuvwxyz";
+  out := "";
+  for letter in word do 
+    Append(out, [alphabet[letter]]);
+  od;
+  return out;
+end;
+
 ## The following method could disappear if there are methods for Green's
 ## relations etc so that the other method in attr.gi can be used.
 #
