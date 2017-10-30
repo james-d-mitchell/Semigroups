@@ -26,8 +26,8 @@
 #include <iostream>
 #include <vector>
 
-#include "semigroups-debug.h"
 #include "rnams.h"
+#include "semigroups-debug.h"
 
 #include "src/compiled.h"
 
@@ -62,7 +62,8 @@ extern UInt T_BLOCKS;
 enum t_semi_subtype_t {
   T_SEMI_SUBTYPE_UF     = 0,
   T_SEMI_SUBTYPE_CONG   = 1,
-  T_SEMI_SUBTYPE_ENSEMI = 2
+  T_SEMI_SUBTYPE_ENSEMI = 2,
+  T_SEMI_SUBTYPE_ORB    = 3
 };
 
 // Get a new GAP Obj containing a pointer to a C++ class of type Class
