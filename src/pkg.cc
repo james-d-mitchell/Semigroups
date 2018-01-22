@@ -27,6 +27,7 @@
 #include "bipart.h"
 #include "congpairs.h"
 #include "converter.h"
+#include "gapbind.h"
 #include "fropin.h"
 #include "semigroups-debug.h"
 #include "semigrp.h"
@@ -375,6 +376,11 @@ Obj IsSemigroup;
 Obj IsSemigroupIdeal;
 Obj IsActingSemigroup;
 
+
+// Install methods
+GAP_CONSTRUCTOR_1_ARG(NEW_BMAT8, T_BMAT8, BMat8, convert_from_gap_to_bmat8);
+
+
 /*****************************************************************************
 *V  GVarFilts . . . . . . . . . . . . . . . . . . . list of filters to export
 */
@@ -507,6 +513,9 @@ static Int InitKernel(StructInitInfo* module) {
   /* init filters and functions                                          */
   InitHdlrFiltsFromTable(GVarFilts);
   InitHdlrFuncsFromTable(GVarFuncs);
+
+  InitCopyGVar("TheTypeTPkgObj", &TheTypeTPkgObj);
+  T_PKG_OBJ = RegisterPackageTNUM("TPkgObj", TPkgObjTypeFunc);
 
   ImportGVarFromLibrary("SEMIGROUPS", &SEMIGROUPS);
 

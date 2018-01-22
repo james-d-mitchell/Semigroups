@@ -17,6 +17,9 @@ fi;
 DeclareCategory("IsTSemiObj", IsObject);
 BindGlobal("TheTypeTSemiObj", NewType(NewFamily("TSemiObjFamily"), IsTSemiObj));
 
+DeclareCategory("IsTPkgObj", IsObject);
+BindGlobal("TheTypeTPkgObj", NewType(NewFamily("TPkgObjFamily"), IsTPkgObj));
+
 # the kernel module makes use of the c functions HTAdd_TreeHash_C and
 # HTValue_TreeHash_C and so we should only use the part of the kernel module
 # using these functions if Orb is compiled.
