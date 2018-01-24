@@ -26,14 +26,16 @@
 using libsemigroups::BMat8;
 
 // Register a subtype . . .
-UInt T_BMAT8 = pkg_obj_subtype.register_subtype("BMat8", "bmat8.h");
+static const UInt T_BMAT8 = REGISTER_PKG_OBJ<BMat8>(
+    [](Obj o) -> void { SaveUInt8(t_pkg_obj_cpp_class<BMat8*>(o)->to_int()); },
+    [](Obj o) -> void {
+      ADDR_OBJ(o)[1] = reinterpret_cast<Obj>(new BMat8(LoadUInt8()));
+    });
 
 // Install methods
 static Obj BMAT8_NEW(Obj self) {
   return new_t_pkg_obj(T_BMAT8, new BMat8());
 }
-
-// REGISTER_WITH_GAP(NEW_BMAT8, T_BMAT8);
 
 static Obj BMAT8_TO_INT(Obj self, Obj x) {
   SEMIGROUPS_ASSERT(TNUM_OBJ(x) == T_PKG_OBJ

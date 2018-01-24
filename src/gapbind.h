@@ -21,46 +21,24 @@
 #ifndef SEMIGROUPS_SRC_GAPBIND_H_
 #define SEMIGROUPS_SRC_GAPBIND_H_
 
+#include <cxxabi.h>
+
+#include <cstdlib>
+#include <sstream>
 #include <string>
 #include <vector>
 
 #include "src/compiled.h"
+// TODO namespace
 
-UInt T_PKG_OBJ = 0;  // for positional objects
-// Obj T_PKG_CMP_OBJ = 0; // for component objects
+UInt T_PKG_OBJ = 0;
+Obj  TheTypeTPkgObj;
 
-Obj TheTypeTPkgObj;
 Obj TPkgObjTypeFunc(Obj o) {
   return TheTypeTPkgObj;
 }
 
 typedef size_t t_pkg_obj_subtype_t;
-
-// TODO namespace
-
-class PkgObjSubtype {
- public:
-  PkgObjSubtype() : _next_subtype(0) {}
-
-  t_pkg_obj_subtype_t register_subtype(std::string name, std::string srcfile) {
-    _names.push_back(name);
-    _srcfiles.push_back(srcfile);
-    return _next_subtype++;
-  }
-
-  std::string name(t_pkg_obj_subtype_t x) {
-    return _names.at(x);
-  }
-
-  std::string srcfile(t_pkg_obj_subtype_t x) {
-    return _srcfiles.at(x);
-  }
-
- private:
-  t_pkg_obj_subtype_t      _next_subtype;
-  std::vector<std::string> _names;
-  std::vector<std::string> _srcfiles;
-} pkg_obj_subtype;
 
 // A T_PKG_POS_OBJ Obj in GAP is of the form:
 //
@@ -68,48 +46,127 @@ class PkgObjSubtype {
 
 // Get a new GAP Obj containing a pointer to a C++ class of type TClass
 template <typename TClass>
-inline Obj new_t_pkg_obj(t_pkg_obj_subtype_t subtype, TClass ptr) {
+inline Obj new_t_pkg_obj(t_pkg_obj_subtype_t subtype, TClass* ptr) {
   Obj o          = NewBag(T_PKG_OBJ, 2 * sizeof(Obj));
   ADDR_OBJ(o)[0] = (Obj) subtype;
   ADDR_OBJ(o)[1] = reinterpret_cast<Obj>(ptr);
   return o;
 }
 
-template <typename TClass> inline TClass t_pkg_obj_cpp_class(Obj o) {
-  return reinterpret_cast<TClass>(ADDR_OBJ(o)[1]);
-}
-
 inline t_pkg_obj_subtype_t t_pkg_obj_subtype(Obj o) {
-  // SEMIGROUPS_ASSERT(TNUM_OBJ(o) == T_t_semi_obj);
-  // TODO change the above to an error
+  SEMIGROUPS_ASSERT(TNUM_OBJ(o) == T_PKG_OBJ);
   return static_cast<t_pkg_obj_subtype_t>(
       reinterpret_cast<UInt>(ADDR_OBJ(o)[0]));
 }
 
+template <typename TClass> inline TClass t_pkg_obj_cpp_class(Obj o) {
+  SEMIGROUPS_ASSERT(TNUM_OBJ(o) == T_PKG_OBJ);
+  return reinterpret_cast<TClass>(ADDR_OBJ(o)[1]);
+}
+
+class PkgObjSubtype {
+  typedef std::function<void(Obj)> FUNCTION;
+
+ public:
+  PkgObjSubtype() : _next_subtype(0) {}
+
+  t_pkg_obj_subtype_t register_subtype(std::string     name,
+                                       FUNCTION const& free_func,
+                                       FUNCTION const& save_func,
+                                       FUNCTION const& load_func) {
+    _names.push_back(name);
+    _free_funcs.push_back(free_func);
+    _save_funcs.push_back(save_func);
+    _load_funcs.push_back(load_func);
+    return _next_subtype++;
+  }
+
+  std::string name(Obj o) {
+    SEMIGROUPS_ASSERT(TNUM_OBJ(o) == T_PKG_OBJ);
+    return _names.at(t_pkg_obj_subtype(o));
+  }
+
+  void free(Obj o) {
+    SEMIGROUPS_ASSERT(TNUM_OBJ(o) == T_PKG_OBJ);
+    return _free_funcs.at(t_pkg_obj_subtype(o))(o);
+  }
+
+  void save(Obj o) {
+    SEMIGROUPS_ASSERT(TNUM_OBJ(o) == T_PKG_OBJ);
+    return _save_funcs.at(t_pkg_obj_subtype(o))(o);
+  }
+
+  void load(Obj o) {
+    SEMIGROUPS_ASSERT(TNUM_OBJ(o) == T_PKG_OBJ);
+    return _load_funcs.at(t_pkg_obj_subtype(o))(o);
+  }
+
+ private:
+  t_pkg_obj_subtype_t      _next_subtype;
+  std::vector<std::string> _names;
+  std::vector<FUNCTION>    _free_funcs;
+  std::vector<FUNCTION>    _save_funcs;
+  std::vector<FUNCTION>    _load_funcs;
+} PKG_OBJ_SUBTYPE_MANAGER;
+
+template <typename T> std::string type_name() {
+  int         status;
+  std::string tname = typeid(T).name();
+  char*       demangled_name =
+      abi::__cxa_demangle(tname.c_str(), NULL, NULL, &status);
+  if (status == 0) {
+    tname = demangled_name;
+    std::free(demangled_name);
+  }
+  return tname;
+}
+
+template <typename T>
+t_pkg_obj_subtype_t REGISTER_PKG_OBJ(std::function<void(Obj)> save,
+                                     std::function<void(Obj)> load) {
+  t_pkg_obj_subtype_t st = PKG_OBJ_SUBTYPE_MANAGER.register_subtype(
+      type_name<T>(),
+      [&st](Obj x) -> void {
+        SEMIGROUPS_ASSERT(t_pkg_obj_subtype(x) == st);
+        delete t_pkg_obj_cpp_class<T*>(x);
+      },
+      save,
+      load);
+  return st;
+}
+
+// TODO figure out how to remove the ostringstream from here!
 void TPkgObjPrintFunc(Obj o) {
-  Pr("<C++ class %s>",
-     (Int) pkg_obj_subtype.name(t_pkg_obj_subtype(o)).c_str(),
-     0L);
+  std::ostringstream stm;
+  stm << o;
+  Pr("<C++ class %s at %s>",
+     (Int) PKG_OBJ_SUBTYPE_MANAGER.name(o).c_str(),
+     (Int) stm.str().c_str());
 }
 
-// Functions for converting from C/C++ to GAP Obj's
+// TODO Is the next one required?
+// Obj TPkgObjCopyFunc(Obj o, Int mut) {
+//  return o;
+//}
 
-inline Obj intobj_int(Int x) {
-  return INTOBJ_INT(x);
+void TPkgObjCleanFunc(Obj o) {}
+
+Int TPkgObjIsMutableObjFuncs(Obj o) {
+  return 1L;
 }
 
-// Functions for converting from GAP Obj's to C/C++
-//
-// None so far . . .
+void TPkgObjFreeFunc(Obj o) {
+  PKG_OBJ_SUBTYPE_MANAGER.free(o);
+}
 
-#define GAP_CONSTRUCTOR_1_ARG(NAME, SUBTYPE, CPPTYPE, ARG_GAP_TO_CPP) \
-  static Obj NAME(Obj self, Obj x) {                                  \
-    return new_t_pkg_obj(SUBTYPE, new CPPTYPE(ARG_GAP_TO_CPP(x)));    \
-  }
+void TPkgObjSaveFunc(Obj o) {
+  SaveUInt(t_pkg_obj_subtype(o));
+  PKG_OBJ_SUBTYPE_MANAGER.save(o);
+}
 
-#define GAP_FUNC_METHOD_1_ARG(NAME, TYPE, METHOD, RETURN_CPP_TO_GAP)  \
-  static Obj NAME(Obj self, Obj x) {                                  \
-    return RETURN_CPP_TO_GAP(t_pkg_obj_cpp_class<TYPE>(x)->METHOD()); \
-  }
+void TPkgObjLoadFunc(Obj o) {
+  ADDR_OBJ(o)[0] = (Obj) LoadUInt();
+  PKG_OBJ_SUBTYPE_MANAGER.load(o);
+}
 
 #endif  // SEMIGROUPS_SRC_GAPBIND_H_

@@ -524,9 +524,16 @@ static Int InitKernel(StructInitInfo* module) {
   InitHdlrFiltsFromTable(GVarFilts);
   InitHdlrFuncsFromTable(GVarFuncs);
 
-  InitCopyGVar("TheTypeTPkgObj", &TheTypeTPkgObj);
-  T_PKG_OBJ                = RegisterPackageTNUM("TPkgObj", TPkgObjTypeFunc);
+  T_PKG_OBJ = RegisterPackageTNUM("TPkgObj", TPkgObjTypeFunc);
+
+  InfoBags[T_PKG_OBJ].name = "Semigroups package C++ object wrapper type";
   PrintObjFuncs[T_PKG_OBJ] = TPkgObjPrintFunc;
+  InitMarkFuncBags(T_PKG_OBJ, &MarkNoSubBags);
+  InitFreeFuncBag(T_PKG_OBJ, &TPkgObjFreeFunc);
+  SaveObjFuncs[T_PKG_OBJ] = TPkgObjSaveFunc;
+  LoadObjFuncs[T_PKG_OBJ] = TPkgObjLoadFunc;
+
+  InitCopyGVar("TheTypeTPkgObj", &TheTypeTPkgObj);
 
   ImportGVarFromLibrary("SEMIGROUPS", &SEMIGROUPS);
 
