@@ -415,6 +415,13 @@ static StructGVarFunc GVarFuncs[] = {
     GVAR_ENTRY("bmat8.h", BMAT8_TO_INT, 1, "x"),
     GVAR_ENTRY("bmat8.h", BMAT8_SET, 4, "x, i, j, val"),
     GVAR_ENTRY("bmat8.h", BMAT8_GET, 3, "x, i, j"),
+    GVAR_ENTRY("bmat8.h", BMAT8_EQ, 2, "x, y"),
+    GVAR_ENTRY("bmat8.h", BMAT8_LT, 2, "x, y"),
+    GVAR_ENTRY("bmat8.h", BMAT8_TRANSPOSE, 1, "x"),
+    GVAR_ENTRY("bmat8.h", BMAT8_MULTIPLY, 2, "x, y"),
+    GVAR_ENTRY("bmat8.h", BMAT8_ONE, 1, "x"),
+    GVAR_ENTRY("bmat8.h", BMAT8_RANDOM, 1, "dim"),
+    GVAR_ENTRY("bmat8.h", BMAT8_PRINT, 1, "x"),
 
     GVAR_ENTRY("semigrp.cc", EN_SEMI_AS_LIST, 1, "S"),
     GVAR_ENTRY("semigrp.cc", EN_SEMI_AS_SET, 1, "S"),

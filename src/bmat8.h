@@ -28,28 +28,6 @@ using libsemigroups::BMat8;
 // Register a subtype . . .
 UInt T_BMAT8 = pkg_obj_subtype.register_subtype("BMat8", "bmat8.h");
 
-// Convert from GAP matrix of blists to BMat8
-
-BMat8* convert_from_gap_to_bmat8(gap_list_t list) {
-  SEMIGROUPS_ASSERT(IS_LIST(list));
-  SEMIGROUPS_ASSERT(LEN_LIST(list) > 0);
-  SEMIGROUPS_ASSERT(IS_BLIST_REP(ELM_LIST(list, 1)));
-
-  size_t dim = LEN_BLIST(ELM_LIST(list, 1));
-  BMat8* x   = new BMat8();
-  for (size_t i = 0; i < dim; i++) {
-    Obj row = ELM_PLIST(list, i + 1);
-    SEMIGROUPS_ASSERT(IS_BLIST_REP(row));
-    SEMIGROUPS_ASSERT(LEN_BLIST(row) == dim);
-    for (size_t j = 0; j < dim; j++) {
-      if (ELM_BLIST(row, j + 1) == True) {
-        // x.set(i, j, true);
-      }
-    }
-  }
-  return x;
-}
-
 // Install methods
 static Obj BMAT8_NEW(Obj self) {
   return new_t_pkg_obj(T_BMAT8, new BMat8());
@@ -58,12 +36,14 @@ static Obj BMAT8_NEW(Obj self) {
 // REGISTER_WITH_GAP(NEW_BMAT8, T_BMAT8);
 
 static Obj BMAT8_TO_INT(Obj self, Obj x) {
-  SEMIGROUPS_ASSERT(t_pkg_obj_subtype(x) == T_BMAT8);
+  SEMIGROUPS_ASSERT(TNUM_OBJ(x) == T_PKG_OBJ
+                    && t_pkg_obj_subtype(x) == T_BMAT8);
   return INTOBJ_INT(t_pkg_obj_cpp_class<BMat8*>(x)->to_int());
 }
 
 static Obj BMAT8_SET(Obj self, Obj x, Obj i, Obj j, Obj val) {
-  SEMIGROUPS_ASSERT(t_pkg_obj_subtype(x) == T_BMAT8);
+  SEMIGROUPS_ASSERT(TNUM_OBJ(x) == T_PKG_OBJ
+                    && t_pkg_obj_subtype(x) == T_BMAT8);
   SEMIGROUPS_ASSERT(IS_INTOBJ(i));
   SEMIGROUPS_ASSERT(INT_INTOBJ(i) >= 1 && INT_INTOBJ(i) <= 8);
   SEMIGROUPS_ASSERT(IS_INTOBJ(j));
@@ -75,7 +55,8 @@ static Obj BMAT8_SET(Obj self, Obj x, Obj i, Obj j, Obj val) {
 }
 
 static Obj BMAT8_GET(Obj self, Obj x, Obj i, Obj j) {
-  SEMIGROUPS_ASSERT(t_pkg_obj_subtype(x) == T_BMAT8);
+  SEMIGROUPS_ASSERT(TNUM_OBJ(x) == T_PKG_OBJ
+                    && t_pkg_obj_subtype(x) == T_BMAT8);
   SEMIGROUPS_ASSERT(IS_INTOBJ(i));
   SEMIGROUPS_ASSERT(INT_INTOBJ(i) >= 1 && INT_INTOBJ(i) <= 8);
   SEMIGROUPS_ASSERT(IS_INTOBJ(j));
@@ -84,6 +65,61 @@ static Obj BMAT8_GET(Obj self, Obj x, Obj i, Obj j) {
                                                      INT_INTOBJ(j) - 1)
               ? True
               : False);
+}
+
+static Obj BMAT8_EQ(Obj self, Obj x, Obj y) {
+  SEMIGROUPS_ASSERT(TNUM_OBJ(x) == T_PKG_OBJ
+                    && t_pkg_obj_subtype(x) == T_BMAT8);
+  SEMIGROUPS_ASSERT(TNUM_OBJ(y) == T_PKG_OBJ
+                    && t_pkg_obj_subtype(y) == T_BMAT8);
+  return (*t_pkg_obj_cpp_class<BMat8*>(x) == *t_pkg_obj_cpp_class<BMat8*>(y)
+              ? True
+              : False);
+}
+
+static Obj BMAT8_LT(Obj self, Obj x, Obj y) {
+  SEMIGROUPS_ASSERT(TNUM_OBJ(x) == T_PKG_OBJ
+                    && t_pkg_obj_subtype(x) == T_BMAT8);
+  SEMIGROUPS_ASSERT(TNUM_OBJ(y) == T_PKG_OBJ
+                    && t_pkg_obj_subtype(y) == T_BMAT8);
+  return (*x < *y ? True : False);
+}
+
+static Obj BMAT8_TRANSPOSE(Obj self, Obj x) {
+  SEMIGROUPS_ASSERT(TNUM_OBJ(x) == T_PKG_OBJ
+                    && t_pkg_obj_subtype(x) == T_BMAT8);
+  return new_t_pkg_obj(T_BMAT8,
+                       new BMat8(t_pkg_obj_cpp_class<BMat8*>(x)->transpose()));
+}
+
+static Obj BMAT8_MULTIPLY(Obj self, Obj x, Obj y) {
+  SEMIGROUPS_ASSERT(TNUM_OBJ(x) == T_PKG_OBJ
+                    && t_pkg_obj_subtype(x) == T_BMAT8);
+  SEMIGROUPS_ASSERT(TNUM_OBJ(y) == T_PKG_OBJ
+                    && t_pkg_obj_subtype(y) == T_BMAT8);
+  return new_t_pkg_obj(T_BMAT8,
+                       new BMat8((*t_pkg_obj_cpp_class<BMat8*>(x))
+                                 * (*t_pkg_obj_cpp_class<BMat8*>(y))));
+}
+
+static Obj BMAT8_ONE(Obj self, Obj x) {
+  SEMIGROUPS_ASSERT(TNUM_OBJ(x) == T_PKG_OBJ
+                    && t_pkg_obj_subtype(x) == T_BMAT8);
+  return new_t_pkg_obj(T_BMAT8,
+                       new BMat8(t_pkg_obj_cpp_class<BMat8*>(x)->one()));
+}
+
+static Obj BMAT8_RANDOM(Obj self, Obj dim) {
+  SEMIGROUPS_ASSERT(IS_INTOBJ(dim));
+  SEMIGROUPS_ASSERT(INT_INTOBJ(dim) >= 1 && INT_INTOBJ(dim) <= 8);
+  return new_t_pkg_obj(T_BMAT8, new BMat8(BMat8::random(INT_INTOBJ(dim))));
+}
+
+static Obj BMAT8_PRINT(Obj self, Obj x) {
+  SEMIGROUPS_ASSERT(TNUM_OBJ(x) == T_PKG_OBJ
+                    && t_pkg_obj_subtype(x) == T_BMAT8);
+  Pr(std::to_string(*t_pkg_obj_cpp_class<BMat8*>(x)).c_str(), 0L, 0L);
+  return 0L;
 }
 
 #endif  // SEMIGROUPS_SRC_BMAT8_H_

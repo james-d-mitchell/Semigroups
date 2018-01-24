@@ -26,7 +26,7 @@
 
 #include "src/compiled.h"
 
-Int T_PKG_OBJ = 0;  // for positional objects
+UInt T_PKG_OBJ = 0;  // for positional objects
 // Obj T_PKG_CMP_OBJ = 0; // for component objects
 
 Obj TheTypeTPkgObj;
