@@ -14,8 +14,21 @@
 ## Specializations of declarations for MatrixOverSemiring
 #############################################################################
 
-DeclareCategory("IsBooleanMat", IsMatrixOverSemiring and
-                                IsPlistMatrixOverSemiringPositionalRep);
+DeclareCategory("IsBooleanMat", IsMatrixOverSemiring);
+
+# If x is in IsLibsemigroupsBMat8Rep, then x![1] is the TPkgObj containing the
+# libsemigroups C++ BMat8 object corresponding to x. This is for boolean mats
+# up to dimension 8 only.
+DeclareRepresentation("IsLibsemigroupsBMat8Rep",
+                      IsMatrixOverSemiring and IsPositionalObjectRep, 
+                      [1]);
+
+# If x is in IsLibsemigroupsBooleanMatRep, then x![1] is the TPkgObj containing
+# a pointer to the  libsemigroups C++ BooleanMat object corresponding to x.
+# This is for boolean mats of dimension >= 9 only.
+DeclareRepresentation("IsLibsemigroupsBooleanMatRep",
+                      IsMatrixOverSemiring and IsPositionalObjectRep, 
+                      [1]);
 
 DeclareCategoryCollections("IsBooleanMat");
 DeclareCategoryCollections("IsBooleanMatCollection");

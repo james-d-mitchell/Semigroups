@@ -411,7 +411,7 @@ typedef Obj (*GVarFunc)(/*arguments*/);
 // Table of functions to export
 
 static StructGVarFunc GVarFuncs[] = {
-    GVAR_ENTRY("bmat8.h", NEW_BMAT8, 1, "list"),
+    GVAR_ENTRY("bmat8.h", NEW_BMAT8, 0, ""),
     GVAR_ENTRY("bmat8.h", BMAT8_TO_INT, 1, "x"),
 
     GVAR_ENTRY("semigrp.cc", EN_SEMI_AS_LIST, 1, "S"),
