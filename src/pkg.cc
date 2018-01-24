@@ -25,10 +25,11 @@
 #include <iostream>
 
 #include "bipart.h"
+#include "bmat8.h"
 #include "congpairs.h"
 #include "converter.h"
-#include "gapbind.h"
 #include "fropin.h"
+#include "gapbind.h"
 #include "semigroups-debug.h"
 #include "semigrp.h"
 #include "uf.h"
@@ -376,10 +377,7 @@ Obj IsSemigroup;
 Obj IsSemigroupIdeal;
 Obj IsActingSemigroup;
 
-
 // Install methods
-GAP_CONSTRUCTOR_1_ARG(NEW_BMAT8, T_BMAT8, BMat8, convert_from_gap_to_bmat8);
-
 
 /*****************************************************************************
 *V  GVarFilts . . . . . . . . . . . . . . . . . . . list of filters to export
@@ -413,6 +411,9 @@ typedef Obj (*GVarFunc)(/*arguments*/);
 // Table of functions to export
 
 static StructGVarFunc GVarFuncs[] = {
+    GVAR_ENTRY("bmat8.h", NEW_BMAT8, 1, "list"),
+    GVAR_ENTRY("bmat8.h", BMAT8_TO_INT, 1, "x"),
+
     GVAR_ENTRY("semigrp.cc", EN_SEMI_AS_LIST, 1, "S"),
     GVAR_ENTRY("semigrp.cc", EN_SEMI_AS_SET, 1, "S"),
     GVAR_ENTRY("semigrp.cc", EN_SEMI_CAYLEY_TABLE, 1, "S"),
@@ -515,7 +516,8 @@ static Int InitKernel(StructInitInfo* module) {
   InitHdlrFuncsFromTable(GVarFuncs);
 
   InitCopyGVar("TheTypeTPkgObj", &TheTypeTPkgObj);
-  T_PKG_OBJ = RegisterPackageTNUM("TPkgObj", TPkgObjTypeFunc);
+  T_PKG_OBJ                = RegisterPackageTNUM("TPkgObj", TPkgObjTypeFunc);
+  PrintObjFuncs[T_PKG_OBJ] = TPkgObjPrintFunc;
 
   ImportGVarFromLibrary("SEMIGROUPS", &SEMIGROUPS);
 

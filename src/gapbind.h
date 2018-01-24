@@ -21,9 +21,12 @@
 #ifndef SEMIGROUPS_SRC_GAPBIND_H_
 #define SEMIGROUPS_SRC_GAPBIND_H_
 
+#include <string>
+#include <vector>
+
 #include "src/compiled.h"
 
-extern Obj T_PKG_OBJ; // for positional objects
+Int T_PKG_OBJ = 0;  // for positional objects
 // Obj T_PKG_CMP_OBJ = 0; // for component objects
 
 Obj TheTypeTPkgObj;
@@ -39,12 +42,24 @@ class PkgObjSubtype {
  public:
   PkgObjSubtype() : _next_subtype(0) {}
 
-  t_pkg_obj_subtype_t register_subtype() {
-    return ++_next_subtype;
+  t_pkg_obj_subtype_t register_subtype(std::string name, std::string srcfile) {
+    _names.push_back(name);
+    _srcfiles.push_back(srcfile);
+    return _next_subtype++;
+  }
+
+  std::string name(t_pkg_obj_subtype_t x) {
+    return _names.at(x);
+  }
+
+  std::string srcfile(t_pkg_obj_subtype_t x) {
+    return _srcfiles.at(x);
   }
 
  private:
-  t_pkg_obj_subtype_t _next_subtype;
+  t_pkg_obj_subtype_t      _next_subtype;
+  std::vector<std::string> _names;
+  std::vector<std::string> _srcfiles;
 } pkg_obj_subtype;
 
 // A T_PKG_POS_OBJ Obj in GAP is of the form:
@@ -53,7 +68,7 @@ class PkgObjSubtype {
 
 // Get a new GAP Obj containing a pointer to a C++ class of type TClass
 template <typename TClass>
-inline Obj new_t_pkg_obj(t_pkg_obj_subtype_t subtype, TClass* ptr) {
+inline Obj new_t_pkg_obj(t_pkg_obj_subtype_t subtype, TClass ptr) {
   Obj o          = NewBag(T_PKG_OBJ, 2 * sizeof(Obj));
   ADDR_OBJ(o)[0] = (Obj) subtype;
   ADDR_OBJ(o)[1] = reinterpret_cast<Obj>(ptr);
@@ -68,7 +83,13 @@ inline t_pkg_obj_subtype_t t_pkg_obj_subtype(Obj o) {
   // SEMIGROUPS_ASSERT(TNUM_OBJ(o) == T_t_semi_obj);
   // TODO change the above to an error
   return static_cast<t_pkg_obj_subtype_t>(
-      reinterpret_cast<UInt>(ADDR_OBJ(o)[1]));
+      reinterpret_cast<UInt>(ADDR_OBJ(o)[0]));
+}
+
+void TPkgObjPrintFunc(Obj o) {
+  Pr("<C++ class %s>",
+     (Int) pkg_obj_subtype.name(t_pkg_obj_subtype(o)).c_str(),
+     0L);
 }
 
 // Functions for converting from C/C++ to GAP Obj's
@@ -78,15 +99,17 @@ inline Obj intobj_int(Int x) {
 }
 
 // Functions for converting from GAP Obj's to C/C++
+//
+// None so far . . .
 
 #define GAP_CONSTRUCTOR_1_ARG(NAME, SUBTYPE, CPPTYPE, ARG_GAP_TO_CPP) \
-  Obj NAME(Obj self, Obj x) {                                         \
+  static Obj NAME(Obj self, Obj x) {                                  \
     return new_t_pkg_obj(SUBTYPE, new CPPTYPE(ARG_GAP_TO_CPP(x)));    \
   }
 
-#define GAP_FUNC_METHOD_1_ARG(NAME, TYPE, METHOD, RETURN_CPP_TO_GAP)   \
-  Obj NAME(Obj self, Obj x) {                                          \
-    return RETURN_CPP_TO_GAP(t_semi_obj_cpp_class<TYPE>(x)->METHOD()); \
+#define GAP_FUNC_METHOD_1_ARG(NAME, TYPE, METHOD, RETURN_CPP_TO_GAP)  \
+  static Obj NAME(Obj self, Obj x) {                                  \
+    return RETURN_CPP_TO_GAP(t_pkg_obj_cpp_class<TYPE>(x)->METHOD()); \
   }
 
 #endif  // SEMIGROUPS_SRC_GAPBIND_H_

@@ -20,28 +20,30 @@
 #define SEMIGROUPS_SRC_BMAT8_H_
 
 #include "gapbind.h"
-#include "pkg.h"
 #include "libsemigroups/src/bmat.h"
+#include "pkg.h"
+
+using libsemigroups::BMat8;
 
 // Register a subtype . . .
-UInt T_BMAT8 = pkg_obj_subtype.register_subtype();
+UInt T_BMAT8 = pkg_obj_subtype.register_subtype("BMat8");
 
 // Convert from GAP matrix of blists to BMat8
 
-BMat8 convert_from_gap_to_bmat8(gap_list_t list) {
+BMat8* convert_from_gap_to_bmat8(gap_list_t list) {
   SEMIGROUPS_ASSERT(IS_LIST(list));
   SEMIGROUPS_ASSERT(LEN_LIST(list) > 0);
   SEMIGROUPS_ASSERT(IS_BLIST_REP(ELM_LIST(list, 1)));
 
   size_t dim = LEN_BLIST(ELM_LIST(list, 1));
-  BMat8 x;
+  BMat8* x   = new BMat8();
   for (size_t i = 0; i < dim; i++) {
-    Obj row = ELM_PLIST(o, i + 1);
+    Obj row = ELM_PLIST(list, i + 1);
     SEMIGROUPS_ASSERT(IS_BLIST_REP(row));
     SEMIGROUPS_ASSERT(LEN_BLIST(row) == dim);
     for (size_t j = 0; j < dim; j++) {
       if (ELM_BLIST(row, j + 1) == True) {
-        x.set(i, j, true);
+        // x.set(i, j, true);
       }
     }
   }
@@ -49,6 +51,7 @@ BMat8 convert_from_gap_to_bmat8(gap_list_t list) {
 }
 
 // Install methods
-GAP_CONSTRUCTOR_1_ARG(NEW_BMAT8, T_BMAT8, BMat8, convert_from_gap_to_bmat8);
+GAP_CONSTRUCTOR_1_ARG(NEW_BMAT8, T_BMAT8, BMat8*, convert_from_gap_to_bmat8);
+GAP_FUNC_METHOD_1_ARG(BMAT8_TO_INT, BMat8*, to_int, intobj_int);
 
 #endif  // SEMIGROUPS_SRC_BMAT8_H_
