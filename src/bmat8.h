@@ -51,7 +51,7 @@ BMat8* convert_from_gap_to_bmat8(gap_list_t list) {
 }
 
 // Install methods
-static Obj NEW_BMAT8(Obj self) {
+static Obj BMAT8_NEW(Obj self) {
   return new_t_pkg_obj(T_BMAT8, new BMat8());
 }
 
@@ -60,6 +60,30 @@ static Obj NEW_BMAT8(Obj self) {
 static Obj BMAT8_TO_INT(Obj self, Obj x) {
   SEMIGROUPS_ASSERT(t_pkg_obj_subtype(x) == T_BMAT8);
   return INTOBJ_INT(t_pkg_obj_cpp_class<BMat8*>(x)->to_int());
+}
+
+static Obj BMAT8_SET(Obj self, Obj x, Obj i, Obj j, Obj val) {
+  SEMIGROUPS_ASSERT(t_pkg_obj_subtype(x) == T_BMAT8);
+  SEMIGROUPS_ASSERT(IS_INTOBJ(i));
+  SEMIGROUPS_ASSERT(INT_INTOBJ(i) >= 1 && INT_INTOBJ(i) <= 8);
+  SEMIGROUPS_ASSERT(IS_INTOBJ(j));
+  SEMIGROUPS_ASSERT(INT_INTOBJ(j) >= 1 && INT_INTOBJ(j) <= 8);
+  SEMIGROUPS_ASSERT(val == True || val == False);
+  t_pkg_obj_cpp_class<BMat8*>(x)->set(
+      INT_INTOBJ(i) - 1, INT_INTOBJ(j) - 1, val == True);
+  return 0L;
+}
+
+static Obj BMAT8_GET(Obj self, Obj x, Obj i, Obj j) {
+  SEMIGROUPS_ASSERT(t_pkg_obj_subtype(x) == T_BMAT8);
+  SEMIGROUPS_ASSERT(IS_INTOBJ(i));
+  SEMIGROUPS_ASSERT(INT_INTOBJ(i) >= 1 && INT_INTOBJ(i) <= 8);
+  SEMIGROUPS_ASSERT(IS_INTOBJ(j));
+  SEMIGROUPS_ASSERT(INT_INTOBJ(j) >= 1 && INT_INTOBJ(j) <= 8);
+  return (t_pkg_obj_cpp_class<BMat8*>(x)->operator()(INT_INTOBJ(i) - 1,
+                                                     INT_INTOBJ(j) - 1)
+              ? True
+              : False);
 }
 
 #endif  // SEMIGROUPS_SRC_BMAT8_H_
