@@ -34,16 +34,11 @@ static const UInt T_ELEMENT =
 
 // Element methods . . .
 
-REGISTER(HASH<Element>);
-REGISTER(EQUAL<Element>);
-
 static Obj ELEMENT_DEGREE(Obj self, Obj x) {
   SEMIGROUPS_ASSERT(TNUM_OBJ(x) == T_PKG_OBJ
                     && t_pkg_obj_subtype(x) == T_ELEMENT);
   return INTOBJ_INT(t_pkg_obj_cpp_class<Element*>(x)->degree());
 }
-
-REGISTER(ELEMENT_DEGREE);
 
 static Obj ELEMENT_ONE(Obj self, Obj x) {
   SEMIGROUPS_ASSERT(TNUM_OBJ(x) == T_PKG_OBJ
@@ -51,6 +46,9 @@ static Obj ELEMENT_ONE(Obj self, Obj x) {
   return new_t_pkg_obj(T_ELEMENT, t_pkg_obj_cpp_class<Element*>(x)->identity());
 }
 
+REGISTER(HASH<Element>);
+REGISTER(EQUAL<Element>);
+REGISTER(ELEMENT_DEGREE);
 REGISTER(ELEMENT_ONE);
 
 // BooleanMat methods . . .
@@ -73,17 +71,47 @@ static Obj BOOLEANMAT_NEW(Obj self, Obj list) {
   return new_t_pkg_obj(T_ELEMENT, new BooleanMat(vec));
 }
 
-REGISTER(BOOLEANMAT_NEW);
-
+// TODO The following could be more generic for ElementWithVectorData* in
+// general
 static Obj BOOLEANMAT_GET(Obj self, Obj x, Obj pos) {
   SEMIGROUPS_ASSERT(TNUM_OBJ(x) == T_PKG_OBJ
                     && t_pkg_obj_subtype(x) == T_ELEMENT);
   SEMIGROUPS_ASSERT(IS_INTOBJ(pos));
-  size_t i = INT_INTOBJ(pos);
-  // FIXME replace with try catch using at instead of []
-  return ((*t_pkg_obj_cpp_class<BooleanMat*>(x))[i - 1] ? True : False);
+  try {
+    return (t_pkg_obj_cpp_class<BooleanMat*>(x)->at(INT_INTOBJ(pos)) ? True
+                                                                     : False);
+  } catch (std::out_of_range& e) {
+#ifdef SEMIGROUPS_KERNEL_DEBUG
+    std::cerr << "exception std::out_of_range thrown "
+                 "by libsemigroups::BooleanMat::at("
+              << INT_INTOBJ(pos) << "): " << e.what() << std::endl;
+#endif
+    size_t deg = t_pkg_obj_cpp_class<BooleanMat*>(x)->degree();
+    ErrorQuit("the second argument <pos> must be at most %d (not %d)",
+              deg,
+              INT_INTOBJ(pos));
+    return 0L;  // to keep the compiler happy
+  }
 }
 
+// TODO The following could be more generic for ElementWithVectorData* in
+// general
+static Obj BOOLEANMAT_MULTIPLY(Obj self, Obj x, Obj y) {
+  SEMIGROUPS_ASSERT(TNUM_OBJ(x) == T_PKG_OBJ
+                    && t_pkg_obj_subtype(x) == T_ELEMENT);
+  SEMIGROUPS_ASSERT(TNUM_OBJ(y) == T_PKG_OBJ
+                    && t_pkg_obj_subtype(y) == T_ELEMENT);
+
+  BooleanMat* xx  = t_pkg_obj_cpp_class<BooleanMat*>(x);
+  BooleanMat* yy  = t_pkg_obj_cpp_class<BooleanMat*>(y);
+  size_t      dim = xx->degree();
+  Element*    z   = new BooleanMat(new std::vector<bool>(dim * dim));
+  z->redefine(xx, yy);
+  return new_t_pkg_obj(T_ELEMENT, z);
+}
+
+REGISTER(BOOLEANMAT_MULTIPLY);
+REGISTER(BOOLEANMAT_NEW);
 REGISTER(BOOLEANMAT_GET);
 
 #endif  // SEMIGROUPS_SRC_ELEMENTS_H_
