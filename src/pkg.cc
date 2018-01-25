@@ -24,13 +24,14 @@
 
 #include <iostream>
 
-#include "bipart.h"
 #include "bmat8.h"
+#include "cong.h"
+#include "elements.h"
+
+#include "bipart.h"
 #include "congpairs.h"
 #include "converter.h"
-#include "elements.h"
 #include "fropin.h"
-#include "gapbind.h"
 #include "semigroups-debug.h"
 #include "semigrp.h"
 #include "uf.h"

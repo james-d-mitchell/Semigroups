@@ -23,6 +23,17 @@
 
 #include <cxxabi.h>
 
+// Inclusion of <cstdef> appears to be required to prevent travis from issuing
+// the warning:
+//
+//     /usr/include/c++/5/cstddef:51:11: error: ‘::max_align_t’ has not been
+//     declared
+//
+// according to:
+//
+// https://stackoverflow.com/questions/35110786/how-to-fix-the-error-max-align-t
+
+#include <cstddef>
 #include <cstdlib>
 #include <functional>
 #include <sstream>
@@ -184,7 +195,29 @@ static char const* convert_template_name(char const* c) {
   // Convert to upper case
   std::locale loc;
   for (size_t i = 0; i < source.length(); ++i) {
-    source[i] = std::toupper(source[i], loc);
+    if (!isalpha(source[i])) {
+      source.replace(i, 1, "_");
+    } else {
+      source[i] = std::toupper(source[i], loc);
+    }
+  }
+  char* out = new char[source.size() + 1];  // we need extra char for NUL
+  memcpy(out, source.c_str(), source.size() + 1);
+  return out;
+}
+
+static char const* normalize_name(char const* c) {
+  if (c == nullptr) {
+    return c;
+  }
+  std::string source(c);
+  std::locale loc;
+  for (size_t i = 0; i < source.length(); ++i) {
+    if (!isalpha(source[i])) {
+      source.replace(i, 1, "_");
+    } else {
+      source[i] = std::toupper(source[i], loc);
+    }
   }
   char* out = new char[source.size() + 1];  // we need extra char for NUL
   memcpy(out, source.c_str(), source.size() + 1);
@@ -199,7 +232,7 @@ bool REGISTER_PKG_OBJ_FUNC(char const*    fname,
   std::string srcfile   = std::string(fname) + ":Func" + std::string(name);
   char*       c_srcfile = new char[srcfile.size() + 1];
   memcpy(c_srcfile, srcfile.c_str(), srcfile.size() + 1);
-  PKG_OBJ_SUBTYPE_MANAGER.GVAR_FUNCS.push_back({convert_template_name(name),
+  PKG_OBJ_SUBTYPE_MANAGER.GVAR_FUNCS.push_back({normalize_name(name),
                                                 nparam,
                                                 params(nparam),
                                                 (GVarFunc) func,
@@ -281,7 +314,36 @@ template <typename TElementType> static Obj HASH(Obj self, Obj x) {
       std::hash<TElementType>{}(*t_pkg_obj_cpp_class<TElementType*>(x)));
 }
 
-// Declaring things for GAP . . .
+template<typename TVecType, class TVecTypeToObj>
+static inline std::vector<TVecType> to_vector(Obj list) {
+  SEMIGROUPS_ASSERT(IS_LIST(list));
+  std::vector<TVecType> vec;
+  for (size_t i = 1; i <= (size_t) LEN_LIST(list); ++i) {
+    vec.push_back(TVecTypeToObj{}(ELM_PLIST(list, i)));
+  }
+  return vec;
+}
+
+template<typename TIntegerType>
+struct to_intobj {
+  TIntegerType operator()(Obj x) {
+    SEMIGROUPS_ASSERT(IS_INTOBJ(x));
+    return static_cast<TIntegerType>(INT_INTOBJ(x));
+  }
+};
+
+template<typename TIntegerType>
+struct to_vector_index {
+  TIntegerType operator()(Obj x) {
+    SEMIGROUPS_ASSERT(IS_INTOBJ(x));
+    return static_cast<TIntegerType>(INT_INTOBJ(x) - 1);
+  }
+};
+
+static inline bool BOOL_BOOLOBJ(Obj val) {
+  SEMIGROUPS_ASSERT(val == True || val == False);
+  return (val == True ? true : false);
+}
 
 //} // namespace gapbind
 
