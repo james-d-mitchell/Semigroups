@@ -26,9 +26,9 @@
 
 #include "bipart.h"
 #include "bmat8.h"
-#include "elements.h"
 #include "congpairs.h"
 #include "converter.h"
+#include "elements.h"
 #include "fropin.h"
 #include "gapbind.h"
 #include "semigroups-debug.h"
@@ -404,26 +404,15 @@ static StructGVarFilt GVarFilts[] = {
 
 /*****************************************************************************/
 
+#define GVAR_ENTRY(srcfile, name, nparam, params)                  \
+  {                                                                \
+    convert_template_name(#name), nparam, params, (GVarFunc) name, \
+        srcfile ":Func" #name                                      \
+  }
+
 // Table of functions to export
 
 static StructGVarFunc GVarFuncs[] = {
-    GVAR_ENTRY("bmat8.h", BMAT8_NEW, 0, ""),
-    GVAR_ENTRY("bmat8.h", EQUAL<BMat8>, 2, "x, y"),
-    GVAR_ENTRY("bmat8.h", LESS<BMat8>, 2, "x, y"),
-    GVAR_ENTRY("bmat8.h", HASH<BMat8>, 1, "x"),
-    GVAR_ENTRY("bmat8.h", BMAT8_SET, 4, "x, i, j, val"),
-    GVAR_ENTRY("bmat8.h", BMAT8_GET, 3, "x, i, j"),
-    GVAR_ENTRY("bmat8.h", BMAT8_TRANSPOSE, 1, "x"),
-    GVAR_ENTRY("bmat8.h", BMAT8_MULTIPLY, 2, "x, y"),
-    GVAR_ENTRY("bmat8.h", BMAT8_ONE, 1, "x"),
-    GVAR_ENTRY("bmat8.h", BMAT8_RANDOM, 1, "dim"),
-    GVAR_ENTRY("bmat8.h", BMAT8_PRINT, 1, "x"),
-
-    GVAR_ENTRY("booleanmat.h", BOOLEANMAT_NEW, 1, "dim"),
-    GVAR_ENTRY("booleanmat.h", BOOLEANMAT_GET, 2, "x, pos"),
-    GVAR_ENTRY("booleanmat.h", HASH<Element>, 1, "x"),
-    GVAR_ENTRY("booleanmat.h", ELEMENT_DEGREE, 1, "x"),
-    //GVAR_ENTRY("booleanmat.h", BOOLEANMAT_EQ, 2, "x, y"),
 
     GVAR_ENTRY("semigrp.cc", EN_SEMI_AS_LIST, 1, "S"),
     GVAR_ENTRY("semigrp.cc", EN_SEMI_AS_SET, 1, "S"),
@@ -524,10 +513,13 @@ static StructGVarFunc GVarFuncs[] = {
 static Int InitKernel(StructInitInfo* module) {
   /* init filters and functions                                          */
   InitHdlrFiltsFromTable(GVarFilts);
-  //for (StructGVarFunc& x : GVarFuncs) {
-  //  x.name = convert_template_name(x.name);
-  //}
-  InitHdlrFuncsFromTable(GVarFuncs);
+
+  // FIXME remove this
+  for (auto& x : GVarFuncs) {
+    PKG_OBJ_SUBTYPE_MANAGER.GVAR_FUNCS.push_back(x);
+  }
+
+  InitHdlrFuncsFromTable(&PKG_OBJ_SUBTYPE_MANAGER.GVAR_FUNCS[0]);
 
   T_PKG_OBJ = RegisterPackageTNUM("TPkgObj", TPkgObjTypeFunc);
 
@@ -664,7 +656,7 @@ static Int InitKernel(StructInitInfo* module) {
 static Int InitLibrary(StructInitInfo* module) {
   /* init filters and functions */
   InitGVarFiltsFromTable(GVarFilts);
-  InitGVarFuncsFromTable(GVarFuncs);
+  InitGVarFuncsFromTable(&PKG_OBJ_SUBTYPE_MANAGER.GVAR_FUNCS[0]);
 
   /* return success                                                      */
   return 0;

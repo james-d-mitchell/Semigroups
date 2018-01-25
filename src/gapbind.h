@@ -71,11 +71,13 @@ static class PkgObjSubtype {
 
  public:
   PkgObjSubtype() : _next_subtype(0) {}
+  // TODO init other data members
 
   t_pkg_obj_subtype_t register_subtype(std::string     name,
                                        FUNCTION const& free_func,
                                        FUNCTION const& save_func,
                                        FUNCTION const& load_func) {
+    // TODO check that the name is not already registered
     _names.push_back(name);
     _free_funcs.push_back(free_func);
     _save_funcs.push_back(save_func);
@@ -103,6 +105,8 @@ static class PkgObjSubtype {
     return _load_funcs.at(t_pkg_obj_subtype(o))(o);
   }
 
+  std::vector<StructGVarFunc> GVAR_FUNCS;
+
  private:
   t_pkg_obj_subtype_t      _next_subtype;
   std::vector<std::string> _names;
@@ -123,6 +127,8 @@ template <typename T> std::string type_name() {
   return tname;
 }
 
+// Register a new subtype for the package T_NUM, with save, load, and free
+// functions specified. Returns the new subtype.
 template <typename T>
 t_pkg_obj_subtype_t
 REGISTER_PKG_OBJ(std::function<void(Obj)> save,
@@ -135,6 +141,85 @@ REGISTER_PKG_OBJ(std::function<void(Obj)> save,
   return st;
 }
 
+// Register functions
+
+template <typename R, typename... Types>
+constexpr std::integral_constant<unsigned, sizeof...(Types)>
+ArgumentCount(R (*f)(Types...)) {
+  return std::integral_constant<unsigned, sizeof...(Types)>{};
+}
+
+typedef Obj (*GVarFunc)(/*arguments*/);
+
+char const PARAMS[] = "abcdefghijklmnopqrstuvxyz";
+
+char const* params(size_t nr) {
+  SEMIGROUPS_ASSERT(nr < 26);
+  std::string source;
+  if (nr > 0) {
+    for (size_t i = 0; i < nr - 1; ++i) {
+      source += PARAMS[i] + std::string(", ");
+    }
+    source += PARAMS[nr - 1];
+  }
+  char* out = new char[source.size() + 1];  // we need extra char for NUL
+  memcpy(out, source.c_str(), source.size() + 1);
+  return out;
+}
+
+// The next function changes FUNC<PARAM> to PARAM_FUNC, and is probably
+// extremely fragile.
+static char const* convert_template_name(char const* c) {
+  if (c == nullptr) {
+    return c;
+  }
+  std::string source(c);
+  size_t      first = source.find_first_of("<");
+  if (first == std::string::npos) {
+    return c;
+  }
+  size_t      last = source.find_last_of(">");
+  std::string tp   = source.substr(first + 1, last - first - 1);
+  source           = tp + "_" + source.substr(0, first);
+  // Convert to upper case
+  std::locale loc;
+  for (size_t i = 0; i < source.length(); ++i) {
+    source[i] = std::toupper(source[i], loc);
+  }
+  char* out = new char[source.size() + 1];  // we need extra char for NUL
+  memcpy(out, source.c_str(), source.size() + 1);
+  return out;
+}
+
+template <typename TFunctionType>
+bool REGISTER_PKG_OBJ_FUNC(char const*    fname,
+                           char const*    name,
+                           TFunctionType* func,
+                           Int            nparam) {
+  std::string srcfile   = std::string(fname) + ":Func" + std::string(name);
+  char*       c_srcfile = new char[srcfile.size() + 1];
+  memcpy(c_srcfile, srcfile.c_str(), srcfile.size() + 1);
+  PKG_OBJ_SUBTYPE_MANAGER.GVAR_FUNCS.push_back({convert_template_name(name),
+                                                nparam,
+                                                params(nparam),
+                                                (GVarFunc) func,
+                                                c_srcfile});
+  return true;
+}
+
+#if defined(__COUNTER__) && (__COUNTER__ + 1 == __COUNTER__ + 0)
+#define COUNTER __COUNTER__
+#else
+#define COUNTER __LINE__
+#endif
+
+#define TOKENPASTE(x, y) x##y
+#define TOKENPASTE2(x, y) TOKENPASTE(x, y)
+#define GAPBIND_PRIVATE_UNIQUE_ID int TOKENPASTE2(nothing, __COUNTER__) =
+
+#define REGISTER(func)                             \
+  GAPBIND_PRIVATE_UNIQUE_ID REGISTER_PKG_OBJ_FUNC( \
+      __FILE__, #func, func, decltype(ArgumentCount(func))::value - 1)
 // TODO figure out how to remove the ostringstream from here!
 void TPkgObjPrintFunc(Obj o) {
   std::ostringstream stm;
@@ -180,8 +265,7 @@ template <typename TElementType> static Obj EQUAL(Obj self, Obj x, Obj y) {
               : False);
 }
 
-template <typename TElementType>
-static Obj LESS(Obj self, Obj x, Obj y) {
+template <typename TElementType> static Obj LESS(Obj self, Obj x, Obj y) {
   SEMIGROUPS_ASSERT(TNUM_OBJ(x) == T_PKG_OBJ);
   SEMIGROUPS_ASSERT(TNUM_OBJ(y) == T_PKG_OBJ);
   SEMIGROUPS_ASSERT(t_pkg_obj_subtype(x) == t_pkg_obj_subtype(y));
@@ -191,8 +275,7 @@ static Obj LESS(Obj self, Obj x, Obj y) {
               : False);
 }
 
-template <typename TElementType>
-static Obj HASH(Obj self, Obj x) {
+template <typename TElementType> static Obj HASH(Obj self, Obj x) {
   SEMIGROUPS_ASSERT(TNUM_OBJ(x) == T_PKG_OBJ);
   return INTOBJ_INT(
       std::hash<TElementType>{}(*t_pkg_obj_cpp_class<TElementType*>(x)));
@@ -200,37 +283,6 @@ static Obj HASH(Obj self, Obj x) {
 
 // Declaring things for GAP . . .
 
-// The next function changes FUNC<PARAM> to PARAM_FUNC, and is probably
-// extremely fragile.
-static char const* convert_template_name(char const* c) {
-  if (c == nullptr) {
-    return c;
-  }
-  std::string source(c);
-  size_t      first = source.find_first_of("<");
-  if (first == std::string::npos) {
-    return c;
-  }
-  size_t      last  = source.find_last_of(">");
-  std::string tp    = source.substr(first + 1, last - first - 1);
-  source            = tp + "_" + source.substr(0, first);
-  // Convert to upper case
-  std::locale loc;
-  for (size_t i = 0; i < source.length(); ++i) {
-    source[i] = std::toupper(source[i], loc);
-  }
-  char* out = new char[source.size() + 1];  // we need extra char for NUL
-  memcpy(out, source.c_str(), source.size() + 1);
-  return out;
-}
 //} // namespace gapbind
-
-typedef Obj (*GVarFunc)(/*arguments*/);
-
-#define GVAR_ENTRY(srcfile, name, nparam, params)                  \
-  {                                                                \
-    convert_template_name(#name), nparam, params, (GVarFunc) name, \
-        srcfile ":Func" #name                                      \
-  }
 
 #endif  // SEMIGROUPS_SRC_GAPBIND_H_

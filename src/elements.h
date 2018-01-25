@@ -32,7 +32,28 @@ static const UInt T_ELEMENT =
     REGISTER_PKG_OBJ<Element>([](Obj o) -> void { std::cout << "LOL"; },
                               [](Obj o) -> void { std::cout << "LOL"; });
 
-// Install constructor . . .
+// Element methods . . .
+
+REGISTER(HASH<Element>);
+REGISTER(EQUAL<Element>);
+
+static Obj ELEMENT_DEGREE(Obj self, Obj x) {
+  SEMIGROUPS_ASSERT(TNUM_OBJ(x) == T_PKG_OBJ
+                    && t_pkg_obj_subtype(x) == T_ELEMENT);
+  return INTOBJ_INT(t_pkg_obj_cpp_class<Element*>(x)->degree());
+}
+
+REGISTER(ELEMENT_DEGREE);
+
+static Obj ELEMENT_ONE(Obj self, Obj x) {
+  SEMIGROUPS_ASSERT(TNUM_OBJ(x) == T_PKG_OBJ
+                    && t_pkg_obj_subtype(x) == T_ELEMENT);
+  return new_t_pkg_obj(T_ELEMENT, t_pkg_obj_cpp_class<Element*>(x)->identity());
+}
+
+REGISTER(ELEMENT_ONE);
+
+// BooleanMat methods . . .
 static Obj BOOLEANMAT_NEW(Obj self, Obj list) {
   SEMIGROUPS_ASSERT(IS_LIST(list));
   // SEMIGROUPS_ASSERT(LEN_LIST(list) > 8);
@@ -52,6 +73,8 @@ static Obj BOOLEANMAT_NEW(Obj self, Obj list) {
   return new_t_pkg_obj(T_ELEMENT, new BooleanMat(vec));
 }
 
+REGISTER(BOOLEANMAT_NEW);
+
 static Obj BOOLEANMAT_GET(Obj self, Obj x, Obj pos) {
   SEMIGROUPS_ASSERT(TNUM_OBJ(x) == T_PKG_OBJ
                     && t_pkg_obj_subtype(x) == T_ELEMENT);
@@ -61,12 +84,6 @@ static Obj BOOLEANMAT_GET(Obj self, Obj x, Obj pos) {
   return ((*t_pkg_obj_cpp_class<BooleanMat*>(x))[i - 1] ? True : False);
 }
 
-// Install methods . . .
-
-static Obj ELEMENT_DEGREE(Obj self, Obj x) {
-  SEMIGROUPS_ASSERT(TNUM_OBJ(x) == T_PKG_OBJ
-                    && t_pkg_obj_subtype(x) == T_ELEMENT);
-  return INTOBJ_INT(t_pkg_obj_cpp_class<Element*>(x)->degree());
-}
+REGISTER(BOOLEANMAT_GET);
 
 #endif  // SEMIGROUPS_SRC_ELEMENTS_H_
