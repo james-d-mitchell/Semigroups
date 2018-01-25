@@ -24,12 +24,14 @@
 #include <cxxabi.h>
 
 #include <cstdlib>
+#include <functional>
 #include <sstream>
 #include <string>
 #include <vector>
 
 #include "src/compiled.h"
-// TODO namespace
+
+// namespace gapbind {
 
 UInt T_PKG_OBJ = 0;
 Obj  TheTypeTPkgObj;
@@ -64,7 +66,7 @@ template <typename TClass> inline TClass t_pkg_obj_cpp_class(Obj o) {
   return reinterpret_cast<TClass>(ADDR_OBJ(o)[1]);
 }
 
-class PkgObjSubtype {
+static class PkgObjSubtype {
   typedef std::function<void(Obj)> FUNCTION;
 
  public:
@@ -122,16 +124,14 @@ template <typename T> std::string type_name() {
 }
 
 template <typename T>
-t_pkg_obj_subtype_t REGISTER_PKG_OBJ(std::function<void(Obj)> save,
-                                     std::function<void(Obj)> load) {
+t_pkg_obj_subtype_t
+REGISTER_PKG_OBJ(std::function<void(Obj)> save,
+                 std::function<void(Obj)> load,
+                 std::function<void(Obj)> free = [](Obj x) -> void {
+                   delete t_pkg_obj_cpp_class<T*>(x);
+                 }) {
   t_pkg_obj_subtype_t st = PKG_OBJ_SUBTYPE_MANAGER.register_subtype(
-      type_name<T>(),
-      [&st](Obj x) -> void {
-        SEMIGROUPS_ASSERT(t_pkg_obj_subtype(x) == st);
-        delete t_pkg_obj_cpp_class<T*>(x);
-      },
-      save,
-      load);
+      type_name<T>(), save, load, free);
   return st;
 }
 
@@ -168,5 +168,69 @@ void TPkgObjLoadFunc(Obj o) {
   ADDR_OBJ(o)[0] = (Obj) LoadUInt();
   PKG_OBJ_SUBTYPE_MANAGER.load(o);
 }
+
+// Default methods . . .
+template <typename TElementType> static Obj EQUAL(Obj self, Obj x, Obj y) {
+  SEMIGROUPS_ASSERT(TNUM_OBJ(x) == T_PKG_OBJ);
+  SEMIGROUPS_ASSERT(TNUM_OBJ(y) == T_PKG_OBJ);
+  SEMIGROUPS_ASSERT(t_pkg_obj_subtype(x) == t_pkg_obj_subtype(y));
+  return (std::equal_to<TElementType>{}(*t_pkg_obj_cpp_class<TElementType*>(x),
+                                        *t_pkg_obj_cpp_class<TElementType*>(y))
+              ? True
+              : False);
+}
+
+template <typename TElementType>
+static Obj LESS(Obj self, Obj x, Obj y) {
+  SEMIGROUPS_ASSERT(TNUM_OBJ(x) == T_PKG_OBJ);
+  SEMIGROUPS_ASSERT(TNUM_OBJ(y) == T_PKG_OBJ);
+  SEMIGROUPS_ASSERT(t_pkg_obj_subtype(x) == t_pkg_obj_subtype(y));
+  return (*t_pkg_obj_cpp_class<TElementType*>(x)
+                  < *t_pkg_obj_cpp_class<TElementType*>(y)
+              ? True
+              : False);
+}
+
+template <typename TElementType>
+static Obj HASH(Obj self, Obj x) {
+  SEMIGROUPS_ASSERT(TNUM_OBJ(x) == T_PKG_OBJ);
+  return INTOBJ_INT(
+      std::hash<TElementType>{}(*t_pkg_obj_cpp_class<TElementType*>(x)));
+}
+
+// Declaring things for GAP . . .
+
+// The next function changes FUNC<PARAM> to PARAM_FUNC, and is probably
+// extremely fragile.
+static char const* convert_template_name(char const* c) {
+  if (c == nullptr) {
+    return c;
+  }
+  std::string source(c);
+  size_t      first = source.find_first_of("<");
+  if (first == std::string::npos) {
+    return c;
+  }
+  size_t      last  = source.find_last_of(">");
+  std::string tp    = source.substr(first + 1, last - first - 1);
+  source            = tp + "_" + source.substr(0, first);
+  // Convert to upper case
+  std::locale loc;
+  for (size_t i = 0; i < source.length(); ++i) {
+    source[i] = std::toupper(source[i], loc);
+  }
+  char* out = new char[source.size() + 1];  // we need extra char for NUL
+  memcpy(out, source.c_str(), source.size() + 1);
+  return out;
+}
+//} // namespace gapbind
+
+typedef Obj (*GVarFunc)(/*arguments*/);
+
+#define GVAR_ENTRY(srcfile, name, nparam, params)                  \
+  {                                                                \
+    convert_template_name(#name), nparam, params, (GVarFunc) name, \
+        srcfile ":Func" #name                                      \
+  }
 
 #endif  // SEMIGROUPS_SRC_GAPBIND_H_

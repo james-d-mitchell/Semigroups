@@ -21,12 +21,11 @@
 
 #include "gapbind.h"
 #include "libsemigroups/src/bmat8.h"
-#include "pkg.h"
 
 using libsemigroups::BMat8;
 
 // Register a subtype . . .
-static const UInt T_BMAT8 = REGISTER_PKG_OBJ<BMat8>(
+const UInt T_BMAT8 = REGISTER_PKG_OBJ<BMat8>(
     [](Obj o) -> void { SaveUInt8(t_pkg_obj_cpp_class<BMat8*>(o)->to_int()); },
     [](Obj o) -> void {
       ADDR_OBJ(o)[1] = reinterpret_cast<Obj>(new BMat8(LoadUInt8()));
@@ -35,12 +34,6 @@ static const UInt T_BMAT8 = REGISTER_PKG_OBJ<BMat8>(
 // Install methods
 static Obj BMAT8_NEW(Obj self) {
   return new_t_pkg_obj(T_BMAT8, new BMat8());
-}
-
-static Obj BMAT8_TO_INT(Obj self, Obj x) {
-  SEMIGROUPS_ASSERT(TNUM_OBJ(x) == T_PKG_OBJ
-                    && t_pkg_obj_subtype(x) == T_BMAT8);
-  return INTOBJ_INT(t_pkg_obj_cpp_class<BMat8*>(x)->to_int());
 }
 
 static Obj BMAT8_SET(Obj self, Obj x, Obj i, Obj j, Obj val) {
@@ -67,24 +60,6 @@ static Obj BMAT8_GET(Obj self, Obj x, Obj i, Obj j) {
                                                      INT_INTOBJ(j) - 1)
               ? True
               : False);
-}
-
-static Obj BMAT8_EQ(Obj self, Obj x, Obj y) {
-  SEMIGROUPS_ASSERT(TNUM_OBJ(x) == T_PKG_OBJ
-                    && t_pkg_obj_subtype(x) == T_BMAT8);
-  SEMIGROUPS_ASSERT(TNUM_OBJ(y) == T_PKG_OBJ
-                    && t_pkg_obj_subtype(y) == T_BMAT8);
-  return (*t_pkg_obj_cpp_class<BMat8*>(x) == *t_pkg_obj_cpp_class<BMat8*>(y)
-              ? True
-              : False);
-}
-
-static Obj BMAT8_LT(Obj self, Obj x, Obj y) {
-  SEMIGROUPS_ASSERT(TNUM_OBJ(x) == T_PKG_OBJ
-                    && t_pkg_obj_subtype(x) == T_BMAT8);
-  SEMIGROUPS_ASSERT(TNUM_OBJ(y) == T_PKG_OBJ
-                    && t_pkg_obj_subtype(y) == T_BMAT8);
-  return (*x < *y ? True : False);
 }
 
 static Obj BMAT8_TRANSPOSE(Obj self, Obj x) {
