@@ -156,6 +156,53 @@ function(S)
   return MTSE(S, DigraphSources(DigraphRemoveLoops(Y))[1], ());
 end);
 
+InstallMethod(McAlisterTripleSemigroupComponents,
+"for a McAlister triple semigroup",
+[IsMcAlisterTripleSemigroup and IsWholeFamily],
+function(S)
+  local G, XX, YY, act, comps, id, next, o, v;
+
+  G := McAlisterTripleSemigroupGroup(S);
+  XX := McAlisterTripleSemigroupPartialOrder(S);
+  YY := McAlisterTripleSemigroupSemilattice(S);
+  act := McAlisterTripleSemigroupAction(S);
+
+  comps := [];
+  id    := ListWithIdenticalEntries(DigraphNrVertices(XX), 0);
+  next  := 1;
+
+  for v in DigraphVertices(YY) do
+    if id[v] = 0 then
+      o := Intersection(Orbit(G, v, act), DigraphVertexLabels(YY));
+      Add(comps, o);
+      id{o} := ListWithIdenticalEntries(Length(o), next);
+      next := next + 1;
+    fi;
+  od;
+  return rec(comps := comps, id := id);
+end);
+
+InstallMethod(McAlisterTripleSemigroupQuotientDigraph,
+"for a McAlister triple semigroup",
+[IsMcAlisterTripleSemigroup and IsWholeFamily],
+function(S)
+  local YY, XX_YY, YY_XX, comps, gr, i;
+  YY := McAlisterTripleSemigroupSemilattice(S);
+  XX_YY := DigraphVertexLabels(YY);
+  if XX_YY <> DigraphVertices(YY) then
+    YY_XX := [];
+    for i in [1 .. Length(XX_YY)] do
+      YY_XX[XX_YY[i]] := i;
+    od;
+  else
+    YY_XX := XX_YY;
+  fi;
+  # Convert components to vertices of Y, rather than their labels in X.
+  comps := List(McAlisterTripleSemigroupComponents(S).comps, c -> YY_XX{c});
+  gr := QuotientDigraph(McAlisterTripleSemigroupSemilattice(S), comps);
+  return DigraphRemoveAllMultipleEdges(gr);
+end);
+
 # (A, g) in S if and only if Ag^-1 is a vertex of the semilattice of S
 InstallMethod(AsList, "for a McAlister triple semigroup",
 [IsMcAlisterTripleSemigroup],
@@ -170,6 +217,7 @@ function(S)
       fi;
     od;
   od;
+  # TODO delete this
   SetMcAlisterTripleSemigroupElmList(S, out);
   return out;
 end);
@@ -784,11 +832,13 @@ end;
 # original
 ###############################################################################
 
-GensOfMTS := function(S)
+InstallMethod(SmallGeneratingSet, "for a McAlister triple subsemigroup",
+[IsMcAlisterTripleSemigroup],
+function(S)
   local G, Sl, sl, V, orb, lookup, found, components, count, po, gens, top,
   above, c, check, nbrs, stabs, H, rep, i, j, g, v;
-  G := MTSGroup(S);
-  Sl := MTSSemilattice(S);
+  G := McAlisterTripleSemigroupGroup(S);
+  Sl := McAlisterTripleSemigroupSemilattice(S);
   sl := DigraphReflexiveTransitiveReduction(Sl);
   V := DigraphVertices(Sl);
 
@@ -870,7 +920,7 @@ GensOfMTS := function(S)
   od;
 
   return gens;
-end;
+end);
 
 MTSDClassPartialOrder := function(x, y)
   local S, Sl, G;
@@ -921,4 +971,3 @@ end;
 #
 # InstallMethod(MinActionRank, "for a McAlister triple semigroup",
 # [IsMcAlisterTripleSemigroup], x -> 1);
-

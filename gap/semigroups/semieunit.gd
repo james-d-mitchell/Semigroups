@@ -32,8 +32,10 @@ DeclareSynonymAttr("IsMTSE", IsMcAlisterTripleSemigroupElement);
 DeclareSynonymAttr("IsMcAlisterTripleSemigroup",
                    IsInverseSemigroup and IsGeneratorsOfInverseSemigroup
                    and IsMcAlisterTripleSemigroupElementCollection
-                   and IsWholeFamily and IsEnumerableSemigroupRep);
+                   and IsWholeFamily and IsActingSemigroup);
 DeclareSynonymAttr("IsMTS", IsMcAlisterTripleSemigroup);
+DeclareSynonym("IsMcAlisterTripleSubsemigroup",
+IsMcAlisterTripleSemigroupElementCollection and IsSemigroup);
 
 # This is a representation for McAlister triple semigroup, which are
 # created via the function McAlisterTripleSemigroup.
@@ -78,10 +80,16 @@ DeclareSynonymAttr("MTSPartialOrder", McAlisterTripleSemigroupPartialOrder);
 DeclareAttribute("McAlisterTripleSemigroupSemilattice",
                  IsMcAlisterTripleSemigroup and IsWholeFamily);
 DeclareSynonymAttr("MTSSemilattice", McAlisterTripleSemigroupSemilattice);
+# TODO remove this:
 DeclareAttribute("McAlisterTripleSemigroupElmList",
                  IsMcAlisterTripleSemigroup and IsWholeFamily);
 DeclareAttribute("OneImmutable",
                  IsMcAlisterTripleSemigroup and IsWholeFamily and IsMonoid);
+
+DeclareAttribute("McAlisterTripleSemigroupComponents",
+                 IsMcAlisterTripleSemigroup and IsWholeFamily);
+DeclareAttribute("McAlisterTripleSemigroupQuotientDigraph",
+                 IsMcAlisterTripleSemigroup and IsWholeFamily);
 
 # Operations for relating to McAlister triple semigroups
 DeclareAttribute("IsomorphismMcAlisterTripleSemigroup",
