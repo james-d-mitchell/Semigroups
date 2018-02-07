@@ -358,7 +358,7 @@ function(x, i)
 end);
 
 #############################################################################
-# Implementing IsomorphismSemigroup for IsMcAlisterTripleSemigroup
+# IsomorphismSemigroup for IsMcAlisterTripleSemigroup
 #############################################################################
 SEMIGROUPS.EUISPrincipalRightIdeal := function(S, e)
   local elements;
@@ -398,6 +398,44 @@ SEMIGROUPS.McAlisterTripleSemigroupConstructPartialOrder := function(S, Y, G)
 
   return out;
 end;
+
+### TEST
+DigraphFromSemilattice := function(E)
+  return DigraphReflexiveTransitiveClosure(Digraph(NaturalPartialOrder(E)));
+end;
+
+SEMIGROUPS.McAlisterTripleSemigroupSemilatticeIsomorphism := function(S, cong)
+  local iso, s, YY;
+
+  iso := function(s)
+    local ideal;
+    ideal := SEMIGROUPS.EUISPrincipalRightIdeal(S, s);
+    return Set(ideal, x -> [InverseOp(x) * x,
+                            CongruenceClassOfElement(cong, x)]);
+  end;
+
+  YY := Set(Idempotents(S), e -> iso(e));
+  return MappingByFunction(S, Domain(YY), iso);
+end;
+
+SEMIGROUPS.McAlisterTripleSemigroupConstructPartialOrder := function(S, Y, G)
+  local g, A, sc, out;
+
+  out := ShallowCopy(Y);
+  for g in G do #TODO: if Ag = A then should not check powers of g
+    for A in Y do #TODO: may be able to do this once per G-orbit of Y
+      sc := ShallowCopy(A);
+      sc := Set(sc, x -> [x[1], g * x[2]]);
+      if not sc in out then
+        Append(out, [sc]);
+        out := Set(out);
+      fi;
+    od;
+  od;
+
+  return out;
+end;
+### TEST
 
 SEMIGROUPS.McAlisterTripleSemigroupConstructAction := function(xx, map)
   local map2, act, pt, g;
@@ -447,8 +485,9 @@ InstallMethod(IsomorphismMcAlisterTripleSemigroup,
 "for a semigroup",
 [IsSemigroup],
 function(S)
-  local cong, grp, map_y, map_yy, map_g, yy, xx,
-        labels, x, y, iso, anti_act, act, M;
+  local cong, grp, iso_pg, G, hom, map_G, Es, yy, ids, Dcl, n, cosets, xx,
+  xiny, yinx, D, s, R, e, Ge, h, y_pos, x_pos, act, ah, edgy, x, act2, M, iso,
+  i, H;
 
   if not IsEUnitaryInverseSemigroup(S) then
     ErrorNoReturn("Semigroups: IsomorphismSemigroup: usage,\n",
@@ -457,46 +496,120 @@ function(S)
 
   cong := MinimumGroupCongruence(S);
   grp := S / cong;
-  # This is G.
-  map_yy := SEMIGROUPS.McAlisterTripleSemigroupSemilatticeIsomorphism(S, cong);
-  yy := Set(Image(map_yy));
-  # Construct Y as in Howie.
-  xx := SEMIGROUPS.McAlisterTripleSemigroupConstructPartialOrder(S, yy, grp);
-  # Construct X as in Howie.
+  iso_pg := IsomorphismPermGroup(grp); #This takes a long time, e.g. Sym5
+  G := Range(iso_pg);
+  G := Group(SmallGeneratingSet(G));
+  hom := QuotientSemigroupHomomorphism(grp);
+  map_G := CompositionMapping(iso_pg, hom);
 
-  # Next we create the digraphs x and y for the McAlister triple semigroup.
-  x := SEMIGROUPS.McAlisterTripleSemigroupConstructStandardPartialOrder(xx);
-  # The elements of yy may not be the first elements of xx.
-  map_y := function(a)
-    return Position(xx, a);
+  Es := IdempotentGeneratedSubsemigroup(S);
+  yy := Digraph(NaturalPartialOrder(Es));
+  ids := Elements(Es);
+
+  Dcl := DClasses(S);
+  n := NrDClasses(S);
+  cosets := [];
+  x := [];
+  xiny := [];
+  yinx := [];
+  for i in [1 .. n] do
+    D := Dcl[i];
+    s := Representative(D);
+    R := RClass(D, s);
+    e := LeftOne(s);
+    Ge := Group(List(SmallGeneratingSet(Group(Elements(HClass(D, e)))), g -> g ^
+          map_G));
+    cosets[i] := RightCosets(G, Ge);
+    Append(x, Set(cosets[i], q -> [i, q]));
+    for H in HClasses(R) do
+      h := Representative(H);
+      y_pos := Position(ids, RightOne(h));
+      x_pos := Position(x, [i, Ge * (h ^ map_G)]);
+      yinx[y_pos] := x_pos;
+      xiny[x_pos] := y_pos;
+    od;
+  od;
+
+  act := function(a, g)
+    local b;
+    b := x[a];
+    return Position(x, [b[1], b[2] * g]);
   end;
-  map_y := MappingByFunction(Domain(yy), Domain(Set([1 .. Size(xx)])), map_y);
 
-  labels := ShallowCopy(yy);
-  Apply(labels, a -> Position(xx, a));
-  y := InducedSubdigraph(x, labels);
-  SetDigraphVertexLabels(y, labels);
+  ah := ActionHomomorphism(G, [1 .. Size(x)], act);
+  edgy := List(DigraphEdges(yy), e -> [yinx[e[1]], yinx[e[2]]]);
+  xx := EdgeOrbitsDigraph(Image(ah), edgy, Size(x));
+  xx := DigraphReflexiveTransitiveClosure(xx);
+  yy := DigraphReflexiveTransitiveClosure(yy);
+  SetDigraphVertexLabels(yy, yinx);
 
-  # The semigroup quotient group is not a group object, so find an isomorphism.
-  map_g := IsomorphismPermGroup(grp);
-  map_g := CompositionMapping(
-             SmallerDegreePermutationRepresentation(Image(map_g)), map_g);
-
-  # Create the action of Image(map_g) on x - this is the action of G on X.
-  anti_act := SEMIGROUPS.McAlisterTripleSemigroupConstructAction(xx, map_g);
-  act := function(pt, g)
-    return(anti_act(pt, g ^ -1));
+  act2 := function(a, g)
+    return a ^ (g ^ ah);
   end;
 
-  M := McAlisterTripleSemigroup(Range(map_g), x, y, act);
+  M := McAlisterTripleSemigroup(G, xx, yy, act2);
+
   iso := function(s)
-    local t;
-    t := s;
-    return MTSE(M, (t ^ map_yy) ^ map_y,
-               CongruenceClassOfElement(cong, s) ^ map_g);
+    return MTSE(M, yinx[Position(ids, LeftOne(s))], s ^ map_G);
   end;
+
   return MappingByFunction(S, M, iso);
 end);
+
+#InstallMethod(IsomorphismMcAlisterTripleSemigroup,
+#"for a semigroup",
+#[IsSemigroup],
+#function(S)
+#  local cong, grp, map_y, map_yy, map_g, yy, xx,
+#        labels, x, y, iso, anti_act, act, M;
+#
+#  if not IsEUnitaryInverseSemigroup(S) then
+#    ErrorNoReturn("Semigroups: IsomorphismSemigroup: usage,\n",
+#                  "the semigroup is not E-unitary,");
+#  fi;
+#
+#  cong := MinimumGroupCongruence(S);
+#  grp := S / cong;
+#  # This is G.
+#  map_yy := SEMIGROUPS.McAlisterTripleSemigroupSemilatticeIsomorphism(S, cong);
+#  yy := Set(Image(map_yy));
+#  # Construct Y as in Howie.
+#  xx := SEMIGROUPS.McAlisterTripleSemigroupConstructPartialOrder(S, yy, grp);
+#  # Construct X as in Howie.
+#
+#  # Next we create the digraphs x and y for the McAlister triple semigroup.
+#  x := SEMIGROUPS.McAlisterTripleSemigroupConstructStandardPartialOrder(xx);
+#  # The elements of yy may not be the first elements of xx.
+#  map_y := function(a)
+#    return Position(xx, a);
+#  end;
+#  map_y := MappingByFunction(Domain(yy), Domain(Set([1 .. Size(xx)])), map_y);
+#
+#  labels := ShallowCopy(yy);
+#  Apply(labels, a -> Position(xx, a));
+#  y := InducedSubdigraph(x, labels);
+#  SetDigraphVertexLabels(y, labels);
+#
+#  # The semigroup quotient group is not a group object, so find an isomorphism.
+#  map_g := IsomorphismPermGroup(grp);
+#  map_g := CompositionMapping(
+#             SmallerDegreePermutationRepresentation(Image(map_g)), map_g);
+#
+#  # Create the action of Image(map_g) on x - this is the action of G on X.
+#  anti_act := SEMIGROUPS.McAlisterTripleSemigroupConstructAction(xx, map_g);
+#  act := function(pt, g)
+#    return(anti_act(pt, g ^ -1));
+#  end;
+#
+#  M := McAlisterTripleSemigroup(Range(map_g), x, y, act);
+#  iso := function(s)
+#    local t;
+#    t := s;
+#    return MTSE(M, (t ^ map_yy) ^ map_y,
+#               CongruenceClassOfElement(cong, s) ^ map_g);
+#  end;
+#  return MappingByFunction(S, M, iso);
+#end);
 
 InstallMethod(IsomorphismSemigroup,
 "for IsMcAlisterTripleSemigroup and a semigroup",
@@ -664,5 +777,148 @@ end;
 # 8) Improve IsomorphismSemigroup method.
 # 9) Improve 'if not IsSubgroup(AutomorphismGroup(X), Image(hom)) then' line of
 # McAlisterTripleSemigroup
+# 10) Implement function that turns MTS over a non-perm group into one that is
+# over a perm group.
+# 11) Add to documentation of DigraphReverse returns a digraph where vertex i in
+# the reverse is adjacent to j in the reverse when j is adjacent to i in the
+# original
 ###############################################################################
+
+GensOfMTS := function(S)
+  local G, Sl, sl, V, orb, lookup, found, components, count, po, gens, top,
+  above, c, check, nbrs, stabs, H, rep, i, j, g, v;
+  G := MTSGroup(S);
+  Sl := MTSSemilattice(S);
+  sl := DigraphReflexiveTransitiveReduction(Sl);
+  V := DigraphVertices(Sl);
+
+  orb := List(Orbits(G), o -> Intersection(o, V));
+  lookup := [];
+  found := Union(orb);
+  components := [];
+  count := 1;
+  for i in V do
+    if not IsBound(lookup[i]) then
+      if i in found then
+        Add(components, First(orb, o -> i in o));
+        for j in components[count] do
+          lookup[j] := count;
+        od;
+      else
+        Add(components, [i]);
+        lookup[i] := count;
+      fi;
+      count := count + 1;
+    fi;
+  od;
+
+  po := Digraph(components,
+        {x, y} -> ForAny(OutNeighboursOfVertex(Sl, x[1]), nbr -> nbr in y));
+  po := DigraphReflexiveTransitiveReduction(po);
+
+  gens := [];
+  top := Reversed(DigraphTopologicalSort(po));
+  for i in [1 .. Length(top)] do
+    above := Filtered(top{[1 .. i - 1]}, j -> j in InNeighboursOfVertex(po,
+             top[i]));
+    c := components[top[i]];
+
+    if IsEmpty(above) then # Add minimal gen set of this D-class
+      for g in GeneratorsOfGroup(Stabilizer(G, c[1])) do
+        Add(gens, MTSE(S, c[1], g)); # Add gens of a maximal subgroup
+      od;
+      if Length(c) > 1 then # Add gens to span remaining H-classes
+        for j in [1 .. Length(c) - 1] do
+          Add(gens, MTSE(S, c[j], RepresentativeAction(G, c[j + 1], c[j])));
+        od;
+        Add(gens, MTSE(S, c[Length(c)],
+            RepresentativeAction(G, c[1], c[Length(c)])));
+      fi;
+    else
+      check := false;
+      nbrs := InNeighboursOfVertex(sl, c[1]);
+      stabs := Union(Set(nbrs, nb -> GeneratorsOfGroup(Stabilizer(G, nb))));
+      if IsEmpty(stabs) then
+        H := Group(());
+      else
+        H := Group(stabs);
+      fi;
+
+      if Length(c) > 1 then
+        for v in c{[2 .. Length(c)]} do
+          if not v in Orbit(H, c[1]) then
+            rep := RepresentativeAction(G, v, c[1]);
+            Add(gens, MTSE(S, c[1], rep)); # Add gens to span all H-classes.
+            H := ClosureGroup(H, rep);
+            check := true;
+          fi;
+        od;
+      fi;
+
+      for g in GeneratorsOfGroup(Stabilizer(G, c[1])) do
+        if not g in H then
+          Add(gens, MTSE(S, c[1], g)); # Add missing elements from max subgroup
+          check := true;
+        fi;
+      od;
+
+      if check = false and Length(nbrs) = 1
+          and Length(components[lookup[nbrs[1]]]) = 1 then
+        Add(gens, MTSE(S, c[1], Identity(G)));
+      fi;
+    fi;
+  od;
+
+  return gens;
+end;
+
+MTSDClassPartialOrder := function(x, y)
+  local S, Sl, G;
+  S := MTSEParent(x);
+  if not MTSEParent(y) = S then
+    ErrorNoReturn("");
+  fi;
+  Sl := MTSSemilattice(S);
+  G := MTSGroup(S);
+  if ForAny(OutNeighboursOfVertex(Sl, x[1]), nbr -> nbr in Orbit(G, y[1])) then
+    return true; # x >= y
+  fi;
+  return false; # y < x or incomparible
+end;
+
+# InstallMethod(IsGeneratorsOfActingSemigroup,
+# "for a McAlister triple semigroup element collection",
+# [IsMcAlisterTripleSemigroupElementCollection], x -> true);
+#
+# InstallMethod(ActionDegree,
+# "for a McAlister triple semigroup element collection",
+# [IsMcAlisterTripleSemigroupElementCollection],
+# function(coll)
+#   local top;
+#   top := DigraphTopologicalSort(MTSSemilattice(MTSEParent(coll[1])));
+#   return Length(top) - Minimum(List(coll, x -> Position(top, x[1])));
+# end);
+#
+# InstallMethod(ActionDegree,
+# "for a McAlister triple semigroup",
+# [IsMcAlisterTripleSemigroupElementCollection],
+# function(S)
+#   return DigraphNrVertices(MTSSemilattice(S)) - 1;
+# end);
+#
+# InstallMethod(ActionRank, "for a McAlister triple semigroup",
+# [IsMcAlisterTripleSemigroup],
+# function(S)
+#   return Maximum(List(OutNeighbours(MTSSemilattice(S)), Length));
+# end);
+#
+# InstallMethod(ActionRank, "for a McAlister triple semigroup and integer",
+# [IsMcAlisterTripleSemigroupElement, IsInt],
+# function(x)
+#   # ???????????????? not sure what the purpose of the int is
+#   return Length(OutNeighboursOfVertex(MTSSemilattice(MTSEParent(x)), x[1]));
+# end);
+#
+# InstallMethod(MinActionRank, "for a McAlister triple semigroup",
+# [IsMcAlisterTripleSemigroup], x -> 1);
 
