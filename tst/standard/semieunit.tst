@@ -102,11 +102,12 @@ gap> ps := InverseSemigroup([PartialPerm([2, 3, 4, 5], [1, 3, 5, 4]),
 > PartialPerm([2, 3, 4, 5], [1, 4, 5, 3])]);;
 gap> Mps := IsomorphismSemigroup(IsMcAlisterTripleSemigroup, ps);;
 gap> Image(Mps);
-[ (1, ()), (1, (2,3)), (1, (1,2)), (1, (1,2,3)), (1, (1,3,2)), (1, (1,3)), 
-  (2, ()), (2, (2,3)), (2, (1,2,3)), (2, (1,3)), (3, ()), (3, (2,3)), 
-  (3, (1,2)), (3, (1,3,2)) ]
+[ (1, ()), (1, (1,2)(3,6)(4,5)), (1, (1,4)(2,6)(3,5)), (1, (1,6,5)(2,4,3)),
+  (3, ()), (3, (1,3)(2,5)(4,6)), (3, (1,4)(2,6)(3,5)), (3, (1,5,6)(2,3,4)),
+  (4, ()), (4, (1,2)(3,6)(4,5)), (4, (1,3)(2,5)(4,6)), (4, (1,4)(2,6)(3,5)),
+  (4, (1,5,6)(2,3,4)), (4, (1,6,5)(2,4,3)) ]
 gap> AsSemigroup(IsMcAlisterTripleSemigroup, ps);
-<McAlister triple semigroup over Group([ (2,3), (1,2,3), (2,3), (1,3,2) ])>
+<McAlister triple semigroup over Group([ (1,5,6)(2,3,4), (1,4)(2,6)(3,5) ])>
 gap> ps := InverseSemigroup([PartialPerm([1, 4, 6, 7], [1, 4, 6, 7]),
 >   PartialPerm([2, 3, 6, 7], [2, 3, 6, 7]), PartialPerm([6, 7], [6, 7]),
 >   PartialPerm([2, 3, 5, 6, 7], [2, 3, 5, 6, 7]),
@@ -114,13 +115,13 @@ gap> ps := InverseSemigroup([PartialPerm([1, 4, 6, 7], [1, 4, 6, 7]),
 >   PartialPerm([2, 3, 6, 7], [1, 4, 7, 6]), PartialPerm([6, 7], [7, 6])]);;
 gap> Mps := IsomorphismSemigroup(IsMcAlisterTripleSemigroup, ps);;
 gap> Image(Mps);
-[ (1, ()), (1, (1,2)), (2, ()), (3, ()), (3, (1,2)), (5, ()), (5, (1,2)) ]
+[ (1, ()), (1, (1,2)), (2, ()), (2, (1,2)), (3, ()), (3, (1,2)), (4, ()) ]
 gap> Elements(Range(Mps));
 [ (1, ()), (1, (1,2)), (2, ()), (3, ()), (3, (1,2)), (5, ()), (5, (1,2)) ]
 gap> IsWholeFamily(Image(Mps));
 true
 gap> AsSemigroup(IsMcAlisterTripleSemigroup, ps);
-<McAlister triple semigroup over Group([ (), (), (), (1,2), (1,2), (1,2) ])>
+<McAlister triple semigroup over Group([ (1,2) ])>
 
 #T# AsSemigroup with bad input
 gap> T := Semigroup([PartialPerm([1], [3]),

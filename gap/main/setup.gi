@@ -373,7 +373,7 @@ function(S)
   local act, digraph;
   S := MTSEParent(Representative(S));
   act     := McAlisterTripleSemigroupAction(S);
-  digraph := McAlisterTripleSemigroupSemilattice(S);
+  digraph := McAlisterTripleSemigroupPartialOrder(S);
   return
   function(pt, x)
     if pt = 0 then
@@ -429,7 +429,7 @@ function(S)
   local act, digraph;
   S := MTSEParent(Representative(S));
   act     := McAlisterTripleSemigroupAction(S);
-  digraph := McAlisterTripleSemigroupSemilattice(S);
+  digraph := McAlisterTripleSemigroupPartialOrder(S);
   return
     function(pt, x)
       if pt = 0 then

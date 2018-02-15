@@ -80,6 +80,19 @@ DeclareSynonymAttr("MTSPartialOrder", McAlisterTripleSemigroupPartialOrder);
 DeclareAttribute("McAlisterTripleSemigroupSemilattice",
                  IsMcAlisterTripleSemigroup and IsWholeFamily);
 DeclareSynonymAttr("MTSSemilattice", McAlisterTripleSemigroupSemilattice);
+DeclareAttribute("McAlisterTripleSemigroupActionHomomorphism",
+                 IsMcAlisterTripleSemigroup and IsWholeFamily);
+DeclareSynonymAttr("MTSActionHomomorphism",
+                 McAlisterTripleSemigroupActionHomomorphism);
+DeclareAttribute("McAlisterTripleSemigroupUnderlyingAction",
+                 IsMcAlisterTripleSemigroup and IsWholeFamily);
+DeclareSynonymAttr("MTSUnderlyingAction",
+                 McAlisterTripleSemigroupUnderlyingAction);
+DeclareAttribute("McAlisterTripleSemigroupSemilatticeVertexLabelInverseMap",
+                 IsMcAlisterTripleSemigroup and IsWholeFamily);
+DeclareSynonymAttr("MTSSemilatticeVertexLabelInverseMap",
+                 McAlisterTripleSemigroupSemilatticeVertexLabelInverseMap);
+
 # TODO remove this:
 DeclareAttribute("McAlisterTripleSemigroupElmList",
                  IsMcAlisterTripleSemigroup and IsWholeFamily);
@@ -88,8 +101,12 @@ DeclareAttribute("OneImmutable",
 
 DeclareAttribute("McAlisterTripleSemigroupComponents",
                  IsMcAlisterTripleSemigroup and IsWholeFamily);
+DeclareSynonymAttr("MTSComponents",
+                 McAlisterTripleSemigroupComponents);
 DeclareAttribute("McAlisterTripleSemigroupQuotientDigraph",
                  IsMcAlisterTripleSemigroup and IsWholeFamily);
+DeclareSynonymAttr("MTSQuotientDigraph",
+                 McAlisterTripleSemigroupQuotientDigraph);
 
 # Operations for relating to McAlister triple semigroups
 DeclareAttribute("IsomorphismMcAlisterTripleSemigroup",

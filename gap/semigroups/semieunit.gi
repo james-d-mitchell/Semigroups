@@ -112,10 +112,10 @@ function(G, X, Y, act)
 
   SetMcAlisterTripleSemigroupGroup(M, G);
   SetMcAlisterTripleSemigroupAction(M, anti_act);
+  SetMcAlisterTripleSemigroupUnderlyingAction(M, act);
   SetMcAlisterTripleSemigroupPartialOrder(M, X);
   SetMcAlisterTripleSemigroupSemilattice(M, Y);
-
-  GeneratorsOfSemigroup(M);
+  SetMcAlisterTripleSemigroupActionHomomorphism(M, hom);
   return M;
 end);
 
@@ -171,7 +171,7 @@ function(S)
   id    := ListWithIdenticalEntries(DigraphNrVertices(XX), 0);
   next  := 1;
 
-  for v in DigraphVertices(YY) do
+  for v in DigraphVertexLabels(YY) do
     if id[v] = 0 then
       o := Intersection(Orbit(G, v, act), DigraphVertexLabels(YY));
       Add(comps, o);
@@ -186,21 +186,31 @@ InstallMethod(McAlisterTripleSemigroupQuotientDigraph,
 "for a McAlister triple semigroup",
 [IsMcAlisterTripleSemigroup and IsWholeFamily],
 function(S)
-  local YY, XX_YY, YY_XX, comps, gr, i;
-  YY := McAlisterTripleSemigroupSemilattice(S);
-  XX_YY := DigraphVertexLabels(YY);
-  if XX_YY <> DigraphVertices(YY) then
-    YY_XX := [];
-    for i in [1 .. Length(XX_YY)] do
-      YY_XX[XX_YY[i]] := i;
-    od;
-  else
-    YY_XX := XX_YY;
-  fi;
+  local YY_XX, comps, gr;
+  YY_XX := McAlisterTripleSemigroupSemilatticeVertexLabelInverseMap(S);
   # Convert components to vertices of Y, rather than their labels in X.
   comps := List(McAlisterTripleSemigroupComponents(S).comps, c -> YY_XX{c});
   gr := QuotientDigraph(McAlisterTripleSemigroupSemilattice(S), comps);
   return DigraphRemoveAllMultipleEdges(gr);
+end);
+
+InstallMethod(McAlisterTripleSemigroupSemilatticeVertexLabelInverseMap,
+"for a McAlister triple semigroup",
+[IsMcAlisterTripleSemigroup and IsWholeFamily],
+function(S)
+  local XX, YY, XX_YY, YY_XX, i;
+  XX := McAlisterTripleSemigroupPartialOrder(S);
+  YY := McAlisterTripleSemigroupSemilattice(S);
+  XX_YY := DigraphVertexLabels(YY);
+  if XX_YY <> DigraphVertices(XX) then
+    YY_XX := ListWithIdenticalEntries(DigraphNrVertices(XX), 0);
+    for i in [1 .. Length(XX_YY)] do
+      YY_XX[XX_YY[i]] := i;
+    od;
+  else
+    return XX_YY;
+  fi;
+  return YY_XX;
 end);
 
 # (A, g) in S if and only if Ag^-1 is a vertex of the semilattice of S
@@ -378,7 +388,6 @@ function(x, y)
                   "usage,\n", "the elements must be from the same McAlister ",
                   "triple semigroup,");
   fi;
-  labels := DigraphVertexLabels(McAlisterTripleSemigroupSemilattice(S));
   return MTSE(S, DigraphVertexLabel(McAlisterTripleSemigroupPartialOrder(S),
                PartialOrderDigraphJoinOfVertices(
                  McAlisterTripleSemigroupPartialOrder(S), x[1],
@@ -546,7 +555,9 @@ function(S)
   grp := S / cong;
   iso_pg := IsomorphismPermGroup(grp); #This takes a long time, e.g. Sym5
   G := Range(iso_pg);
-  G := Group(SmallGeneratingSet(G));
+  if not IsEmpty(SmallGeneratingSet(G)) then
+    G := Group(SmallGeneratingSet(G));
+  fi;
   hom := QuotientSemigroupHomomorphism(grp);
   map_G := CompositionMapping(iso_pg, hom);
 
@@ -835,59 +846,59 @@ end;
 InstallMethod(SmallGeneratingSet, "for a McAlister triple subsemigroup",
 [IsMcAlisterTripleSemigroup],
 function(S)
-  local G, Sl, sl, V, orb, lookup, found, components, count, po, gens, top,
-  above, c, check, nbrs, stabs, H, rep, i, j, g, v;
+  local G, Sl, X_Y, Y_X, comps, lookup, RepAct, Stab, Orb, hom, act, gens, acts,
+  po, top, sl, above, c, check, nbrs, stabs, H, rep, i, g, j, v;
+
   G := McAlisterTripleSemigroupGroup(S);
   Sl := McAlisterTripleSemigroupSemilattice(S);
-  sl := DigraphReflexiveTransitiveReduction(Sl);
-  V := DigraphVertices(Sl);
+  X_Y := DigraphVertexLabels(Sl);
+  Y_X := McAlisterTripleSemigroupSemilatticeVertexLabelInverseMap(S);
+  comps := McAlisterTripleSemigroupComponents(S).comps;
+  lookup := McAlisterTripleSemigroupComponents(S).id;
 
-  orb := List(Orbits(G), o -> Intersection(o, V));
-  lookup := [];
-  found := Union(orb);
-  components := [];
-  count := 1;
-  for i in V do
-    if not IsBound(lookup[i]) then
-      if i in found then
-        Add(components, First(orb, o -> i in o));
-        for j in components[count] do
-          lookup[j] := count;
-        od;
-      else
-        Add(components, [i]);
-        lookup[i] := count;
-      fi;
-      count := count + 1;
-    fi;
-  od;
 
-  po := Digraph(components,
-        {x, y} -> ForAny(OutNeighboursOfVertex(Sl, x[1]), nbr -> nbr in y));
-  po := DigraphReflexiveTransitiveReduction(po);
+  if McAlisterTripleSemigroupUnderlyingAction(S) = OnPoints then
+    RepAct := {a, b} -> RepresentativeAction(G, b, a);
+    Stab := {a} -> Stabilizer(G, a);
+    Orb := {H, a} -> Orbit(H, a);
+  else
+    hom := McAlisterTripleSemigroupActionHomomorphism(S);
+    act := McAlisterTripleSemigroupUnderlyingAction(S);
+    RepAct := {a, b} -> RepresentativeAction(G, b, a, act);
+    gens := Generators(G);
+    acts := List(gens, g -> g ^ hom);
+    #not sure why but (G, a, act) doesn't work as intended.
+    Stab := {a} -> Stabilizer(G, a, act);
+    Orb := {H, a} -> Orbit(H, a, act);
+  fi;
 
+  # We use reflexive transitive reductions so we can only check neighbours
+  # u > v such that there is no w where u > w > v
   gens := [];
-  top := Reversed(DigraphTopologicalSort(po));
+  po := McAlisterTripleSemigroupQuotientDigraph(S);
+  po := DigraphReflexiveTransitiveReduction(po);
+  top := Reversed(DigraphTopologicalSort(po)); # Work down from top D-classes
+  sl := DigraphReflexiveTransitiveReduction(Sl);
+  SetDigraphVertexLabels(sl, DigraphVertexLabels(Sl)); # Preserve labelling
   for i in [1 .. Length(top)] do
     above := Filtered(top{[1 .. i - 1]}, j -> j in InNeighboursOfVertex(po,
              top[i]));
-    c := components[top[i]];
+    c := comps[top[i]];
 
     if IsEmpty(above) then # Add minimal gen set of this D-class
-      for g in GeneratorsOfGroup(Stabilizer(G, c[1])) do
+      for g in GeneratorsOfGroup(Stab(c[1])) do
         Add(gens, MTSE(S, c[1], g)); # Add gens of a maximal subgroup
       od;
       if Length(c) > 1 then # Add gens to span remaining H-classes
         for j in [1 .. Length(c) - 1] do
-          Add(gens, MTSE(S, c[j], RepresentativeAction(G, c[j + 1], c[j])));
+          Add(gens, MTSE(S, c[j], RepAct(c[j + 1], c[j])));
         od;
-        Add(gens, MTSE(S, c[Length(c)],
-            RepresentativeAction(G, c[1], c[Length(c)])));
+        Add(gens, MTSE(S, c[Length(c)], RepAct(c[1], c[Length(c)])));
       fi;
     else
       check := false;
-      nbrs := InNeighboursOfVertex(sl, c[1]);
-      stabs := Union(Set(nbrs, nb -> GeneratorsOfGroup(Stabilizer(G, nb))));
+      nbrs := List(InNeighboursOfVertex(sl, Y_X[c[1]]), nb -> X_Y[nb]);
+      stabs := Union(Set(nbrs, nb -> GeneratorsOfGroup(Stab(nb))));
       if IsEmpty(stabs) then
         H := Group(());
       else
@@ -896,8 +907,8 @@ function(S)
 
       if Length(c) > 1 then
         for v in c{[2 .. Length(c)]} do
-          if not v in Orbit(H, c[1]) then
-            rep := RepresentativeAction(G, v, c[1]);
+          if not v in Orb(H, c[1]) then
+            rep := RepAct(v, c[1]);
             Add(gens, MTSE(S, c[1], rep)); # Add gens to span all H-classes.
             H := ClosureGroup(H, rep);
             check := true;
@@ -905,7 +916,7 @@ function(S)
         od;
       fi;
 
-      for g in GeneratorsOfGroup(Stabilizer(G, c[1])) do
+      for g in GeneratorsOfGroup(Stab(c[1])) do
         if not g in H then
           Add(gens, MTSE(S, c[1], g)); # Add missing elements from max subgroup
           check := true;
@@ -913,7 +924,7 @@ function(S)
       od;
 
       if check = false and Length(nbrs) = 1
-          and Length(components[lookup[nbrs[1]]]) = 1 then
+          and Length(comps[lookup[nbrs[1]]]) = 1 then
         Add(gens, MTSE(S, c[1], Identity(G)));
       fi;
     fi;
