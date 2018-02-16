@@ -909,13 +909,7 @@ end);
 InstallMethod(LambdaPerm, "for a McAlister triple subsemigroup",
 [IsMcAlisterTripleSubsemigroup],
 function(S)
-  local T, X, G, act, hom;
-  T := MTSEParent(Representative(S));
-  X := McAlisterTripleSemigroupPartialOrder(T);
-  G := McAlisterTripleSemigroupGroup(T);
-  act := McAlisterTripleSemigroupAction(T);
-  hom := ActionHomomorphism(G, DigraphVertices(X), act);
-  return {x, y} -> (x[2] ^ -1 * y[2]) ^ hom;
+  return {x, y} -> x[2] ^ -1 * y[2];
 end);
 
 # Returns a permutation mapping LambdaFunc(S)(x) to LambdaFunc(S)(y) so that
@@ -942,13 +936,20 @@ InstallMethod(LambdaConjugator, "for a bipartition semigroup",
 InstallMethod(LambdaConjugator, "for a Rees 0-matrix subsemigroup",
 [IsReesZeroMatrixSubsemigroup], S ->
 function(x, y)
-  return (); #FIXME is this right????
+  return (); #FIXME is this right???? This is not right!!
 end);
 
 InstallMethod(LambdaConjugator, "for a McAlister triple subsemigroup",
-[IsMcAlisterTripleSubsemigroup], S ->
-function(x, y)
-  return (); #FIXME is this right????
+[IsMcAlisterTripleSubsemigroup], 
+function(S)
+  local T, G, act;
+  T := MTSEParent(Representative(S));
+  G := McAlisterTripleSemigroupGroup(T);
+  act := McAlisterTripleSemigroupAction(T);
+  return {x, y} -> RepresentativeAction(G, 
+                                        LambdaFunc(S)(y), 
+                                        LambdaFunc(S)(x), 
+                                        act);
 end);
 
 InstallMethod(LambdaConjugator, "for a matrix semigroup",
