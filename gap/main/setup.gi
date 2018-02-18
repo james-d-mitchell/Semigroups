@@ -940,15 +940,15 @@ function(x, y)
 end);
 
 InstallMethod(LambdaConjugator, "for a McAlister triple subsemigroup",
-[IsMcAlisterTripleSubsemigroup], 
+[IsMcAlisterTripleSubsemigroup],
 function(S)
   local T, G, act;
   T := MTSEParent(Representative(S));
   G := McAlisterTripleSemigroupGroup(T);
   act := McAlisterTripleSemigroupAction(T);
-  return {x, y} -> RepresentativeAction(G, 
-                                        LambdaFunc(S)(y), 
-                                        LambdaFunc(S)(x), 
+  return {x, y} -> RepresentativeAction(G,
+                                        LambdaFunc(S)(y),
+                                        LambdaFunc(S)(x),
                                         act);
 end);
 
