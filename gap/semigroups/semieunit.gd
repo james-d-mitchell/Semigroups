@@ -95,18 +95,14 @@ DeclareAttribute("McAlisterTripleSemigroupSemilatticeVertexLabelInverseMap",
                  IsMcAlisterTripleSubsemigroup);
 DeclareSynonymAttr("MTSSemilatticeVertexLabelInverseMap",
                  McAlisterTripleSemigroupSemilatticeVertexLabelInverseMap);
-
-# TODO remove this:
-DeclareAttribute("McAlisterTripleSemigroupElmList",
-                 IsMcAlisterTripleSemigroup and IsWholeFamily);
 DeclareAttribute("OneImmutable",
                  IsMcAlisterTripleSemigroup and IsWholeFamily and IsMonoid);
 DeclareAttribute("McAlisterTripleSemigroupComponents",
-                 IsMcAlisterTripleSemigroup and IsWholeFamily);
+                 IsMcAlisterTripleSubsemigroup);
 DeclareSynonymAttr("MTSComponents",
                  McAlisterTripleSemigroupComponents);
 DeclareAttribute("McAlisterTripleSemigroupQuotientDigraph",
-                 IsMcAlisterTripleSemigroup and IsWholeFamily);
+                 IsMcAlisterTripleSubsemigroup);
 DeclareSynonymAttr("MTSQuotientDigraph",
                  McAlisterTripleSemigroupQuotientDigraph);
 

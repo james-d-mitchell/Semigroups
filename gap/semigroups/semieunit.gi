@@ -215,44 +215,18 @@ function(S)
   return YY_XX;
 end);
 
-# (A, g) in S if and only if Ag^-1 is a vertex of the semilattice of S
-InstallMethod(AsList, "for a McAlister triple semigroup",
-[IsMcAlisterTripleSemigroup],
-function(S)
-  local out, g, A, V;
-  out := [];
-  V := DigraphVertexLabels(McAlisterTripleSemigroupSemilattice(S));
-  for g in McAlisterTripleSemigroupGroup(S) do
-    for A in V do
-      if (McAlisterTripleSemigroupAction(S)(A, Inverse(g)) in V) then
-        Add(out, MTSE(S, A, g));
-      fi;
-    od;
-  od;
-  # TODO delete this
-  SetMcAlisterTripleSemigroupElmList(S, out);
-  return out;
-end);
-
-InstallMethod(String, "for a McAlister triple semigroup",
-[IsMcAlisterTripleSemigroup],
+InstallMethod(String, "for a McAlister triple subsemigroup",
+[IsMcAlisterTripleSubsemigroup],
 function(S)
   local G, X, Y;
+  if not IsWholeFamily(S) then
+    return Concatenation("Semigroup(", String(GeneratorsOfSemigroup(S)));
+  fi;
   G := McAlisterTripleSemigroupGroup(S);
   X := McAlisterTripleSemigroupPartialOrder(S);
   Y := McAlisterTripleSemigroupSemilattice(S);
   return Concatenation("McAlisterTripleSemigroup(", String(G), ", ",
                        String(X), ", ", String(DigraphVertexLabels(Y)), ")");
-end);
-
-InstallMethod(String, "for a McAlister triple subsemigroup",
-[IsMcAlisterTripleSubsemigroup],
-function(S)
-  local G, X, Y;
-  G := McAlisterTripleSemigroupGroup(S);
-  X := McAlisterTripleSemigroupPartialOrder(S);
-  Y := McAlisterTripleSemigroupSemilattice(S);
-  return Concatenation("Semigroup(", String(GeneratorsOfSemigroup(S)));
 end);
 
 InstallMethod(PrintObj, "for a McAlister triple subsemigroup",
@@ -371,6 +345,20 @@ InstallMethod(McAlisterTripleSemigroupUnderlyingAction,
 [IsMcAlisterTripleSubsemigroup],
 function(S)
   return MTSUnderlyingAction(MTSEParent(Representative(S)));
+end);
+
+InstallMethod(McAlisterTripleSemigroupComponents,
+"for a McAlister triple subsemigroup",
+[IsMcAlisterTripleSubsemigroup],
+function(S)
+  return MTSComponents(MTSEParent(Representative(S)));
+end);
+
+InstallMethod(McAlisterTripleSemigroupQuotientDigraph,
+"for a McAlister triple subsemigroup",
+[IsMcAlisterTripleSubsemigroup],
+function(S)
+  return MTSQuotientDigraph(MTSEParent(Representative(S)));
 end);
 
 InstallMethod(McAlisterTripleSemigroupSemilatticeVertexLabelInverseMap,
