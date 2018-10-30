@@ -147,6 +147,7 @@ RZMSMatrixIsomorphismGroup := function(nr_rows, nr_cols, G)
   auto := List(auto, x -> ApplyPermWholeDimension(dim, 3, x));
 
   # The RZMS matrix isomorphism group
+  # TODO(CCR): maybe remove more generators here
   return Group(Flat([rows, cols, grswaps, gcswaps, auto]));
 end;
 
@@ -161,21 +162,22 @@ IsomorphismReesZeroMatrixSemigroups := function(S, T)
   n := Length(mS[1]);
   if not (Length(mT) = m and ForAll(mS, row -> Length(row) = n)
       and ForAll(mT, row -> Length(row) = n)) then
+      # TODO(CCR): don't check all rows since the matrix must be m x n
     ErrorNoReturn("dimensions are different");
   fi;
 
   GS := UnderlyingSemigroup(S);
   GT := UnderlyingSemigroup(T);
-  if not IsPermGroup(GS) and IsPermGroup(GT) then
+  if not IsPermGroup(GS) or not IsPermGroup(GT) then
     ErrorNoReturn("the rzms should have underlying semigroups which are perm ",
                   "groups");
   fi;
 
   grp_iso := IsomorphismGroups(GS, GT);
-  grp_inv := InverseGeneralMapping(grp_iso);
   if grp_iso = fail then
     ErrorNoReturn("underlying groups are not isomorphic");
   fi;
+  grp_inv := InverseGeneralMapping(grp_iso);
 
   # Each entry of a matrix corresponds to a triple (j, i, g) in J x I x G.
   # There is bijection between these triple and the set [1 .. |I| x |J| x G].
@@ -195,12 +197,15 @@ IsomorphismReesZeroMatrixSemigroups := function(S, T)
   # We now find an element of (G \wreath S_n) \rtimes Aut(G) which sends the
   # martix of S to the matrix of T. We create the representation of this action
   # on the integers [1 .. |I| x |J| x G] to utilize permutation group methods.
+
+  # JDM: Non-trivial amount of time
   GG  := RZMSMatrixIsomorphismGroup(m, n, GS);
   map := RepresentativeAction(GG, setmS, setmT, OnSets);
 
   dimensions := [m, n, Size(GS) + 1];
 
   pos := function(g)  # [i, j, 1] represents the (i,j)'th entry being 0.
+    # Replace Elements -> Enumerator
     return Position(Elements(GS), g) + 1;
   end;
 
