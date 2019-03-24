@@ -538,7 +538,7 @@ Matrix(IsBooleanMat, [[1, 0, 0, 1, 0, 0], [0, 1, 1, 0, 0, 0],
 
 # boolmat: AsBooleanMat, AsDigraph for a digraph, boolean mat 2/2
 gap> x := Digraph([[], [8, 10], [1, 10], [5], [8], [], [10], [], [9], []]);
-<digraph with 10 vertices, 8 edges>
+<immutable digraph with 10 vertices, 8 edges>
 gap> AsDigraph(AsBooleanMat(x)) = x;
 true
 gap> x := Matrix(IsBooleanMat, [[1, 0, 0, 1, 0],
