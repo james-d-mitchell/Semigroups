@@ -53,9 +53,14 @@ else
   mkdir libsemigroups 
 fi
 
+# TEMPORARY: INSTALL DIGRAPHS MASTER BRANCH
+git clone -b master --depth=1 https://github.com/gap-packages/Digraphs.git $GAPROOT/pkg/digraphs
+cd $GAPROOT/pkg/digraphs
+./autogen.sh && ./configure && make
+
 ################################################################################
 # Install digraphs, genss, io, orb, and profiling
-PKGS=( "digraphs" "genss" "io" "orb" )
+PKGS=( "genss" "io" "orb" )
 if [ "$SUITE"  == "coverage" ]; then
   PKGS+=( "profiling" )
 fi
