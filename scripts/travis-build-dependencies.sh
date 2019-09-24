@@ -59,7 +59,7 @@ CURL="curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-m
 # TEMPORARY: INSTALL DIGRAPHS MASTER BRANCH
 git clone -b master --depth=1 https://github.com/gap-packages/Digraphs.git $GAPROOT/pkg/digraphs
 cd $GAPROOT/pkg/digraphs
-./autogen.sh && ./configure && make
+./autogen.sh && ./configure $PKG_FLAGS && make
 
 ################################################################################
 # Install digraphs, genss, io, orb, and profiling
