@@ -56,9 +56,14 @@ fi
 # Common curl settings
 CURL="curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 40 -L"
 
+# TEMPORARY: INSTALL DIGRAPHS MASTER BRANCH
+git clone -b master --depth=1 https://github.com/gap-packages/Digraphs.git $GAPROOT/pkg/digraphs
+cd $GAPROOT/pkg/digraphs
+./autogen.sh && ./configure && make
+
 ################################################################################
 # Install digraphs, genss, io, orb, and profiling
-PKGS=( "digraphs" "genss" "io" "orb" )
+PKGS=( "genss" "io" "orb" )
 if [ "$SUITE"  == "coverage" ]; then
   PKGS+=( "profiling" )
 fi
