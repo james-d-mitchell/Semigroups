@@ -39,6 +39,7 @@
 #include "pkg.h"
 #include "semigroups-debug.h"
 
+#include "libsemigroups/element-adapters.hpp"
 #include "libsemigroups/element.hpp"
 #include "libsemigroups/semiring.hpp"
 
