@@ -18,3 +18,9 @@ DeclareCategory("IsRegularActingSemigroupRep",
 DeclareCategory("IsInverseActingSemigroupRep",
                 IsInverseSemigroup and IsGeneratorsOfInverseSemigroup
                 and IsRegularActingSemigroupRep);
+
+DeclareOperation("NormalClosureInverseSemigroup", 
+[IsInverseSemigroup, IsInverseSemigroup]);
+
+DeclareOperation("NormalClosureInverseSemigroup", 
+[IsInverseSemigroup, IsList]);

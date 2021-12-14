@@ -579,6 +579,112 @@ SEMIGROUPS.KernelTraceClosure := function(S, kernel, traceBlocks, pairstoapply)
   return InverseSemigroupCongruenceByKernelTraceNC(S, kernel, traceBlocks);
 end;
 
+########################################################################
+
+SEMIGROUPS.KernelTraceClosureNew := function(S, kernel, trace, pairs)
+  local kernelgenstoapply, tracepairs, NormalClosureInverseSemigroup,
+  enumerate_trace, enforce_conditions, compute_kernel;
+  
+  kernel := InverseSubsemigroup(S, kernel);
+  Enumerate(kernel);
+  kernelgenstoapply := Set(pairs, x -> x[1] * x[2] ^ -1);
+  # kernel might not be normal, so make sure to check its generators too
+  UniteSet(kernelgenstoapply, GeneratorsOfInverseSemigroup(kernel));
+  tracepairs := Set(pairs, x -> Set([RightOne(x[1]), RightOne(x[2])]));
+
+  NormalClosureInverseSemigroup := function(S, K, coll)
+    local T, opts, x, list;
+    # This takes an inv smgp S, an inv subsemigroup K, and some elms coll,
+    # then creates the *normal closure* of K with coll inside S.
+    # It assumes K is already normal.
+    T := ClosureInverseSemigroup(K, coll);
+
+    while K <> T do
+      K := T;
+      opts := rec();
+      opts.gradingfunc := function(o, x)
+        return x in T;
+      end;
+      opts.onlygrades := function(x, data)
+        return x = false;
+      end;
+      opts.onlygradesdata := fail;
+      for x in GeneratorsOfSemigroup(K) do
+        list := AsList(Enumerate(Orb(GeneratorsOfSemigroup(S), x, POW, opts)));
+        T := ClosureInverseSemigroup(T, list);
+      od;
+    od;
+    return K;
+  end;
+
+  enforce_conditions := function()
+    local f, e, a;
+    for a in EnumeratorCanonical(S) do
+      f := RightOne(a);
+      if a in kernel then
+        e := LeftOne(a);
+        if not CongruenceTestMembershipNC(trace, e, f) then
+          Add(tracepairs, [e, f]);
+        fi;
+      else
+        for e in EquivalenceClassOfElementNC(trace, f) do
+          if a * e in kernel then
+            AddSet(kernelgenstoapply, a);
+            break;
+          fi;
+        od;
+      fi;
+    od;
+  end;
+
+  compute_kernel := function()
+    if not IsEmpty(kernelgenstoapply) then
+      kernel := NormalClosureInverseSemigroup(S, 
+                                              kernel,
+                                              kernelgenstoapply);
+      Enumerate(kernel);
+      kernelgenstoapply := [];
+    fi;
+  end;
+
+  enumerate_trace := function()
+    local pairs, pair;
+    tracepairs := Set(tracepairs);
+    for pair in tracepairs do
+      if not pair in trace then
+        pairs := ShallowCopy(GeneratingPairsOfSemigroupCongruence(trace));
+        Add(pairs, pair);
+        trace := SemigroupCongruenceByGeneratingPairs(Source(trace), pairs);
+      fi;
+    od;
+    tracepairs := [];
+  end;
+
+  Info(InfoSemigroups, 3, "kernel size: ", Size(kernel));
+  Info(InfoSemigroups, 3, "trace # classes: ", NrEquivalenceClasses(trace));
+  Info(InfoSemigroups, 3, "# kernel generators ", Size(kernelgenstoapply));
+  Info(InfoSemigroups, 3, "# trace pairs: ", Size(tracepairs));
+    Print(kernelgenstoapply, "\n");
+  compute_kernel();
+  enforce_conditions();
+
+  # Keep applying the method until no new info is found
+  while not IsEmpty(kernelgenstoapply) or not IsEmpty(tracepairs) do
+    Info(InfoSemigroups, 3, "kernel size: ", Size(kernel));
+    Info(InfoSemigroups, 3, "trace # classes: ", NrEquivalenceClasses(trace));
+    Info(InfoSemigroups, 3, "# kernel generators ", Size(kernelgenstoapply));
+    Info(InfoSemigroups, 3, "# trace pairs: ", Size(tracepairs));
+    enumerate_trace();
+    compute_kernel();
+    enforce_conditions();
+  od;
+  trace := SemigroupCongruenceByGeneratingPairs(kernel, 
+             GeneratingPairsOfSemigroupCongruence(trace));
+  return [S, kernel, trace];
+
+  return InverseSemigroupCongruenceByKernelTraceNC(S, kernel, trace);
+end;
+
 InstallMethod(MinimumGroupCongruence,
 "for an inverse semigroup with inverse op",
 [IsInverseSemigroup and IsGeneratorsOfInverseSemigroup],
