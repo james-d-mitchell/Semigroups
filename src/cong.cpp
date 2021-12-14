@@ -145,5 +145,9 @@ void init_cong(gapbind14::Module &m) {
            [](Congruence &C) {
              return gapbind14::make_iterator(C.cbegin_ntc(), C.cend_ntc());
            })
-      .def("quotient_froidure_pin", &Congruence::quotient_froidure_pin);
+      .def("quotient_froidure_pin", &Congruence::quotient_froidure_pin)
+      .def("setting_string",
+           [](Congruence &C) { return C.todd_coxeter()->settings_string(); })
+      .def("stats_string",
+           [](Congruence &C) { return C.todd_coxeter()->stats_string(); });
 }
