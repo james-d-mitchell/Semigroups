@@ -33,7 +33,7 @@ InstallImmediateMethod(GeneratingPairsOfAnyCongruence,
 # Constructor
 #############################################################################
 
-InstallMethod(_AnyCongruenceByGeneratingPairs,
+InstallMethod(AnyCongruenceByGeneratingPairs,
 [IsSemigroup, IsHomogeneousList, IsFunction],
 function(S, pairs, filt)
   local fam, C, pair;
@@ -235,42 +235,62 @@ end);
 ########################################################################
 
 BindGlobal("_JoinAnyCongruences",
-function(lhop, rhop)
-  local Constructor, pairs;
+function(Constructor, lhop, rhop)
+  local pairs;
   if Range(lhop) <> Range(rhop) then
     Error("cannot form the join of congruences over different semigroups");
   elif lhop = rhop then
     return lhop;
-  elif IsCongruenceCategory(lhop) then
-    Constructor := SemigroupCongruenceByGeneratingPairs;
-  elif IsLeftCongruenceCategory(lhop) then
-    Constructor := LeftSemigroupCongruenceByGeneratingPairs;
-  else
-    Assert(1, IsRightCongruenceCategory(lhop));
-    Constructor := RightSemigroupCongruenceByGeneratingPairs;
   fi;
   pairs := Concatenation(GeneratingPairsOfAnyCongruence(lhop),
                          GeneratingPairsOfAnyCongruence(rhop));
   return Constructor(Range(lhop), pairs);
 end);
 
+InstallMethod(JoinAnyCongruences,
+"for semigroup congruences with known generating pairs",
+[IsCongruenceCategory and HasGeneratingPairsOfMagmaCongruence,
+ IsCongruenceCategory and HasGeneratingPairsOfMagmaCongruence],
+function(lhop, rhop)
+  return _JoinAnyCongruences(SemigroupCongruenceByGeneratingPairs,
+                             lhop,
+                             rhop);
+end);
+
+InstallMethod(JoinAnyCongruences,
+"for left semigroup congruences with known generating pairs",
+[IsLeftCongruenceCategory and HasGeneratingPairsOfLeftMagmaCongruence,
+ IsLeftCongruenceCategory and HasGeneratingPairsOfLeftMagmaCongruence],
+function(lhop, rhop)
+  return _JoinAnyCongruences(LeftSemigroupCongruenceByGeneratingPairs,
+                             lhop,
+                             rhop);
+end);
+
+InstallMethod(JoinAnyCongruences,
+"for right semigroup congruences with known generating pairs",
+[IsRightCongruenceCategory and HasGeneratingPairsOfRightMagmaCongruence,
+ IsRightCongruenceCategory and HasGeneratingPairsOfRightMagmaCongruence],
+function(lhop, rhop)
+  return _JoinAnyCongruences(RightSemigroupCongruenceByGeneratingPairs,
+                             lhop,
+                             rhop);
+end);
+
 InstallMethod(JoinSemigroupCongruences,
 "for a semigroup congruence with known generating pairs",
 [IsCongruenceCategory and HasGeneratingPairsOfMagmaCongruence,
  IsCongruenceCategory and HasGeneratingPairsOfMagmaCongruence],
-_JoinAnyCongruences);
+JoinAnyCongruences);
 
 InstallMethod(JoinLeftSemigroupCongruences,
 "for a semigroup left congruence with known generating pairs",
 [IsLeftCongruenceCategory and HasGeneratingPairsOfLeftMagmaCongruence,
  IsLeftCongruenceCategory and HasGeneratingPairsOfLeftMagmaCongruence],
-_JoinAnyCongruences);
+JoinAnyCongruences);
 
 InstallMethod(JoinRightSemigroupCongruences,
 "for a semigroup right congruence with known generating pairs",
 [IsRightCongruenceCategory and HasGeneratingPairsOfRightMagmaCongruence,
  IsRightCongruenceCategory and HasGeneratingPairsOfRightMagmaCongruence],
-_JoinAnyCongruences);
-
-MakeReadWriteGlobal("_JoinAnyCongruences");
-Unbind(_JoinAnyCongruences);
+JoinAnyCongruences);

@@ -61,8 +61,8 @@ ReadPackage("semigroups", "gap/libsemigroups/froidure-pin.gd");
 ReadPackage("semigroups", "gap/main/froidure-pin.gd");
 ReadPackage("semigroups", "gap/main/semiact.gd");
 ReadPackage("semigroups", "gap/main/setup.gd");
-ReadPackage("semigroups", "gap/main/acting.gd");
 ReadPackage("semigroups", "gap/main/lambda-rho.gd");
+ReadPackage("semigroups", "gap/main/acting.gd");
 ReadPackage("semigroups", "gap/main/graded.gd");
 ReadPackage("semigroups", "gap/main/orbits.gd");
 

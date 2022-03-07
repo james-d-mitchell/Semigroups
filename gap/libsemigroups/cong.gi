@@ -397,7 +397,7 @@ ToBeat([IsSemigroup and CanUseLibsemigroupsCongruences, IsList],
 function(S, pairs)
   local filt;
   filt := IsCongruenceCategory and CanUseLibsemigroupsCongruence;
-  return _AnyCongruenceByGeneratingPairs(S, pairs, filt);
+  return AnyCongruenceByGeneratingPairs(S, pairs, filt);
 end);
 
 InstallMethod(LeftSemigroupCongruenceByGeneratingPairs,
@@ -408,7 +408,7 @@ ToBeat([IsSemigroup and CanUseLibsemigroupsCongruences, IsList],
 function(S, pairs)
   local filt;
   filt := IsLeftCongruenceCategory and CanUseLibsemigroupsCongruence;
-  return _AnyCongruenceByGeneratingPairs(S, pairs, filt);
+  return AnyCongruenceByGeneratingPairs(S, pairs, filt);
 end);
 
 InstallMethod(RightSemigroupCongruenceByGeneratingPairs,
@@ -419,5 +419,5 @@ ToBeat([IsSemigroup and CanUseLibsemigroupsCongruences, IsList],
 function(S, pairs)
   local filt;
   filt := IsRightCongruenceCategory and CanUseLibsemigroupsCongruence;
-  return _AnyCongruenceByGeneratingPairs(S, pairs, filt);
+  return AnyCongruenceByGeneratingPairs(S, pairs, filt);
 end);

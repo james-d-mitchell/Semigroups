@@ -24,7 +24,7 @@ DeclareOperation("AsRightSemigroupCongruenceByGeneratingPairs",
 DeclareOperation("AsLeftSemigroupCongruenceByGeneratingPairs",
                  [IsLeftSemigroupCongruence]);
 
-# Internal detail
-
-DeclareOperation("_AnyCongruenceByGeneratingPairs",
+DeclareOperation("AnyCongruenceByGeneratingPairs",
                  [IsSemigroup, IsHomogeneousList, IsFunction]);
+DeclareOperation("JoinAnyCongruences", 
+                 [IsAnyCongruenceCategory, IsAnyCongruenceCategory]);

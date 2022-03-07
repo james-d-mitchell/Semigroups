@@ -197,6 +197,11 @@ function(C)
   return CongruenceByWangPair(Source(C), H, W);
 end);
 
+InstallMethod(JoinAnyCongruences,
+"for two congruences by Wang pair",
+[IsCongruenceByWangPair, IsCongruenceByWangPair],
+JoinSemigroupCongruences);
+
 InstallMethod(JoinSemigroupCongruences,
 "for two congruences by Wang pair",
 [IsCongruenceByWangPair, IsCongruenceByWangPair],
@@ -244,5 +249,8 @@ end);
 InstallMethod(LatticeOfCongruences,
 "for a graph inverse semigroup",
 [IsGraphInverseSemigroup],
-S -> JoinSemilatticeOfCongruences(GeneratingCongruencesOfLattice(S),
-                                  JoinSemigroupCongruences));
+function(S)
+  local D;
+  D := PosetOfCongruences(GeneratingCongruencesOfLattice(S));
+  return JoinSemilatticeOfCongruences(D);
+end);

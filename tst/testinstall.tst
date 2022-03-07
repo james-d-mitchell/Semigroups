@@ -1356,8 +1356,8 @@ gap> AsList(JonesMonoid(1));
 # Kernel-trace methods should only be selected for semigroups with inverse op
 gap> S := HallMonoid(2);;
 gap> latt := LatticeOfCongruences(S);;
-gap> InNeighbours(latt);
-[ [ 1 ], [ 1, 2, 3, 4 ], [ 1, 3, 4 ], [ 1, 4 ] ]
+gap> IsIsomorphicDigraph(latt, DigraphFromDigraph6String("&C|E["));
+true
 gap> IsPartialOrderDigraph(latt);
 true
 
