@@ -26,5 +26,7 @@ DeclareOperation("AsLeftSemigroupCongruenceByGeneratingPairs",
 
 DeclareOperation("AnyCongruenceByGeneratingPairs",
                  [IsSemigroup, IsHomogeneousList, IsFunction]);
-DeclareOperation("JoinAnyCongruences", 
+
+# TODO(now) move to cong.gd
+DeclareOperation("JoinAnyCongruences",
                  [IsAnyCongruenceCategory, IsAnyCongruenceCategory]);

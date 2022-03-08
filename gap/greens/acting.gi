@@ -1256,7 +1256,7 @@ end);
 InstallMethod(RelativeDClassReps, "for an acting semigroup and subsemigroup",
 [IsActingSemigroup, IsActingSemigroup],
 function(S, T)
-  local data, D, gens, genstoapply, last_print, x, i, j;
+  local data, D, gens, genstoapply, x, i, j;
 
   if not IsSubsemigroup(S, T) then
     ErrorNoReturn("the 2nd argument (an acting semigroup) must be ",

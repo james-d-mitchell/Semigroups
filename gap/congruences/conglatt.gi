@@ -55,19 +55,19 @@ SEMIGROUPS.PrincipalXCongruencePosetNC :=
     for i in [1 .. Length(congs)] do
       pairs := GeneratingPairsOfAnyCongruence(congs[i]);
       if not IsEmpty(pairs) then
-      pair1 := pairs[1];
-      if CongruenceTestMembershipNC(congs[i], pair[1], pair[2]) then
-        if CongruenceTestMembershipNC(newcong, pair1[1], pair1[2]) then
-          # This is not a new cong - drop it!
-          badcong := true;
-          break;
-        else
-          Add(newparents, i);
+        pair1 := pairs[1];
+        if CongruenceTestMembershipNC(congs[i], pair[1], pair[2]) then
+          if CongruenceTestMembershipNC(newcong, pair1[1], pair1[2]) then
+            # This is not a new cong - drop it!
+            badcong := true;
+            break;
+          else
+            Add(newparents, i);
+          fi;
+        elif CongruenceTestMembershipNC(newcong, pair1[1], pair1[2]) then
+          Add(newchildren, i);
         fi;
-      elif CongruenceTestMembershipNC(newcong, pair1[1], pair1[2]) then
-        Add(newchildren, i);
       fi;
-        fi;
     od;
     nr := nr + 1;
     if nr > last_collected + 1999 then

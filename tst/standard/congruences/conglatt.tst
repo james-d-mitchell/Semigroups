@@ -78,7 +78,9 @@ gap> IsIsomorphicDigraph(l, DigraphFromDigraph6String(
 > "W`C?D@uQbKK]^XaeW?SFXI~o?gKa?z_??W??_?A?q?@_??@oQAw??B?_Co??E@?G_?gKa?X",
 > "_")));
 true
-gap> DotString(l);; # the string depends on the representation of the semigroup
+
+# the string depends on the representation of the semigroup
+gap> DotString(l);;
 gap> DotString(l, rec(numbers := true));;
 gap> IsCongruencePoset(l);
 true
@@ -197,7 +199,7 @@ gap> poset := PosetOfPrincipalCongruences(S);
 <poset of 3 congruences over <transformation semigroup of size 11, degree 3 
  with 2 generators>>
 gap> IsIsomorphicDigraph(poset, DigraphByInNeighbours(
-> [ [ 1, 2, 3 ], [ 2 ], [ 2, 3 ] ]));
+> [[1, 2, 3], [2], [2, 3]]));
 true
 gap> Print(poset, "\n");
 PosetOfCongruences( 
@@ -292,8 +294,8 @@ gap> Length(CongruencesOfSemigroup(S));
 gap> l := LatticeOfCongruences(S);;
 gap> IsIsomorphicDigraph(l,
 > DigraphByInNeighbours(
-> [ [ 1 ], [ 1, 2, 5, 6 ], [ 1, 2, 3, 4, 5, 6 ], [ 1, 2, 4, 5, 6 ],
-> [ 1, 5, 6 ], [ 1, 6 ] ]));
+> [[1], [1, 2, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 4, 5, 6],
+> [1, 5, 6], [1, 6]]));
 true
 gap> minl := MinimalLeftCongruencesOfSemigroup(S);;
 gap> Size(minl);
@@ -399,8 +401,8 @@ gap> S := Semigroup(Transformation([2, 1, 4, 3, 5, 2]),
 >                   Transformation([5, 5, 5, 5, 5, 5]));;
 gap> l := LatticeOfCongruences(S);;
 gap> IsIsomorphicDigraph(l, DigraphByInNeighbours(
-> [ [ 1 ], [ 1, 2 ], [ 1, 3 ], [ 1, 4 ], [ 1, 2, 3, 4, 5, 6 ],
-> [ 1, 2, 3, 4, 6 ] ]));
+> [[1], [1, 2], [1, 3], [1, 4], [1, 2, 3, 4, 5, 6],
+> [1, 2, 3, 4, 6]]));
 true
 
 # SEMIGROUPS_UnbindVariables
