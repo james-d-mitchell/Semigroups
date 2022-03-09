@@ -8,6 +8,10 @@
 ##
 ############################################################################
 
+# TODO:
+# * MeetOfSemigroupCongruences?
+# * fix the error messsage
+
 BindGlobal("SEMIGROUPS_IsHereditarySubset",
 function(S, H)
   local out, h, v, D, BlistH;
@@ -60,7 +64,7 @@ InstallMethod(CongruenceByWangPair,
 "for a graph inverse semigroup, homogeneous list, and homogeneous list",
 [IsGraphInverseSemigroup, IsHomogeneousList, IsHomogeneousList],
 function(S, H, W)
-  local fam, cong;
+  local fam, filt, cong;
   if not IsFinite(S) then
     ErrorNoReturn("the 1st argument (a graph inverse semigroup)",
                   " must be a finite");
@@ -68,8 +72,8 @@ function(S, H, W)
   SEMIGROUPS_ValidateWangPair(S, H, W);
   fam := GeneralMappingsFamily(ElementsFamily(FamilyObj(S)),
                                ElementsFamily(FamilyObj(S)));
-  cong := Objectify(NewType(fam, IsCongruenceByWangPair),
-                    rec(H := H, W := W));
+  filt := IsCongruenceByWangPair and CanUseLibsemigroupsCongruence;
+  cong := Objectify(NewType(fam, filt), rec(H := H, W := W));
   SetSource(cong, S);
   SetRange(cong, S);
   return cong;
@@ -90,7 +94,7 @@ function(C)
     ViewString(C!.W));
 end);
 
-InstallMethod(AsSemigroupCongruenceByGeneratingPairs,
+InstallMethod(GeneratingPairsOfSemigroupCongruence,
 "for a congruence by Wang pair",
 [IsCongruenceByWangPair],
 function(cong)
@@ -118,7 +122,7 @@ function(cong)
       fi;
     od;
   od;
-  return SemigroupCongruence(S, pairs);
+  return pairs;
 end);
 
 BindGlobal("SEMIGROUPS_MinimalHereditarySubsetsVertex",
@@ -177,7 +181,8 @@ end);
 InstallMethod(AsCongruenceByWangPair, "for a semigroup congruence",
 [IsSemigroupCongruence],
 function(C)
-  local H, W, eq, j;
+  local H, W, eq, result, pairs, j;
+
   if not IsGraphInverseSemigroup(Source(C)) then
     ErrorNoReturn(Source(C), " is not a graph inverse semigroup");
   fi;
@@ -194,7 +199,12 @@ function(C)
       IndexOfVertexOfGraphInverseSemigroup));
     fi;
   od;
-  return CongruenceByWangPair(Source(C), H, W);
+  result := CongruenceByWangPair(Source(C), H, W);
+  if HasGeneratingPairsOfMagmaCongruence(C) then
+    pairs := GeneratingPairsOfMagmaCongruence(C);
+    SetGeneratingPairsOfMagmaCongruence(result, pairs);
+  fi;
+  return result;
 end);
 
 InstallMethod(JoinAnyCongruences,

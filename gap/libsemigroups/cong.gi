@@ -136,7 +136,7 @@ function(C)
     factor := Factorization;
   elif CanUseLibsemigroupsFroidurePin(S) then
     CC := LibsemigroupsCongruenceConstructor(S)([AnyCongruenceString(C),
-                                       LibsemigroupsFroidurePin(S)]);
+                                                 LibsemigroupsFroidurePin(S)]);
     factor := MinimalFactorization;
   elif CanUseGapFroidurePin(S) then
     N := Length(GeneratorsOfSemigroup(Range(C)));

@@ -218,7 +218,7 @@ function(C)
   Assert(1, CanUseFroidurePin(S));
 
   lookup := [1 .. Size(S)];
-  for class in NonTrivialEquivalenceClasses(C) do
+  for class in EquivalenceRelationPartition(C) do
     nr := PositionCanonical(S, Representative(class));
     for elm in class do
       lookup[PositionCanonical(S, elm)] := nr;
@@ -230,37 +230,37 @@ end);
 InstallMethod(EquivalenceRelationCanonicalLookup,
 "for IsAnyCongruenceCategory", [IsAnyCongruenceCategory],
 function(C)
-  local S, lookup, max, dictionary, next, out, new_nr, i;
+  local S, lookup;
   S := Range(C);
   if not (IsSemigroup(S) and IsFinite(S)) then
     ErrorNoReturn("the range of the argument (an equivalence relation) ",
                   "is not a finite semigroup");
   fi;
   Assert(1, CanUseFroidurePin(S));
-
   lookup := EquivalenceRelationLookup(C);
-  max := Maximum(lookup);
-  # We do not know whether the maximum is NrEquivalenceClasses(C)
-  dictionary := ListWithIdenticalEntries(max, 0);
-  next := 1;
-  out := EmptyPlist(max);
-  for i in [1 .. Length(lookup)] do
-    new_nr := dictionary[lookup[i]];
-    if new_nr = 0 then
-      dictionary[lookup[i]] := next;
-      new_nr := next;
-      next := next + 1;
-    fi;
-    out[i] := new_nr;
-  od;
-  return out;
+  return FlatKernelOfTransformation(Transformation(lookup), Length(lookup));
 end);
 
 InstallMethod(EquivalenceRelationCanonicalPartition,
 "for IsAnyCongruenceCategory", [IsAnyCongruenceCategory],
 function(C)
-  return Filtered(EquivalenceRelationPartitionWithSingletons(C),
-                  x -> Size(x) <> 1);
+  local S, result, cmp, i;
+  S := Range(C);
+  if not IsFinite(S) then
+    Error("the argument (a congruence) must have finite range");
+  elif not CanUseFroidurePin(S) then
+    # CanUseFroidurePin is required because PositionCanonical is not a thing
+    # for other types of semigroups.
+    TryNextMethod();
+  fi;
+  result := ShallowCopy(EquivalenceRelationPartition(C));
+  cmp := {x, y} -> PositionCanonical(S, x) < PositionCanonical(S, y);
+  for i in [1 .. Length(result)] do
+    result[i] := ShallowCopy(result[i]);
+    Sort(result[i], cmp);
+  od;
+  Sort(result, {x, y} -> cmp(Representative(x), Representative(y)));
+  return result;
 end);
 
 InstallMethod(EquivalenceRelationPartitionWithSingletons,
@@ -269,12 +269,11 @@ function(C)
   local en, partition, lookup, i;
   if not IsFinite(Range(C)) then
     Error("the argument (a congruence) must have finite range");
+  elif not CanUseFroidurePin(Range(C)) then
+    # CanUseFroidurePin is required because EnumeratorCanonical is not a thing
+    # for other types of semigroups.
+    TryNextMethod();
   fi;
-  # CanUseFroidurePin is required because EnumeratorCanonical is not a
-  # thing for other types of congruences. There isn't a way of constructing an
-  # object in IsAnyCongruenceCategory where the range does not have
-  # CanUseFroidurePin, so we just assert this for safety.
-  Assert(1, CanUseFroidurePin(Range(C)));
   en        := EnumeratorCanonical(Range(C));
   partition := List([1 .. NrEquivalenceClasses(C)], x -> []);
   lookup    := EquivalenceRelationCanonicalLookup(C);

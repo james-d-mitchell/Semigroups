@@ -1449,7 +1449,8 @@ function(S, pairs)
 end);
 
 _EquivalenceRelationPartition := function(C)
-  local S, n, elms, table, next, part, i, x;
+  local S, n, elms, table, next, part, class, i, x;
+
   S     := Range(C);
   n     := Size(S);
   elms  := EnumeratorCanonical(S);
@@ -1458,10 +1459,13 @@ _EquivalenceRelationPartition := function(C)
   part  := [];
   for i in [1 .. n] do
     if not IsBound(table[i]) then
-      Add(part, ImagesElm(C, elms[i]));
-      for x in part[Length(part)] do
+      class := ImagesElm(C, elms[i]);
+      for x in class do
         table[PositionCanonical(S, x)] := next;
       od;
+      if Size(class) > 1 then
+        Add(part, class);
+      fi;
       next := next + 1;
     fi;
   od;
