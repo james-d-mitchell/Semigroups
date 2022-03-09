@@ -270,6 +270,30 @@ function(C, elm1, elm2)
   return libsemigroups.Congruence.contains(CC, word1 - 1, word2 - 1);
 end);
 
+InstallMethod(EquivalenceRelationPartitionWithSingletons,
+"for CanUseLibsemigroupsCongruence", [CanUseLibsemigroupsCongruence],
+function(C)
+  local part, i, x;
+  if not IsFinite(Range(C)) then
+    Error("the argument (a congruence) must have finite range");
+  elif not CanUseFroidurePin(Range(C)) then
+    # CanUseFroidurePin is required because EnumeratorCanonical is not a thing
+    # for other types of semigroups.
+    TryNextMethod();
+  fi;
+
+  part := [];
+  for x in Range(C) do
+    i := CongruenceWordToClassIndex(C, Factorization(Range(C), x)) + 1;
+    if not IsBound(part[i]) then
+      part[i] := [];
+    fi;
+    Add(part[i], x);
+  od;
+
+  return part;
+end);
+
 InstallMethod(EquivalenceRelationPartition, "for CanUseLibsemigroupsCongruence",
 [CanUseLibsemigroupsCongruence], 100,
 function(C)
@@ -287,12 +311,12 @@ function(C)
     od;
     return ntc;
   elif CanUseGapFroidurePin(S) then
-    # in this case libsemigroups.Congruence.ntc doesn't work
+    # in this case libsemigroups.Congruence.ntc doesn't work, because S is not
+    # represented in the libsemigroups object
     return Filtered(EquivalenceRelationPartitionWithSingletons(C),
                     x -> Size(x) > 1);
   fi;
-  # Cannot currently test the next line
-  Assert(0, false);
+  TryNextMethod();
 end);
 
 # Methods for congruence classes
@@ -369,8 +393,7 @@ function(cong, elm)
       and CanUseFroidurePin(Range(cong)) then
     lookup := EquivalenceRelationCanonicalLookup(cong);
     id     := lookup[PositionCanonical(Range(cong), elm)];
-    part   := EquivalenceRelationPartitionWithSingletons(cong);
-    return part[id];
+    return EnumeratorCanonical(Range(cong)){Positions(lookup, id)};
   elif IsFpSemigroup(Range(cong))
       or (HasIsFreeSemigroup(Range(cong)) and IsFreeSemigroup(Range(cong)))
       or IsFpMonoid(Range(cong))

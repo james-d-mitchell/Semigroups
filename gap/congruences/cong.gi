@@ -263,27 +263,6 @@ function(C)
   return result;
 end);
 
-InstallMethod(EquivalenceRelationPartitionWithSingletons,
-"for IsAnyCongruenceCategory", [IsAnyCongruenceCategory],
-function(C)
-  local en, partition, lookup, i;
-  if not IsFinite(Range(C)) then
-    Error("the argument (a congruence) must have finite range");
-  elif not CanUseFroidurePin(Range(C)) then
-    # CanUseFroidurePin is required because EnumeratorCanonical is not a thing
-    # for other types of semigroups.
-    TryNextMethod();
-  fi;
-  en        := EnumeratorCanonical(Range(C));
-  partition := List([1 .. NrEquivalenceClasses(C)], x -> []);
-  lookup    := EquivalenceRelationCanonicalLookup(C);
-  for i in [1 .. Length(lookup)] do
-    Add(partition[lookup[i]], en[i]);
-  od;
-
-  return partition;
-end);
-
 ########################################################################
 # Congruence operators
 ########################################################################
