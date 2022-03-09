@@ -450,8 +450,7 @@ true
 gap> F := FreeSemigroup(2);;
 gap> cong := ReesCongruenceOfSemigroupIdeal(SemigroupIdeal(F, [F.1]));;
 gap> EquivalenceRelationLookup(cong);
-Error, the range of the argument (an equivalence relation) is not a finite sem\
-igroup
+Error, the argument (a congruence) must have finite range
 gap> EquivalenceRelationCanonicalLookup(cong);
 Error, the range of the argument (an equivalence relation) is not a finite sem\
 igroup

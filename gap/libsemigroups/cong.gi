@@ -202,8 +202,8 @@ function(C, elm1, elm2)
   if CanUseFroidurePin(S) then
     pos1 := PositionCanonical(S, elm1);
     pos2 := PositionCanonical(S, elm2);
-    if HasEquivalenceRelationLookup(C) then
-      lookup := EquivalenceRelationLookup(C);
+    if HasEquivalenceRelationCanonicalLookup(C) then
+      lookup := EquivalenceRelationCanonicalLookup(C);
       return lookup[pos1] < lookup[pos2];
     else
       word1 := MinimalFactorization(S, pos1);
@@ -270,29 +270,6 @@ function(C, elm1, elm2)
   return libsemigroups.Congruence.contains(CC, word1 - 1, word2 - 1);
 end);
 
-InstallMethod(EquivalenceRelationPartitionWithSingletons,
-"for CanUseLibsemigroupsCongruence", [CanUseLibsemigroupsCongruence],
-function(C)
-  local part, i, x;
-  if not IsFinite(Range(C)) then
-    Error("the argument (a congruence) must have finite range");
-  elif not CanUseFroidurePin(Range(C)) then
-    # CanUseFroidurePin is required because EnumeratorCanonical is not a thing
-    # for other types of semigroups.
-    TryNextMethod();
-  fi;
-
-  part := [];
-  for x in Range(C) do
-    i := CongruenceWordToClassIndex(C, Factorization(Range(C), x)) + 1;
-    if not IsBound(part[i]) then
-      part[i] := [];
-    fi;
-    Add(part[i], x);
-  od;
-
-  return part;
-end);
 
 InstallMethod(EquivalenceRelationPartition, "for CanUseLibsemigroupsCongruence",
 [CanUseLibsemigroupsCongruence], 100,
@@ -367,20 +344,28 @@ end);
 # operation or function that only applies to CanUseLibsemigroupsCongruence
 ###########################################################################
 
-InstallMethod(EquivalenceRelationLookup, "for CanUseLibsemigroupsCongruence",
-[CanUseLibsemigroupsCongruence], 100,
+InstallMethod(EquivalenceRelationPartitionWithSingletons,
+"for CanUseLibsemigroupsCongruence", [CanUseLibsemigroupsCongruence],
 function(C)
-  local S, N, lookup, i;
-  S := Range(C);
-  if not IsFinite(S) then
+  local part, i, x;
+  if not IsFinite(Range(C)) then
     Error("the argument (a congruence) must have finite range");
+  elif not CanUseFroidurePin(Range(C)) then
+    # CanUseFroidurePin is required because EnumeratorCanonical is not a thing
+    # for other types of semigroups.
+    TryNextMethod();
   fi;
-  N := Size(S);
-  lookup := EmptyPlist(N);
-  for i in [1 .. N] do
-    lookup[i] := CongruenceWordToClassIndex(C, Factorization(S, i));
+
+  part := [];
+  for x in Range(C) do
+    i := CongruenceWordToClassIndex(C, Factorization(Range(C), x)) + 1;
+    if not IsBound(part[i]) then
+      part[i] := [];
+    fi;
+    Add(part[i], x);
   od;
-  return lookup;
+
+  return part;
 end);
 
 InstallMethod(ImagesElm,

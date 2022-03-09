@@ -211,12 +211,11 @@ InstallMethod(EquivalenceRelationLookup, "for IsAnyCongruenceCategory",
 function(C)
   local S, lookup, class, nr, elm;
   S := Range(C);
-  if not (IsSemigroup(S) and IsFinite(S)) then
-    ErrorNoReturn("the range of the argument (an equivalence relation) ",
-                  "is not a finite semigroup");
+  if not IsFinite(S) then
+    Error("the argument (a congruence) must have finite range");
+  elif not CanUseFroidurePin(S) then
+    TryNextMethod();
   fi;
-  Assert(1, CanUseFroidurePin(S));
-
   lookup := [1 .. Size(S)];
   for class in EquivalenceRelationPartition(C) do
     nr := PositionCanonical(S, Representative(class));
