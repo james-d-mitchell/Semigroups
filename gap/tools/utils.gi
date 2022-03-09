@@ -295,17 +295,16 @@ SEMIGROUPS.ManualExamples := function()
 end;
 
 SEMIGROUPS.RunExamples := function(exlists, excluded)
-  local oldscr, passed, pad, total, l, sp, bad, s, start_time, test, end_time,
-  elapsed, pex, j, ex, i;
+  local oldscr, pad, total, num_fails, l, sp, bad, s, start_time, test, end_time, elapsed, pex, j, ex, i, attedStrin;
 
   oldscr := SizeScreen();
   SizeScreen([72, oldscr[2]]);
-  passed := true;
   pad := function(nr)
     nr := Length(String(Length(exlists))) - Length(String(nr)) + 1;
     return List([1 .. nr], x -> ' ');
   end;
   total := 0;
+  num_fails := 0;
   for j in [1 .. Length(exlists)] do
     if j in excluded then
       Print("\033[44m# Skipping example ",
@@ -342,7 +341,7 @@ SEMIGROUPS.RunExamples := function(exlists, excluded)
                 " in ",
                 ex[2]{[1 .. 3]},
                 "\033[0m\n");
-          passed := false;
+          num_fails := num_fails + 1;
         fi;
 
         if test = false then
@@ -357,7 +356,7 @@ SEMIGROUPS.RunExamples := function(exlists, excluded)
               Print("# But found:\n");
               PrintFormattedString(pex[4][i]);
               Print("########\033[0m\n");
-              passed := false;
+              num_fails := num_fails + 1;
             fi;
           od;
         fi;
@@ -366,9 +365,12 @@ SEMIGROUPS.RunExamples := function(exlists, excluded)
   od;
   SizeScreen(oldscr);
   if Length(exlists) > 1 then
+    PrintFormatted("{} failures in {} examples\n",
+                   num_fails,
+                   Sum(exlists, Length));
     Print("Total: ", total, " msecs\n");
   fi;
-  return passed;
+  return num_fails = 0;
 end;
 
 SEMIGROUPS.TestManualExamples := function(arg)

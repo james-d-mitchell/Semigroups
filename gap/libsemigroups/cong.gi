@@ -8,16 +8,65 @@
 ###########################################################################
 ##
 
-## This file contains the interface to libsemigroups Congruence objects. There
-## is no declaration/implementation file because no other part of the
-## Semigroups package should directly use any of the functionality in
-## libsemigroups, only via the functions specified in this file.
+## This file contains the interface to libsemigroups Congruence objects.
 
 # TODO: A method for MeetXSemigroupCongruences
 
 ###########################################################################
 # Categories + properties + true methods
 ###########################################################################
+
+# Unless explicitly excluded below, any left, right, or 2-sided congruence
+# satisfies CanUseLibsemigroupsCongruence if its range has generators and
+# CanUseFroidurePin, and the congruence has GeneratingPairs. The main reason to
+# exclude some types of congruences from having CanUseLibsemigroupsCongruence
+# is because there are better methods specifically for that type of congruence,
+# and to avoid inadvertently computing a libsemigroups Congruence object.
+# Note that any congruence with generating pairs whose range/source has
+# CanUseFroidurePin, can use libsemigroups Congruence objects in theory (and
+# they could also in practice), but we exclude this, for the reasons above.
+#
+# The fundamental operation for Congruences that satisfy
+# CanUseLibsemigroupsCongruence is EquivalenceRelationPartition, and any type
+# of congruence not satisfying CanUseLibsemigroupsCongruence should implement
+# EquivalenceRelationPartition, and then the other methods will be available.
+
+# TODO: rename CanUseLibsemigroupsCongruence -> UseLibsemigroupsCongruence.
+
+InstallImmediateMethod(CanUseLibsemigroupsCongruence,
+                       IsAnyCongruenceCategory
+                       and HasGeneratingPairsOfAnyCongruence
+                       and HasRange,
+                       0,
+                       C -> CanUseFroidurePin(Range(C))
+                       and HasGeneratorsOfSemigroup(Range(C)));
+
+InstallImmediateMethod(CanUseLibsemigroupsCongruence,
+                       IsRMSCongruenceByLinkedTriple,
+                       0,
+                       ReturnFalse);
+
+InstallImmediateMethod(CanUseLibsemigroupsCongruence,
+                       IsRZMSCongruenceByLinkedTriple,
+                       0,
+                       ReturnFalse);
+
+InstallImmediateMethod(CanUseLibsemigroupsCongruence,
+                       IsReesCongruence,
+                       0,
+                       ReturnFalse);
+
+InstallImmediateMethod(CanUseLibsemigroupsCongruence,
+                       IsSimpleSemigroupCongruence,
+                       0,
+                       ReturnFalse);
+
+InstallMethod(CanUseLibsemigroupsCongruence,
+"for a left or right semigroup congruence",
+[IsAnyCongruenceCategory],
+ReturnFalse);
+
+# TODO(now) remove CanUseLibsemigroupsCongruences?
 
 # A semigroup satisfies this property if its congruences should belong to
 # CanUseLibsemigroupsCongruence.
@@ -227,7 +276,7 @@ end);
 ###########################################################################
 
 InstallMethod(NrEquivalenceClasses, "for CanUseLibsemigroupsCongruence",
-[CanUseLibsemigroupsCongruence], 100,
+[CanUseLibsemigroupsCongruence],
 function(C)
   local number_of_classes, result;
   number_of_classes := libsemigroups.Congruence.number_of_classes;
@@ -319,7 +368,7 @@ function(class1, class2)
 end);
 
 InstallMethod(EquivalenceClasses, "for CanUseLibsemigroupsCongruence",
-[CanUseLibsemigroupsCongruence], 100,
+[CanUseLibsemigroupsCongruence],
 function(C)
   local result, CC, gens, class_index_to_word, rep, i;
 

@@ -9,7 +9,7 @@
 
 # A congruence belongs to this category if it can use libsemigroups to compute
 # things about itself.
-DeclareCategory("CanUseLibsemigroupsCongruence", IsAnyCongruenceCategory);
+DeclareProperty("CanUseLibsemigroupsCongruence", IsAnyCongruenceCategory);
 
 # The next operation is the only one supplied by libsemigroups/cong.gd/i that
 # is exported.

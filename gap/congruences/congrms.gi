@@ -1074,12 +1074,14 @@ function(x, class)
   # Special case for 0 and {0}
   if class!.nCoset = 0 then
     return x = MultiplicativeZero(S);
+  elif IsMultiplicativeZero(S, x) then
+    return false;
   fi;
   # Otherwise
-  return(x in S and
-         C!.colLookup[x[1]] = class!.colClass and
-         C!.rowLookup[x[3]] = class!.rowClass and
-         LinkedElement(x) in class!.nCoset);
+  return x in S
+         and C!.colLookup[x[1]] = class!.colClass
+         and C!.rowLookup[x[3]] = class!.rowClass
+         and LinkedElement(x) in class!.nCoset;
 end);
 
 InstallMethod(Size,
