@@ -61,11 +61,11 @@ gap> Size(cc);
 gap> List(cc, Size);
 [ 1095, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]
 gap> cc[1] * cc[1];
-<congruence class of Transformation( [ 3, 1, 1, 4, 4 ] )>
+<2-sided congruence class of Transformation( [ 3, 1, 1, 4, 4 ] )>
 gap> cc[7] * cc[1];
-<congruence class of Transformation( [ 3, 1, 1, 4, 4 ] )>
+<2-sided congruence class of Transformation( [ 3, 1, 1, 4, 4 ] )>
 gap> cc[2] * cc[5];
-<congruence class of Transformation( [ 2, 4, 1, 3, 1 ] )>
+<2-sided congruence class of Transformation( [ 2, 4, 1, 3, 1 ] )>
 gap> cc[9] * cc[7] = cc[11];
 true
 gap> Print(cong, "\n");
@@ -140,9 +140,9 @@ gap> y in tclass;
 true
 gap> EquivalenceClassOfElement(cong, z);
 Error, the 2nd argument (a mult. elt.) does not belong to the range of the 1st\
- argument (a congruence)
+ argument (a 2-sided congruence)
 gap> xclass := EquivalenceClassOfElement(cong, x);
-<congruence class of Transformation( [ 3, 4, 2, 4 ] )>
+<2-sided congruence class of Transformation( [ 3, 4, 2, 4 ] )>
 gap> x in xclass;
 true
 gap> xclass * yclass = tclass;

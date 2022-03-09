@@ -12,7 +12,8 @@
 ##
 
 InstallMethod(IsReesCongruence, "for a semigroup congruence",
-[IsAnyCongruenceCategory],
+[IsLeftRightOrTwoSidedCongruence],
+9,  # to beat the library method
 function(C)
   local S, classes, nontrivial, i, class, I;
   if not IsSemigroupCongruence(C) then
@@ -235,7 +236,7 @@ function(C, x)
   fam := CollectionsFamily(FamilyObj(x));
   class := Objectify(NewType(fam,
                              IsReesCongruenceClass
-                             and IsAnyCongruenceClass),
+                             and IsLeftRightOrTwoSidedCongruenceClass),
                      rec());
   if is_ideal_class then
     SetSize(class, Size(SemigroupIdealOfReesCongruence(C)));

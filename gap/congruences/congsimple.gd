@@ -15,7 +15,7 @@ DeclareCategory("IsSimpleSemigroupCongruence",
                 IsCongruenceCategory and IsAttributeStoringRep and IsFinite);
 
 DeclareCategory("IsSimpleSemigroupCongruenceClass",
-                IsAnyCongruenceClass and IsCongruenceClass and
+                IsLeftRightOrTwoSidedCongruenceClass and IsCongruenceClass and
                 IsAttributeStoringRep and IsAssociativeElement);
 
 DeclareOperation("CongruenceByIsomorphism",

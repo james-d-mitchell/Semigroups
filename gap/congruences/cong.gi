@@ -22,29 +22,29 @@
 ##
 
 # Where possible, we only provide methods in this file for
-# IsAnyCongruenceCategory and IsAnyCongruenceClass, and not arbitrary
-# congruences.
+# IsLeftRightOrTwoSidedCongruence and IsLeftRightOrTwoSidedCongruenceClass, and
+# not arbitrary congruences.
 
 ########################################################################
 # 0. Categories
 ########################################################################
 
-InstallMethod(AnyCongruenceCategory, "for a right congruence category",
+InstallMethod(CongruenceCategory, "for a right congruence category",
 [IsRightCongruenceCategory], C -> IsRightCongruenceCategory);
 
-InstallMethod(AnyCongruenceCategory, "for a left congruence category",
+InstallMethod(CongruenceCategory, "for a left congruence category",
 [IsLeftCongruenceCategory], C -> IsLeftCongruenceCategory);
 
-InstallMethod(AnyCongruenceCategory, "for a 2-sided congruence category",
+InstallMethod(CongruenceCategory, "for a 2-sided congruence category",
 [IsCongruenceCategory], C -> IsCongruenceCategory);
 
-InstallMethod(AnyCongruenceString, "for a right congruence category",
+InstallMethod(CongruenceCategoryString, "for a right congruence category",
 [IsRightCongruenceCategory], C -> "right");
 
-InstallMethod(AnyCongruenceString, "for a left congruence category",
+InstallMethod(CongruenceCategoryString, "for a left congruence category",
 [IsLeftCongruenceCategory], C -> "left");
 
-InstallMethod(AnyCongruenceString, "for a 2-sided congruence category",
+InstallMethod(CongruenceCategoryString, "for a 2-sided congruence category",
 [IsCongruenceCategory], C -> "2-sided");
 
 ########################################################################
@@ -189,11 +189,12 @@ function(arg)
 end);
 
 ########################################################################
-# Congruence attributes
+# Congruence attributes that don't require CanUseFroidurePin
 ########################################################################
 
-InstallMethod(NonTrivialEquivalenceClasses, "for IsAnyCongruenceCategory",
-[IsAnyCongruenceCategory],
+InstallMethod(NonTrivialEquivalenceClasses,
+"for a left, right, or 2-sided semigroup congruence",
+[IsLeftRightOrTwoSidedCongruence],
 function(C)
   local part, nr_classes, classes, i;
   part := EquivalenceRelationPartition(C);
@@ -206,16 +207,41 @@ function(C)
   return classes;
 end);
 
-InstallMethod(EquivalenceRelationLookup, "for IsAnyCongruenceCategory",
-[IsAnyCongruenceCategory],
+InstallMethod(EquivalenceRelationCanonicalLookup,
+"for a left, right, or 2-sided semigroup congruence",
+[IsLeftRightOrTwoSidedCongruence],
+function(C)
+  local S, lookup;
+  S := Range(C);
+  if not IsFinite(S) then
+    ErrorNoReturn("the argument (a ",
+                  CongruenceCategoryString(C),
+                  " congruence) must have finite range");
+  fi;
+  lookup := EquivalenceRelationLookup(C);
+  return FlatKernelOfTransformation(Transformation(lookup), Length(lookup));
+end);
+
+########################################################################
+# Congruence attributes that require CanUseFroidurePin
+########################################################################
+
+InstallMethod(EquivalenceRelationLookup,
+"for a left, right, or 2-sided semigroup congruence",
+[IsLeftRightOrTwoSidedCongruence],
 function(C)
   local S, lookup, class, nr, elm;
   S := Range(C);
   if not IsFinite(S) then
-    Error("the argument (a congruence) must have finite range");
+    ErrorNoReturn("the argument (a ",
+                  CongruenceCategoryString(C),
+                  " congruence) must have finite range");
   elif not CanUseFroidurePin(S) then
+    # CanUseFroidurePin is required because PositionCanonical is not a thing
+    # for other types of semigroups.
     TryNextMethod();
   fi;
+
   lookup := [1 .. Size(S)];
   for class in EquivalenceRelationPartition(C) do
     nr := PositionCanonical(S, Representative(class));
@@ -226,27 +252,16 @@ function(C)
   return lookup;
 end);
 
-InstallMethod(EquivalenceRelationCanonicalLookup,
-"for IsAnyCongruenceCategory", [IsAnyCongruenceCategory],
-function(C)
-  local S, lookup;
-  S := Range(C);
-  if not (IsSemigroup(S) and IsFinite(S)) then
-    ErrorNoReturn("the range of the argument (an equivalence relation) ",
-                  "is not a finite semigroup");
-  fi;
-  Assert(1, CanUseFroidurePin(S));
-  lookup := EquivalenceRelationLookup(C);
-  return FlatKernelOfTransformation(Transformation(lookup), Length(lookup));
-end);
-
 InstallMethod(EquivalenceRelationCanonicalPartition,
-"for IsAnyCongruenceCategory", [IsAnyCongruenceCategory],
+"for a left, right, or 2-sided semigroup congruence",
+[IsLeftRightOrTwoSidedCongruence],
 function(C)
   local S, result, cmp, i;
   S := Range(C);
   if not IsFinite(S) then
-    Error("the argument (a congruence) must have finite range");
+    ErrorNoReturn("the argument (a ",
+                  CongruenceCategoryString(C),
+                  " congruence) must have finite range");
   elif not CanUseFroidurePin(S) then
     # CanUseFroidurePin is required because PositionCanonical is not a thing
     # for other types of semigroups.
@@ -267,8 +282,8 @@ end);
 ########################################################################
 
 InstallMethod(\in,
-"for homog. list and IsAnyCongruenceCategory",
-[IsHomogeneousList, IsAnyCongruenceCategory],
+"for homog. list and IsLeftRightOrTwoSidedCongruence",
+[IsHomogeneousList, IsLeftRightOrTwoSidedCongruence],
 function(pair, C)
   local S, string;
 
@@ -277,7 +292,7 @@ function(pair, C)
   fi;
 
   S      := Range(C);
-  string := AnyCongruenceString(C);
+  string := CongruenceCategoryString(C);
   if not (pair[1] in S and pair[2] in S) then
     ErrorNoReturn("the items in the 1st argument (a list) do not all belong to ",
                   "the range of the 2nd argument (a ", string, " semigroup ",
@@ -288,8 +303,8 @@ function(pair, C)
   return CongruenceTestMembershipNC(C, pair[1], pair[2]);
 end);
 
-InstallMethod(\=, "for IsAnyCongruenceCategory",
-[IsAnyCongruenceCategory, IsAnyCongruenceCategory],
+InstallMethod(\=, "for a left, right, or 2-sided semigroup congruence",
+[IsLeftRightOrTwoSidedCongruence, IsLeftRightOrTwoSidedCongruence],
 function(lhop, rhop)
   local S;
   S := Range(lhop);
@@ -304,7 +319,7 @@ function(lhop, rhop)
 end);
 
 InstallMethod(IsSuperrelation, "for semigroup congruences",
-[IsAnyCongruenceCategory, IsAnyCongruenceCategory],
+[IsLeftRightOrTwoSidedCongruence, IsLeftRightOrTwoSidedCongruence],
 {lhop, rhop} -> IsSubrelation(rhop, lhop));
 
 # TODO what about MeetLeftSemigroupCongruences, MeetRightSemigroupCongruences?
@@ -338,31 +353,30 @@ end);
 ########################################################################
 
 InstallMethod(EquivalenceClassOfElement,
-"for IsAnyCongruenceCategory and multiplicative element",
-[IsAnyCongruenceCategory, IsMultiplicativeElement],
+"for a left, right, or 2-sided semigroup congruence and multiplicative element",
+[IsLeftRightOrTwoSidedCongruence, IsMultiplicativeElement],
 function(C, x)
   if not x in Range(C) then
-    Error("the 2nd argument (a mult. elt.) does not belong to the range ",
-          "of the 1st argument (a congruence)");
+    ErrorNoReturn("the 2nd argument (a mult. elt.) does not belong ",
+                  "to the range of the 1st argument (a ",
+                  CongruenceCategoryString(C),
+                  " congruence)");
   fi;
   return EquivalenceClassOfElementNC(C, x);
 end);
 
 InstallMethod(EquivalenceClassOfElementNC,
-"for IsAnyCongruenceCategory and multiplicative element",
-[IsAnyCongruenceCategory, IsMultiplicativeElement],
+"for a left, right, or 2-sided congruence and mult. elt.",
+[IsLeftRightOrTwoSidedCongruence, IsMultiplicativeElement],
 function(C, x)
   local filt, class;
-
-  filt := IsAnyCongruenceClass;
-
   if IsCongruenceCategory(C) then
-    filt := filt and IsCongruenceClass;
+    filt := IsCongruenceClass and IsAttributeStoringRep;
   elif IsLeftCongruenceCategory(C) then
-    filt := filt and IsLeftCongruenceClass;
+    filt := IsLeftCongruenceClass;
   else
     Assert(1, IsRightCongruenceCategory(C));
-    filt := filt and IsRightCongruenceClass;
+    filt := IsRightCongruenceClass;
   fi;
 
   class := Objectify(NewType(FamilyObj(Range(C)), filt), rec());
@@ -380,13 +394,20 @@ end);
 # Congruence class attributes
 ########################################################################
 
-InstallMethod(AsList, "for IsAnyCongruenceClass", [IsAnyCongruenceClass],
+InstallMethod(AsList,
+"for a class of a left, right, or 2-sided semigroup congruence",
+[IsLeftRightOrTwoSidedCongruenceClass],
 C -> ImagesElm(EquivalenceClassRelation(C), Representative(C)));
 
-InstallMethod(Enumerator, "for IsAnyCongruenceClass", [IsAnyCongruenceClass],
+InstallMethod(Enumerator,
+"for a class of a left, right, or 2-sided semigroup congruence",
+[IsLeftRightOrTwoSidedCongruenceClass],
+6,  # To beat the library method for magma congruence classes
 AsList);
 
-InstallMethod(Size, "for IsAnyCongruenceClass", [IsAnyCongruenceClass],
+InstallMethod(Size,
+"for a class of a left, right, or 2-sided semigroup congruence",
+[IsLeftRightOrTwoSidedCongruenceClass],
 C -> Size(AsList(C)));
 
 ########################################################################
@@ -407,9 +428,9 @@ function(lhop, rhop)
 end);
 
 InstallMethod(\=,
-"for IsAnyCongruenceClass and IsAnyCongruenceClass",
+"for classes of a left, right, or 2-sided semigroup congruence",
 IsIdenticalObj,
-[IsAnyCongruenceClass, IsAnyCongruenceClass],
+[IsLeftRightOrTwoSidedCongruenceClass, IsLeftRightOrTwoSidedCongruenceClass],
 function(lhop, rhop)
   return EquivalenceClassRelation(lhop) = EquivalenceClassRelation(rhop)
     and [Representative(lhop), Representative(rhop)]
@@ -417,24 +438,20 @@ function(lhop, rhop)
 end);
 
 InstallMethod(\in,
-"for a mult. elt. and IsAnyCongruenceClass",
-[IsMultiplicativeElement, IsAnyCongruenceClass],
+"for a mult. elt. and a class of a left, right or 2-sided congruence",
+[IsMultiplicativeElement, IsLeftRightOrTwoSidedCongruenceClass],
 function(x, class)
   local C;
   C := EquivalenceClassRelation(class);
   return x in Range(C) and [x, Representative(class)] in C;
 end);
 
-InstallMethod(ViewObj, "for IsAnyCongruenceClass", [IsAnyCongruenceClass],
+InstallMethod(ViewObj, "for a left, right, or 2-sided semigroup congruence",
+[IsLeftRightOrTwoSidedCongruenceClass],
 function(C)
   local string;
-  if IsCongruenceCategory(EquivalenceClassRelation(C)) then
-    string := "";
-  else
-    string := Concatenation(AnyCongruenceString(EquivalenceClassRelation(C)),
-                            " ");
-  fi;
-  Print("<", string, "congruence class of ");
+  string := CongruenceCategoryString(EquivalenceClassRelation(C));
+  Print("<", string, " congruence class of ");
   ViewObj(Representative(C));
   Print(">");
 end);

@@ -33,8 +33,7 @@ InstallImmediateMethod(GeneratingPairsOfAnyCongruence,
 # Constructor
 #############################################################################
 
-InstallMethod(AnyCongruenceByGeneratingPairs,
-[IsSemigroup, IsHomogeneousList, IsFunction],
+BindGlobal("_AnyCongruenceByGeneratingPairs",
 function(S, pairs, filt)
   local fam, C, pair;
 
@@ -56,16 +55,38 @@ function(S, pairs, filt)
                  rec());
   SetSource(C, S);
   SetRange(C, S);
-  if IsCongruenceCategory(C) then
+  # Use IsMagmaCongruence etc because they are categories
+  if IsMagmaCongruence(C) then
     SetGeneratingPairsOfMagmaCongruence(C, pairs);
-  elif IsLeftCongruenceCategory(C) then
+  elif IsLeftMagmaCongruence(C) then
     SetGeneratingPairsOfLeftMagmaCongruence(C, pairs);
   else
-    Assert(0, IsRightCongruenceCategory(C));
+    Assert(0, IsRightMagmaCongruence(C));
     SetGeneratingPairsOfRightMagmaCongruence(C, pairs);
   fi;
   return C;
 end);
+
+InstallMethod(SemigroupCongruenceByGeneratingPairs,
+"for a semigroup and a list",
+[IsSemigroup, IsList],
+{S, pairs} -> _AnyCongruenceByGeneratingPairs(S,
+                                              pairs,
+                                              IsCongruenceCategory));
+
+InstallMethod(LeftSemigroupCongruenceByGeneratingPairs,
+"for a semigroup and a list",
+[IsSemigroup, IsList],
+{S, pairs} -> _AnyCongruenceByGeneratingPairs(S,
+                                              pairs,
+                                              IsLeftCongruenceCategory));
+
+InstallMethod(RightSemigroupCongruenceByGeneratingPairs,
+"for a semigroup and a list",
+[IsSemigroup, IsList],
+{S, pairs} -> _AnyCongruenceByGeneratingPairs(S,
+                                              pairs,
+                                              IsRightCongruenceCategory));
 
 InstallMethod(AsSemigroupCongruenceByGeneratingPairs,
 "for semigroup congruence",
@@ -158,12 +179,13 @@ IsLeftSemigroupCongruence);
 #############################################################################
 
 InstallMethod(PrintObj,
-"for IsAnyCongruenceCategory with known generating pairs",
-[IsAnyCongruenceCategory and HasGeneratingPairsOfAnyCongruence],
+"for IsLeftRightOrTwoSidedCongruence with known generating pairs",
+[IsLeftRightOrTwoSidedCongruence and HasGeneratingPairsOfAnyCongruence],
+10,
 function(C)
   local string;
   if not IsCongruenceCategory(C) then
-    string := ShallowCopy(AnyCongruenceString(C));
+    string := ShallowCopy(CongruenceCategoryString(C));
     string[1] := UppercaseChar(string[1]);
   else
     string := "";
@@ -177,17 +199,11 @@ function(C)
 end);
 
 InstallMethod(ViewObj,
-"for IsAnyCongruenceCategory with known generating pairs",
-[IsAnyCongruenceCategory and HasGeneratingPairsOfAnyCongruence],
+"for IsLeftRightOrTwoSidedCongruence with known generating pairs",
+[IsLeftRightOrTwoSidedCongruence and HasGeneratingPairsOfAnyCongruence],
+9,  # to beat the library method
 function(C)
-  local string;
-  if not IsCongruenceCategory(C) then
-    string := ShallowCopy(AnyCongruenceString(C));
-    Append(string, " ");
-  else
-    string := "";
-  fi;
-  Print("<", string, "semigroup congruence over ");
+  Print("<", CongruenceCategoryString(C), " semigroup congruence over ");
   ViewObj(Range(C));
   Print(" with ",
         Size(GeneratingPairsOfAnyCongruence(C)),
@@ -199,11 +215,11 @@ end);
 ########################################################################
 
 InstallMethod(\=,
-"for IsAnyCongruenceCategory and HasGeneratingPairsOfAnyCongruence",
-[IsAnyCongruenceCategory and HasGeneratingPairsOfAnyCongruence,
- IsAnyCongruenceCategory and HasGeneratingPairsOfAnyCongruence],
+"for IsLeftRightOrTwoSidedCongruence and HasGeneratingPairsOfAnyCongruence",
+[IsLeftRightOrTwoSidedCongruence and HasGeneratingPairsOfAnyCongruence,
+ IsLeftRightOrTwoSidedCongruence and HasGeneratingPairsOfAnyCongruence],
 function(lhop, rhop)
-  if AnyCongruenceCategory(lhop) = AnyCongruenceCategory(rhop) then
+  if CongruenceCategory(lhop) = CongruenceCategory(rhop) then
     return Range(lhop) = Range(rhop)
            and ForAll(GeneratingPairsOfAnyCongruence(lhop), x -> x in rhop)
            and ForAll(GeneratingPairsOfAnyCongruence(rhop), x -> x in lhop);
@@ -212,13 +228,13 @@ function(lhop, rhop)
 end);
 
 InstallMethod(IsSubrelation,
-"for IsAnyCongruenceCategory and HasGeneratingPairsOfAnyCongruence",
-[IsAnyCongruenceCategory and HasGeneratingPairsOfAnyCongruence,
- IsAnyCongruenceCategory and HasGeneratingPairsOfAnyCongruence],
+"for IsLeftRightOrTwoSidedCongruence and HasGeneratingPairsOfAnyCongruence",
+[IsLeftRightOrTwoSidedCongruence and HasGeneratingPairsOfAnyCongruence,
+ IsLeftRightOrTwoSidedCongruence and HasGeneratingPairsOfAnyCongruence],
 function(lhop, rhop)
   # Only valid for certain combinations of types
-  if AnyCongruenceCategory(lhop) <> AnyCongruenceCategory(rhop)
-      and AnyCongruenceCategory(lhop) <> IsCongruenceCategory then
+  if CongruenceCategory(lhop) <> CongruenceCategory(rhop)
+      and CongruenceCategory(lhop) <> IsCongruenceCategory then
     TryNextMethod();
   elif Range(lhop) <> Range(rhop) then
     Error("the 1st and 2nd arguments are congruences over different",

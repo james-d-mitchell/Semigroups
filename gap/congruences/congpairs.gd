@@ -10,7 +10,8 @@
 ## This file contains functions for any semigroup congruence with generating
 ## pairs.
 
-DeclareAttribute("GeneratingPairsOfAnyCongruence", IsAnyCongruenceCategory);
+DeclareAttribute("GeneratingPairsOfAnyCongruence",
+IsLeftRightOrTwoSidedCongruence);
 
 DeclareSynonym("GeneratingPairsOfLeftSemigroupCongruence",
                GeneratingPairsOfLeftMagmaCongruence);
@@ -29,4 +30,5 @@ DeclareOperation("AnyCongruenceByGeneratingPairs",
 
 # TODO(now) move to cong.gd
 DeclareOperation("JoinAnyCongruences",
-                 [IsAnyCongruenceCategory, IsAnyCongruenceCategory]);
+                 [IsLeftRightOrTwoSidedCongruence,
+                  IsLeftRightOrTwoSidedCongruence]);

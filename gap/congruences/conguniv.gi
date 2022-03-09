@@ -187,7 +187,7 @@ function(C, x)
   fam := CollectionsFamily(FamilyObj(x));
   class := Objectify(NewType(fam,
                              IsUniversalSemigroupCongruenceClass
-                             and IsAnyCongruenceClass),
+                             and IsLeftRightOrTwoSidedCongruenceClass),
                      rec());
 
   SetParentAttr(class, Range(C));

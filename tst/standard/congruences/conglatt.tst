@@ -35,12 +35,12 @@ gap> IsLatticeDigraph(l);
 true
 gap> S := OrderEndomorphisms(2);;
 gap> CongruencesOfSemigroup(S);
-[ <semigroup congruence over <regular transformation monoid of degree 2 with 
-     2 generators> with 0 generating pairs>, 
-  <semigroup congruence over <regular transformation monoid of degree 2 with 
-     2 generators> with 1 generating pairs>, 
-  <semigroup congruence over <regular transformation monoid of degree 2 with 
-     2 generators> with 1 generating pairs> ]
+[ <2-sided semigroup congruence over <regular transformation monoid of 
+     degree 2 with 2 generators> with 0 generating pairs>, 
+  <2-sided semigroup congruence over <regular transformation monoid of 
+     degree 2 with 2 generators> with 1 generating pairs>, 
+  <2-sided semigroup congruence over <regular transformation monoid of 
+     degree 2 with 2 generators> with 1 generating pairs> ]
 gap> l := LatticeOfCongruences(S);
 <poset of 3 congruences over <regular transformation monoid of degree 2 with 
  2 generators>>
@@ -365,8 +365,8 @@ PosetOfCongruences(
       [ PartialPerm( [ 1 ], [ 1 ] ), PartialPerm( [ 1, 2 ], [ 1, 2 ] ) ] ] ) 
  ] )
 gap> MinimalCongruences(poset);
-[ <semigroup congruence over <symmetric inverse monoid of degree 2> with 
-    0 generating pairs> ]
+[ <2-sided semigroup congruence over <symmetric inverse monoid of degree 2> wi\
+th 0 generating pairs> ]
 gap> MinimalCongruences(PosetOfCongruences([]));
 [  ]
 

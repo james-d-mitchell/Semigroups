@@ -295,7 +295,8 @@ SEMIGROUPS.ManualExamples := function()
 end;
 
 SEMIGROUPS.RunExamples := function(exlists, excluded)
-  local oldscr, pad, total, num_fails, l, sp, bad, s, start_time, test, end_time, elapsed, pex, j, ex, i, attedStrin;
+  local oldscr, pad, total, num_fails, l, sp, bad, s, start_time, test,
+  end_time, elapsed, pex, j, ex, i;
 
   oldscr := SizeScreen();
   SizeScreen([72, oldscr[2]]);

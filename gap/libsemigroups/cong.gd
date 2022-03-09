@@ -7,9 +7,10 @@
 ##
 ############################################################################
 
-# A congruence belongs to this category if it can use libsemigroups to compute
-# things about itself.
-DeclareProperty("CanUseLibsemigroupsCongruence", IsAnyCongruenceCategory);
+# A congruence satisfies CanUseLibsemigroupsCongruence if it should use a
+# libsemigroups Congruence objects to compute things about itself.
+DeclareProperty("CanUseLibsemigroupsCongruence",
+                IsLeftRightOrTwoSidedCongruence);
 
 # The next operation is the only one supplied by libsemigroups/cong.gd/i that
 # is exported.

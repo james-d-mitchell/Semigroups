@@ -64,7 +64,7 @@ InstallMethod(CongruenceByWangPair,
 "for a graph inverse semigroup, homogeneous list, and homogeneous list",
 [IsGraphInverseSemigroup, IsHomogeneousList, IsHomogeneousList],
 function(S, H, W)
-  local fam, filt, cong;
+  local fam, cong;
   if not IsFinite(S) then
     ErrorNoReturn("the 1st argument (a graph inverse semigroup)",
                   " must be a finite");
@@ -72,10 +72,10 @@ function(S, H, W)
   SEMIGROUPS_ValidateWangPair(S, H, W);
   fam := GeneralMappingsFamily(ElementsFamily(FamilyObj(S)),
                                ElementsFamily(FamilyObj(S)));
-  filt := IsCongruenceByWangPair and CanUseLibsemigroupsCongruence;
-  cong := Objectify(NewType(fam, filt), rec(H := H, W := W));
+  cong := Objectify(NewType(fam, IsCongruenceByWangPair), rec(H := H, W := W));
   SetSource(cong, S);
   SetRange(cong, S);
+  GeneratingPairsOfSemigroupCongruence(cong);
   return cong;
 end);
 

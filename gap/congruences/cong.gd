@@ -21,39 +21,74 @@
 ## Some general functions are also implemented in cong.gi
 ##
 
-########################################################################
-# Categories
+############################################################################
+# IsLeft/Right/SemigroupCongruence is a property, but
+# IsLeft/Right/MagmaCongruence is a category so we use them in conjunction to
+# mean i.e. a left congruence on a semigroup that was created in the category
+# of left congruences. We introduce synonyms for these to simplify their use.
 #
-# IsLeft/Right/SemigroupCongruence is a property, and so we introduce a
-# category for each type of congruence. Many operations are agnostic to the
-# "handedness" of the congruence, and so we also introduce the category
-# IsAnyCongruenceCategory (meaning a left, right or 2-sided congruence).
-#
-########################################################################
+# Note that IsMagmaCongruence implies IsLeftMagmaCongruence and
+# IsRightMagmaCongruence, and so IsLeftCongruenceCategory returns true when
+# applied to a 2-sided congruence.
+############################################################################
 
-DeclareCategory("IsAnyCongruenceCategory",
-                IsEquivalenceRelation,
-                Maximum(RankFilter(IsSemigroupCongruence),
-                        RankFilter(IsLeftMagmaCongruence),
-                        RankFilter(IsRightMagmaCongruence)) -
-                RankFilter(IsEquivalenceRelation) + 1);
-DeclareCategory("IsCongruenceCategory",
-                IsAnyCongruenceCategory and IsSemigroupCongruence and
-                IsMagmaCongruence);
-DeclareCategory("IsLeftCongruenceCategory",
-                IsAnyCongruenceCategory and IsLeftSemigroupCongruence and
-                IsLeftMagmaCongruence);
-DeclareCategory("IsRightCongruenceCategory",
-                IsAnyCongruenceCategory and IsRightSemigroupCongruence and
-                IsRightMagmaCongruence);
+DeclareSynonym("IsLeftCongruenceCategory",
+                IsLeftSemigroupCongruence and IsLeftMagmaCongruence);
+DeclareSynonym("IsRightCongruenceCategory",
+                IsRightSemigroupCongruence and IsRightMagmaCongruence);
+DeclareSynonym("IsCongruenceCategory",
+                IsSemigroupCongruence and IsMagmaCongruence);
 
-DeclareAttribute("AnyCongruenceCategory", IsAnyCongruenceCategory);
-DeclareAttribute("AnyCongruenceString", IsAnyCongruenceCategory);
-DeclareCategory("IsAnyCongruenceClass",
-                IsEquivalenceClass and IsAttributeStoringRep,
-                3);  # to beat IsCongruenceClass
+DeclareProperty("IsLeftRightOrTwoSidedCongruence",
+                IsLeftCongruenceCategory);
+DeclareProperty("IsLeftRightOrTwoSidedCongruence",
+                IsRightCongruenceCategory);
+DeclareProperty("IsLeftRightOrTwoSidedCongruence",
+                IsCongruenceCategory);
 
-Assert(1, RankFilter(IsAnyCongruenceClass) > RankFilter(IsCongruenceClass));
+InstallTrueMethod(IsLeftRightOrTwoSidedCongruence,
+                  IsLeftMagmaCongruence and IsLeftSemigroupCongruence);
+InstallTrueMethod(IsLeftRightOrTwoSidedCongruence,
+                  IsRightMagmaCongruence and IsRightSemigroupCongruence);
+InstallTrueMethod(IsLeftRightOrTwoSidedCongruence,
+                  IsMagmaCongruence and IsSemigroupCongruence);
+
+# The next attributes allows us to recover the category/string from a
+# left/right/2-sided congruence object
+DeclareAttribute("CongruenceCategory",
+                 IsLeftRightOrTwoSidedCongruence);
+DeclareAttribute("CongruenceCategoryString",
+                 IsLeftRightOrTwoSidedCongruence);
+
+############################################################################
+# We introduce the property IsLeftRightOrTwoSidedCongruenceClass in a similar
+# vein to IsLeftRightOrTwoSidedCongruence. Since we declare
+# IsLeftCongruenceClass and IsRightCongruenceClass we could define them to
+# satisfy IsLeftRightOrTwoSidedCongruenceClass, but then we have to declare
+# IsLeftRightOrTwoSidedCongruenceClass as a being a property of
+# IsEquivalenceClass, which means we then have to fiddle with ranks of methods.
+############################################################################
+
+# IsCongruenceClass is declared in gap/lib/mgmcong.gd:140
+# but it does not include IsAttributeStoringRep
+DeclareCategory("IsLeftCongruenceClass",
+                IsEquivalenceClass and IsAttributeStoringRep);
+DeclareCategory("IsRightCongruenceClass",
+                IsEquivalenceClass and IsAttributeStoringRep);
+
+DeclareProperty("IsLeftRightOrTwoSidedCongruenceClass",
+                IsLeftCongruenceClass);
+DeclareProperty("IsLeftRightOrTwoSidedCongruenceClass",
+                IsRightCongruenceClass);
+DeclareProperty("IsLeftRightOrTwoSidedCongruenceClass",
+                IsCongruenceClass);
+
+InstallTrueMethod(IsLeftRightOrTwoSidedCongruenceClass,
+                  IsLeftCongruenceClass);
+InstallTrueMethod(IsLeftRightOrTwoSidedCongruenceClass,
+                  IsRightCongruenceClass);
+InstallTrueMethod(IsLeftRightOrTwoSidedCongruenceClass,
+                  IsCongruenceClass);
 
 ########################################################################
 # Congruences
@@ -66,12 +101,11 @@ DeclareGlobalFunction("RightSemigroupCongruence");
 
 # Properties of congruences
 DeclareProperty("IsRightSemigroupCongruence", IsLeftSemigroupCongruence);
-DeclareProperty("IsLeftSemigroupCongruence", IsRightSemigroupCongruence);
+# DeclareProperty("IsLeftSemigroupCongruence", IsRightSemigroupCongruence);
 DeclareProperty("IsSemigroupCongruence", IsLeftSemigroupCongruence);
-DeclareProperty("IsSemigroupCongruence", IsRightSemigroupCongruence);
+# DeclareProperty("IsSemigroupCongruence", IsRightSemigroupCongruence);
 
 # Attributes of congruences
-# EquivalenceRelationPartition is implemented in libsemigroups/cong.gi
 DeclareAttribute("NonTrivialEquivalenceClasses", IsEquivalenceRelation);
 DeclareAttribute("EquivalenceRelationLookup", IsEquivalenceRelation);
 DeclareAttribute("EquivalenceRelationCanonicalLookup", IsEquivalenceRelation);
@@ -101,12 +135,6 @@ DeclareOperation("IsSuperrelation",
 ########################################################################
 # Congruence classes
 ########################################################################
-
-# IsCongruenceClass is declared in gap/lib/mgmcong.gd:140
-DeclareCategory("IsLeftCongruenceClass",
-                IsEquivalenceClass and IsAttributeStoringRep);
-DeclareCategory("IsRightCongruenceClass",
-                IsEquivalenceClass and IsAttributeStoringRep);
 
 # Actions
 DeclareOperation("OnLeftCongruenceClasses",
