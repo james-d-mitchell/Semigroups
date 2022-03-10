@@ -31,13 +31,9 @@
 # of congruence not satisfying CanUseLibsemigroupsCongruence should implement
 # EquivalenceRelationPartition, and then the other methods will be available.
 
-# TODO: rename CanUseLibsemigroupsCongruence -> UseLibsemigroupsCongruence.
-# TODO: rename HasGeneratingPairsOfAnyCongruence ->
-# HasGeneratingPairsOfLeftRightOrTwoSidedCongruence
-
 InstallImmediateMethod(CanUseLibsemigroupsCongruence,
                        IsLeftRightOrTwoSidedCongruence
-                       and HasGeneratingPairsOfAnyCongruence
+                       and HasGeneratingPairsOfLeftRightOrTwoSidedCongruence
                        and HasRange,
                        0,
                        C -> CanUseFroidurePin(Range(C))
@@ -187,15 +183,15 @@ function(C)
   if IsFpSemigroup(S) or (HasIsFreeSemigroup(S) and IsFreeSemigroup(S))
       or IsFpMonoid(S) or (HasIsFreeMonoid(S) and IsFreeMonoid(S)) then
     make := libsemigroups.Congruence.make_from_fpsemigroup;
-    CC := make([CongruenceCategoryString(C), LibsemigroupsFpSemigroup(S)]);
+    CC := make([CongruenceHandednessString(C), LibsemigroupsFpSemigroup(S)]);
     factor := Factorization;
   elif CanUseLibsemigroupsFroidurePin(S) then
-    CC := LibsemigroupsCongruenceConstructor(S)([CongruenceCategoryString(C),
+    CC := LibsemigroupsCongruenceConstructor(S)([CongruenceHandednessString(C),
                                                  LibsemigroupsFroidurePin(S)]);
     factor := MinimalFactorization;
   elif CanUseGapFroidurePin(S) then
     N := Length(GeneratorsOfSemigroup(Range(C)));
-    tc := libsemigroups.ToddCoxeter.make([CongruenceCategoryString(C)]);
+    tc := libsemigroups.ToddCoxeter.make([CongruenceHandednessString(C)]);
     libsemigroups.ToddCoxeter.set_number_of_generators(tc, N);
     if IsRightMagmaCongruence(C) then
       table := RightCayleyGraphSemigroup(Range(C)) - 1;
@@ -203,7 +199,7 @@ function(C)
       table := LeftCayleyGraphSemigroup(Range(C)) - 1;
     fi;
     libsemigroups.ToddCoxeter.prefill(tc, table);
-    CC := libsemigroups.Congruence.make_from_table([CongruenceCategoryString(C),
+    CC := libsemigroups.Congruence.make_from_table([CongruenceHandednessString(C),
                                                     "none"]);
     libsemigroups.Congruence.set_number_of_generators(CC, N);
     libsemigroups.Congruence.add_runner(CC, tc);
@@ -213,7 +209,7 @@ function(C)
     TryNextMethod();
   fi;
   add_pair := libsemigroups.Congruence.add_pair;
-  for pair in GeneratingPairsOfAnyCongruence(C) do
+  for pair in GeneratingPairsOfLeftRightOrTwoSidedCongruence(C) do
     add_pair(CC, factor(S, pair[1]) - 1, factor(S, pair[2]) - 1);
   od;
   C!.LibsemigroupsCongruence := CC;

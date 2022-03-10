@@ -34,7 +34,7 @@
 # of left congruences. We introduce synonyms for these to simplify their use.
 #
 # Note that IsMagmaCongruence implies IsLeftMagmaCongruence and
-# IsRightMagmaCongruence, and so IsLeftCongruenceCategory returns true when
+# IsRightMagmaCongruence, and so IsLeftMagmaCongruence and IsLeftSemigroupCongruence returns true when
 # applied to a 2-sided congruence. In other words, we cannot use
 # IsLeftMagmaCongruence to determine whether or not a congruence was created as
 # a left congruence or not (we can use IsLeftMagmaCongruence and not
@@ -50,34 +50,23 @@
 # as left congruences? Presuming that these are different TODO(now)???
 ###############################################################################
 
-# TODO remove these synonyms
-
-DeclareSynonym("IsLeftCongruenceCategory",
-                IsLeftSemigroupCongruence and IsLeftMagmaCongruence);
-DeclareSynonym("IsRightCongruenceCategory",
-                IsRightSemigroupCongruence and IsRightMagmaCongruence);
-DeclareSynonym("IsCongruenceCategory",
-                IsSemigroupCongruence and IsMagmaCongruence);
-
 DeclareProperty("IsLeftRightOrTwoSidedCongruence",
-                IsLeftCongruenceCategory);
+                IsLeftMagmaCongruence and IsLeftSemigroupCongruence);
 DeclareProperty("IsLeftRightOrTwoSidedCongruence",
-                IsRightCongruenceCategory);
+                IsRightMagmaCongruence and IsRightSemigroupCongruence);
 DeclareProperty("IsLeftRightOrTwoSidedCongruence",
-                IsCongruenceCategory);
+                IsMagmaCongruence and IsSemigroupCongruence);
 
 InstallTrueMethod(IsLeftRightOrTwoSidedCongruence,
-                  IsLeftCongruenceCategory);
+                  IsLeftMagmaCongruence and IsLeftSemigroupCongruence);
 InstallTrueMethod(IsLeftRightOrTwoSidedCongruence,
-                  IsRightCongruenceCategory);
+                  IsRightMagmaCongruence and IsRightSemigroupCongruence);
 InstallTrueMethod(IsLeftRightOrTwoSidedCongruence,
-                  IsCongruenceCategory);
+                  IsMagmaCongruence and IsSemigroupCongruence);
 
 # The next attributes allows us to recover the category/string from a
 # left/right/2-sided congruence object
-DeclareAttribute("CongruenceCategory",
-                 IsLeftRightOrTwoSidedCongruence);
-DeclareAttribute("CongruenceCategoryString",
+DeclareAttribute("CongruenceHandednessString",
                  IsLeftRightOrTwoSidedCongruence);
 
 ############################################################################

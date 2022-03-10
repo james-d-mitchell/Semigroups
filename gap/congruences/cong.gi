@@ -28,23 +28,14 @@
 # 0. Categories
 ########################################################################
 
-InstallMethod(CongruenceCategory, "for a right congruence category",
-[IsRightCongruenceCategory], C -> IsRightCongruenceCategory);
+InstallMethod(CongruenceHandednessString, "for a right congruence",
+[IsRightMagmaCongruence and IsRightSemigroupCongruence], C -> "right");
 
-InstallMethod(CongruenceCategory, "for a left congruence category",
-[IsLeftCongruenceCategory], C -> IsLeftCongruenceCategory);
+InstallMethod(CongruenceHandednessString, "for a left congruence",
+[IsLeftMagmaCongruence and IsLeftSemigroupCongruence], C -> "left");
 
-InstallMethod(CongruenceCategory, "for a 2-sided congruence category",
-[IsCongruenceCategory], C -> IsCongruenceCategory);
-
-InstallMethod(CongruenceCategoryString, "for a right congruence category",
-[IsRightCongruenceCategory], C -> "right");
-
-InstallMethod(CongruenceCategoryString, "for a left congruence category",
-[IsLeftCongruenceCategory], C -> "left");
-
-InstallMethod(CongruenceCategoryString, "for a 2-sided congruence category",
-[IsCongruenceCategory], C -> "2-sided");
+InstallMethod(CongruenceHandednessString, "for a 2-sided congruence",
+[IsMagmaCongruence and IsSemigroupCongruence], C -> "2-sided");
 
 ########################################################################
 # Flexible functions for creating congruences
@@ -232,7 +223,7 @@ function(C, x)
  if not x in Range(C) then
     ErrorNoReturn("the 2nd argument (a mult. elt.) does not belong ",
                   "to the range of the 1st argument (a ",
-                  CongruenceCategoryString(C),
+                  CongruenceHandednessString(C),
                   " congruence)");
   fi;
   return EquivalenceClassOfElementNC(C, x);
@@ -330,7 +321,7 @@ InstallMethod(ViewObj,
 [IsLeftRightOrTwoSidedCongruenceClass],
 function(C)
   local string;
-  string := CongruenceCategoryString(EquivalenceClassRelation(C));
+  string := CongruenceHandednessString(EquivalenceClassRelation(C));
   Print("<", string, " congruence class of ");
   ViewObj(Representative(C));
   Print(">");

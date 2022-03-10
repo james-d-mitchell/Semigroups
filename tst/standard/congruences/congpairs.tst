@@ -178,13 +178,13 @@ Error, the 2nd argument (a mult. elt.) does not belong to the range of the 1st\
 gap> JoinSemigroupCongruences(cong, cong2);
 Error, cannot form the join of congruences over different semigroups
 gap> IsSubrelation(cong, cong2);
-Error, the 1st and 2nd arguments are congruences over different semigroups
+false
 gap> cong := LeftSemigroupCongruence(S, pair1, pair2);;
 gap> IsSubrelation(cong2, cong);
-Error, the 1st and 2nd arguments are congruences over different semigroups
+false
 gap> cong := RightSemigroupCongruence(S, pair1, pair2);;
 gap> IsSubrelation(cong2, cong);
-Error, the 1st and 2nd arguments are congruences over different semigroups
+false
 
 # A left semigroup congruence example that is also right
 gap> S := Semigroup(Transformation([2, 1, 1, 2, 1]),

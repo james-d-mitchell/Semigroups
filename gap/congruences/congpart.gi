@@ -124,7 +124,7 @@ function(C)
   S := Range(C);
   if not IsFinite(S) then
     ErrorNoReturn("the argument (a ",
-                  CongruenceCategoryString(C),
+                  CongruenceHandednessString(C),
                   " congruence) must have finite range");
   fi;
   lookup := EquivalenceRelationLookup(C);
@@ -159,7 +159,7 @@ function(pair, C)
   fi;
 
   S      := Range(C);
-  string := CongruenceCategoryString(C);
+  string := CongruenceHandednessString(C);
   if not (pair[1] in S and pair[2] in S) then
     ErrorNoReturn("the items in the 1st argument (a list) do not all belong to ",
                   "the range of the 2nd argument (a ", string, " semigroup ",
@@ -182,7 +182,7 @@ function(C)
   S := Range(C);
   if not IsFinite(S) then
     ErrorNoReturn("the argument (a ",
-                  CongruenceCategoryString(C),
+                  CongruenceHandednessString(C),
                   " congruence) must have finite range");
   elif not CanUseFroidurePin(S) then
     # CanUseFroidurePin is required because PositionCanonical is not a thing
@@ -208,7 +208,7 @@ function(C)
   S := Range(C);
   if not IsFinite(S) then
     ErrorNoReturn("the argument (a ",
-                  CongruenceCategoryString(C),
+                  CongruenceHandednessString(C),
                   " congruence) must have finite range");
   elif not CanUseFroidurePin(S) then
     # CanUseFroidurePin is required because PositionCanonical is not a thing

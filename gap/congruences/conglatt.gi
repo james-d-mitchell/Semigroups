@@ -53,7 +53,7 @@ SEMIGROUPS.PrincipalXCongruencePosetNC :=
     newparents := [];   # Parents of newcong
     newcong := SemigroupXCongruence(S, pair);
     for i in [1 .. Length(congs)] do
-      pairs := GeneratingPairsOfAnyCongruence(congs[i]);
+      pairs := GeneratingPairsOfLeftRightOrTwoSidedCongruence(congs[i]);
       if not IsEmpty(pairs) then
         pair1 := pairs[1];
         if CongruenceTestMembershipNC(congs[i], pair[1], pair[2]) then

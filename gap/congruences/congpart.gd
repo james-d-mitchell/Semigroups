@@ -10,12 +10,9 @@
 ## This file contains declarations for left, right, and two-sided congruences
 ## that can compute EquivalenceRelationPartition.
 
-DeclareProperty("CanComputeEquivalenceRelationPartition",
-                IsLeftRightOrTwoSidedCongruence);
-
 # TODO(now)
 # Provide default implementations of the following:
-# * EquivalenceClasses (mostly so the resulting classes have the correct type)
+# * EquivalenceClasses
 # * ImagesElm (for the calculation of the elements of an equivalence class)
 # * NrEquivalenceClasses (this could be computed from EquivalenceClasses, but
 #   usually there's a lower cost way of counting the number)
@@ -60,7 +57,7 @@ DeclareProperty("CanComputeEquivalenceRelationPartition",
 #
 # * IsCongruenceByWangPair;
 #
-# there are others that never use these
+# there are others that never use libsemigroups Congruence objects:
 #
 # * IsInverseSemigroupCongruenceByKernelTrace;
 # * IsSimpleSemigroupCongruence;
@@ -70,6 +67,10 @@ DeclareProperty("CanComputeEquivalenceRelationPartition",
 #
 # and some that always do (congruences defined by generating pairs, not
 # belonging to the previous types).
+#
 ###############################################################################
 ###############################################################################
+
+DeclareProperty("CanComputeEquivalenceRelationPartition",
+                IsLeftRightOrTwoSidedCongruence);
 

@@ -10,8 +10,8 @@
 ## This file contains functions for any semigroup congruence with generating
 ## pairs; regardless of representation.
 
-DeclareAttribute("GeneratingPairsOfAnyCongruence",
-IsLeftRightOrTwoSidedCongruence);
+DeclareAttribute("GeneratingPairsOfLeftRightOrTwoSidedCongruence",
+                 IsLeftRightOrTwoSidedCongruence);
 
 DeclareOperation("AsSemigroupCongruenceByGeneratingPairs",
                  [IsSemigroupCongruence]);
@@ -19,6 +19,3 @@ DeclareOperation("AsRightSemigroupCongruenceByGeneratingPairs",
                  [IsRightSemigroupCongruence]);
 DeclareOperation("AsLeftSemigroupCongruenceByGeneratingPairs",
                  [IsLeftSemigroupCongruence]);
-
-DeclareOperation("AnyCongruenceByGeneratingPairs",
-                 [IsSemigroup, IsHomogeneousList, IsFunction]);

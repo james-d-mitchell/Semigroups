@@ -165,8 +165,7 @@ gap> cj := ReesCongruenceOfSemigroupIdeal(J);;
 gap> class1 := EquivalenceClassOfElement(ci, Transformation([1, 1, 3, 1, 3]));;
 gap> class2 := EquivalenceClassOfElement(cj, Transformation([1, 1, 3, 1, 3]));;
 gap> class1 * class2;
-Error, the arguments (classes of Rees congruences) do not belong to the same c\
-ongruence
+Error, the arguments (cong. classes) are not classes of the same congruence
 gap> cc := JoinSemigroupCongruences(ci, cj);;
 gap> NrEquivalenceClasses(ci); NrEquivalenceClasses(cj); NrEquivalenceClasses(cc);
 16

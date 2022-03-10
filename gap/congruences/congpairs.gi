@@ -12,20 +12,20 @@
 ## generating pairs, regardless of representation.
 #############################################################################
 
-InstallImmediateMethod(GeneratingPairsOfAnyCongruence,
-                       IsCongruenceCategory
+InstallImmediateMethod(GeneratingPairsOfLeftRightOrTwoSidedCongruence,
+                       IsMagmaCongruence and IsSemigroupCongruence
                          and HasGeneratingPairsOfMagmaCongruence,
                        0,
                        GeneratingPairsOfMagmaCongruence);
 
-InstallImmediateMethod(GeneratingPairsOfAnyCongruence,
-                       IsLeftCongruenceCategory
+InstallImmediateMethod(GeneratingPairsOfLeftRightOrTwoSidedCongruence,
+                       IsLeftMagmaCongruence and IsLeftSemigroupCongruence
                          and HasGeneratingPairsOfLeftMagmaCongruence,
                        0,
                        GeneratingPairsOfLeftMagmaCongruence);
 
-InstallImmediateMethod(GeneratingPairsOfAnyCongruence,
-                       IsRightCongruenceCategory
+InstallImmediateMethod(GeneratingPairsOfLeftRightOrTwoSidedCongruence,
+                       IsRightMagmaCongruence and IsRightSemigroupCongruence
                          and HasGeneratingPairsOfRightMagmaCongruence,
                        0,
                        GeneratingPairsOfRightMagmaCongruence);
@@ -123,13 +123,15 @@ IsLeftSemigroupCongruence);
 #############################################################################
 
 InstallMethod(PrintObj,
-"for IsLeftRightOrTwoSidedCongruence with known generating pairs",
-[IsLeftRightOrTwoSidedCongruence and HasGeneratingPairsOfAnyCongruence],
+"for left, right, or 2-sided congruences with known generating pairs",
+[IsLeftRightOrTwoSidedCongruence and HasGeneratingPairsOfLeftRightOrTwoSidedCongruence],
 10,
 function(C)
   local string;
-  if not IsCongruenceCategory(C) then
-    string := ShallowCopy(CongruenceCategoryString(C));
+  if not IsMagmaCongruence(C) then
+    # Don't need to check IsSemigroupCongruence because we check
+    # IsLeftRightOrTwoSidedCongruence above.
+    string := ShallowCopy(CongruenceHandednessString(C));
     string[1] := UppercaseChar(string[1]);
   else
     string := "";
@@ -138,19 +140,19 @@ function(C)
   Print(string, "SemigroupCongruence( ");
   PrintObj(Range(C));
   Print(", ");
-  Print(GeneratingPairsOfAnyCongruence(C));
+  Print(GeneratingPairsOfLeftRightOrTwoSidedCongruence(C));
   Print(" )");
 end);
 
 InstallMethod(ViewObj,
-"for IsLeftRightOrTwoSidedCongruence with known generating pairs",
-[IsLeftRightOrTwoSidedCongruence and HasGeneratingPairsOfAnyCongruence],
+"for left, right, or 2-sided congruences with known generating pairs",
+[IsLeftRightOrTwoSidedCongruence and HasGeneratingPairsOfLeftRightOrTwoSidedCongruence],
 9,  # to beat the library method
 function(C)
-  Print("<", CongruenceCategoryString(C), " semigroup congruence over ");
+  Print("<", CongruenceHandednessString(C), " semigroup congruence over ");
   ViewObj(Range(C));
   Print(" with ",
-        Size(GeneratingPairsOfAnyCongruence(C)),
+        Size(GeneratingPairsOfLeftRightOrTwoSidedCongruence(C)),
         " generating pairs>");
 end);
 
@@ -160,41 +162,47 @@ end);
 
 InstallMethod(\=,
 "for left, right, or 2-sided congruences with known generating pairs",
-[IsLeftRightOrTwoSidedCongruence and HasGeneratingPairsOfAnyCongruence,
- IsLeftRightOrTwoSidedCongruence and HasGeneratingPairsOfAnyCongruence],
+[IsLeftRightOrTwoSidedCongruence and
+ HasGeneratingPairsOfLeftRightOrTwoSidedCongruence,
+ IsLeftRightOrTwoSidedCongruence and
+ HasGeneratingPairsOfLeftRightOrTwoSidedCongruence],
 function(lhop, rhop)
-  if CongruenceCategory(lhop) = CongruenceCategory(rhop) then
-    return Range(lhop) = Range(rhop)
-           and ForAll(GeneratingPairsOfAnyCongruence(lhop), x -> x in rhop)
-           and ForAll(GeneratingPairsOfAnyCongruence(rhop), x -> x in lhop);
+  local lpairs, rpairs;
+  if CongruenceHandednessString(lhop) <> CongruenceHandednessString(rhop) then
+    TryNextMethod();
   fi;
-  TryNextMethod();
+
+  lpairs := GeneratingPairsOfLeftRightOrTwoSidedCongruence(lhop);
+  rpairs := GeneratingPairsOfLeftRightOrTwoSidedCongruence(rhop);
+  return Range(lhop) = Range(rhop)
+         and ForAll(lpairs, x -> x in rhop)
+         and ForAll(rpairs, x -> x in lhop);
 end);
 
 InstallMethod(IsSubrelation,
 "for left, right, or 2-sided congruences with known generating pairs",
-[IsLeftRightOrTwoSidedCongruence and HasGeneratingPairsOfAnyCongruence,
- IsLeftRightOrTwoSidedCongruence and HasGeneratingPairsOfAnyCongruence],
+[IsLeftRightOrTwoSidedCongruence
+ and HasGeneratingPairsOfLeftRightOrTwoSidedCongruence,
+ IsLeftRightOrTwoSidedCongruence
+ and HasGeneratingPairsOfLeftRightOrTwoSidedCongruence],
 function(lhop, rhop)
   # Only valid for certain combinations of types
-  if CongruenceCategory(lhop) <> CongruenceCategory(rhop)
-      and CongruenceCategory(lhop) <> IsCongruenceCategory then
+  if CongruenceHandednessString(lhop) <> CongruenceHandednessString(rhop)
+      and not IsMagmaCongruence(lhop) then
     TryNextMethod();
-  elif Range(lhop) <> Range(rhop) then
-    Error("the 1st and 2nd arguments are congruences over different",
-          " semigroups");
   fi;
 
   # Test whether lhop contains all the pairs in rhop
-  return ForAll(GeneratingPairsOfAnyCongruence(rhop),
-                x -> CongruenceTestMembershipNC(lhop, x[1], x[2]));
+  return Range(lhop) = Range(rhop)
+    and ForAll(GeneratingPairsOfLeftRightOrTwoSidedCongruence(rhop),
+               x -> x in lhop);
 end);
 
 ########################################################################
 # Algebraic operators
 ########################################################################
 
-BindGlobal("_JoinAnyCongruences",
+BindGlobal("_JoinLeftRightOrTwoSidedCongruences",
 function(XSemigroupCongruence, GeneratingPairsOfXCongruence, lhop, rhop)
   local pairs;
   if Range(lhop) <> Range(rhop) then
@@ -213,7 +221,7 @@ InstallMethod(JoinSemigroupCongruences,
 [IsSemigroupCongruence and HasGeneratingPairsOfMagmaCongruence,
  IsSemigroupCongruence and HasGeneratingPairsOfMagmaCongruence],
 function(lhop, rhop)
-  return _JoinAnyCongruences(SemigroupCongruence,
+  return _JoinLeftRightOrTwoSidedCongruences(SemigroupCongruence,
                              GeneratingPairsOfMagmaCongruence,
                              lhop,
                              rhop);
@@ -224,7 +232,7 @@ InstallMethod(JoinLeftSemigroupCongruences,
 [IsLeftSemigroupCongruence and HasGeneratingPairsOfLeftMagmaCongruence,
  IsLeftSemigroupCongruence and HasGeneratingPairsOfLeftMagmaCongruence],
 function(lhop, rhop)
-  return _JoinAnyCongruences(LeftSemigroupCongruence,
+  return _JoinLeftRightOrTwoSidedCongruences(LeftSemigroupCongruence,
                              GeneratingPairsOfLeftMagmaCongruence,
                              lhop,
                              rhop);
@@ -235,7 +243,7 @@ InstallMethod(JoinRightSemigroupCongruences,
 [IsRightSemigroupCongruence and HasGeneratingPairsOfRightMagmaCongruence,
  IsRightSemigroupCongruence and HasGeneratingPairsOfRightMagmaCongruence],
 function(lhop, rhop)
-  return _JoinAnyCongruences(RightSemigroupCongruence,
+  return _JoinLeftRightOrTwoSidedCongruences(RightSemigroupCongruence,
                              GeneratingPairsOfRightMagmaCongruence,
                              lhop,
                              rhop);

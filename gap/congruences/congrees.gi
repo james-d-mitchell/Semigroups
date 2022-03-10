@@ -65,7 +65,8 @@ function(I)
   fam := GeneralMappingsFamily(ElementsFamily(FamilyObj(S)),
                                ElementsFamily(FamilyObj(S)));
   type := NewType(fam,
-                  IsCongruenceCategory
+                  IsSemigroupCongruence
+                  and IsMagmaCongruence
                   and IsAttributeStoringRep
                   and CanComputeEquivalenceRelationPartition);
   C := Objectify(type, rec());
@@ -271,8 +272,8 @@ InstallMethod(\*, "for two Rees congruence classes",
 [IsReesCongruenceClass, IsReesCongruenceClass],
 function(lhop, rhop)
   if not EquivalenceClassRelation(lhop) = EquivalenceClassRelation(rhop) then
-    ErrorNoReturn("the arguments (classes of Rees congruences) do not ",
-                  "belong to the same congruence");
+    ErrorNoReturn("the arguments (cong. classes) are not classes of the same ",
+                  "congruence");
   elif Size(lhop) > 1 then
     return lhop;
   elif Size(rhop) > 1 then
@@ -286,7 +287,8 @@ end);
 InstallMethod(\=, "for two Rees congruence classes",
 [IsReesCongruenceClass, IsReesCongruenceClass],
 function(lhop, rhop)
-  return (Representative(lhop) = Representative(rhop))
+  return EquivalenceClassRelation(lhop) = EquivalenceClassRelation(rhop)
+    and (Representative(lhop) = Representative(rhop))
          or (Size(lhop) > 1 and Size(rhop) > 1);
 end);
 
