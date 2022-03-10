@@ -68,8 +68,8 @@ InstallImmediateMethod(CanUseLibsemigroupsCongruence,
                        ReturnFalse);
 
 InstallMethod(CanUseLibsemigroupsCongruence,
-"for a left or right semigroup congruence",
-[IsLeftRightOrTwoSidedCongruence],
+"for a left, right, or 2-sided congruence that can compute partition",
+[CanComputeEquivalenceRelationPartition],
 ReturnFalse);
 
 # TODO(now) remove CanUseLibsemigroupsCongruences?
@@ -448,4 +448,3 @@ function(cong, elm)
   # Shouldn't be able to reach here
   Assert(0, false);
 end);
-

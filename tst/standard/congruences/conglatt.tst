@@ -323,7 +323,8 @@ gap> pair3 := [PartialPerm([1, 2], [1, 2]), PartialPerm([1, 2], [2, 1])];;
 gap> coll := [RightSemigroupCongruence(S, pair1),
 >             RightSemigroupCongruence(S, pair2),
 >             RightSemigroupCongruence(S, pair3)];;
-gap> l := JoinSemilatticeOfCongruences(PosetOfCongruences(coll));
+gap> l := JoinSemilatticeOfCongruences(PosetOfCongruences(coll), 
+> JoinRightSemigroupCongruences);
 <poset of 4 congruences over <symmetric inverse monoid of degree 2>>
 gap> InNeighbours(l);
 [ [ 1 ], [ 2 ], [ 1, 3 ], [ 1, 2, 3, 4 ] ]
@@ -390,7 +391,7 @@ gap> CongruencesOfPoset(poset);
 [  ]
 gap> DigraphNrVertices(poset);
 0
-gap> JoinSemilatticeOfCongruences(poset);
+gap> JoinSemilatticeOfCongruences(poset, JoinSemigroupCongruences);
 <empty congruence poset>
 gap> MinimalCongruences(poset);
 [  ]

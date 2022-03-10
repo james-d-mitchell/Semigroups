@@ -64,7 +64,10 @@ function(I)
   # Construct the object
   fam := GeneralMappingsFamily(ElementsFamily(FamilyObj(S)),
                                ElementsFamily(FamilyObj(S)));
-  type := NewType(fam, IsCongruenceCategory and IsAttributeStoringRep);
+  type := NewType(fam,
+                  IsCongruenceCategory
+                  and IsAttributeStoringRep
+                  and CanComputeEquivalenceRelationPartition);
   C := Objectify(type, rec());
   # Set some attributes
   SetSource(C, S);

@@ -9,7 +9,11 @@
 ############################################################################
 
 DeclareCategory("IsCongruenceByWangPair",
-                IsCongruenceCategory and IsAttributeStoringRep and IsFinite);
+                IsSemigroupCongruence
+                and CanComputeEquivalenceRelationPartition
+                and IsMagmaCongruence
+                and IsAttributeStoringRep
+                and IsFinite);
 
 DeclareOperation("CongruenceByWangPair",
                  [IsGraphInverseSemigroup,

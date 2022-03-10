@@ -173,9 +173,9 @@ SEMIGROUPS.AddTrivialCongruence := function(poset, SemigroupXCongruence)
 end;
 
 InstallMethod(JoinSemilatticeOfCongruences,
-"for a congruence poset",
-[IsCongruencePoset],
-function(poset)
+"for a congruence poset and a function",
+[IsCongruencePoset, IsFunction],
+function(poset, JoinXCongruences)
   local children, parents, congs, princ_congs, nrcongs, S, length, found,
   start, newcong, badcong, newchildren, newparents, i, j, k, c, p;
 
@@ -206,7 +206,7 @@ function(poset)
 
     for i in [start .. Length(congs)] do      # for each new cong
       for j in [1 .. Length(princ_congs)] do  # for each 1-generated cong
-        newcong := JoinAnyCongruences(congs[i], princ_congs[j]);
+        newcong := JoinXCongruences(congs[i], princ_congs[j]);
         badcong := false;   # Is newcong the same as another cong?
         newchildren := [];  # Children of newcong
         newparents := [];   # Parents of newcong
@@ -438,7 +438,7 @@ InstallMethod(LatticeOfCongruencesNC,
 function(S, pairs)
   local poset;
   poset := PosetOfPrincipalCongruences(S, pairs);
-  poset := JoinSemilatticeOfCongruences(poset);
+  poset := JoinSemilatticeOfCongruences(poset, JoinSemigroupCongruences);
   return SEMIGROUPS.AddTrivialCongruence(poset, SemigroupCongruence);
 end);
 
@@ -461,7 +461,7 @@ InstallMethod(LatticeOfRightCongruencesNC,
 function(S, pairs)
   local poset;
   poset := PosetOfPrincipalRightCongruences(S, pairs);
-  poset := JoinSemilatticeOfCongruences(poset);
+  poset := JoinSemilatticeOfCongruences(poset, JoinRightSemigroupCongruences);
   return SEMIGROUPS.AddTrivialCongruence(poset, SemigroupCongruence);
 end);
 
@@ -485,7 +485,7 @@ InstallMethod(LatticeOfLeftCongruencesNC,
 function(S, pairs)
   local poset;
   poset := PosetOfPrincipalLeftCongruences(S, pairs);
-  poset := JoinSemilatticeOfCongruences(poset);
+  poset := JoinSemilatticeOfCongruences(poset, JoinLeftSemigroupCongruences);
   return SEMIGROUPS.AddTrivialCongruence(poset, SemigroupCongruence);
 end);
 

@@ -112,6 +112,7 @@ ReadPackage("semigroups", "gap/attributes/maximal.gd");
 ReadPackage("semigroups", "gap/attributes/properties.gd");
 
 ReadPackage("semigroups", "gap/congruences/cong.gd");
+ReadPackage("semigroups", "gap/congruences/congpart.gd");
 ReadPackage("semigroups", "gap/congruences/conginv.gd");
 ReadPackage("semigroups", "gap/congruences/conglatt.gd");
 ReadPackage("semigroups", "gap/congruences/congpairs.gd");

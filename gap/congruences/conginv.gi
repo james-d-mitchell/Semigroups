@@ -213,6 +213,7 @@ end);
 # Although the next method doesn't use the representation, it also doesn't
 # require additional computation of the uncongruence, since it calls
 # EquivalenceClasses.
+# TODO(now): this should be a method for EquivalenceRelationPartition
 InstallMethod(EquivalenceRelationCanonicalLookup,
 "for inverse semigroup congruence by kernel and trace",
 [IsInverseSemigroupCongruenceByKernelTrace],

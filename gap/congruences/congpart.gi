@@ -1,0 +1,227 @@
+############################################################################
+##
+##  congruences/congpart.gi
+##  Copyright (C) 2022                                   James D. Mitchell
+##
+##  Licensing information can be found in the README file of this package.
+##
+############################################################################
+##
+## This file contains implementations for left, right, and two-sided
+## congruences that can compute EquivalenceRelationPartition. Please read the
+## comments in congruences/congpart.gd.
+
+#############################################################################
+# Constructor by generating pairs
+#############################################################################
+
+BindGlobal("_AnyCongruenceByGeneratingPairs",
+function(S, pairs, filt)
+  local fam, C, pair;
+
+  for pair in pairs do
+    if not IsList(pair) or Length(pair) <> 2 then
+      Error("the 2nd argument <pairs> must consist of lists of ",
+            "length 2");
+    elif not pair[1] in S or not pair[2] in S then
+      Error("the 2nd argument <pairs> must consist of lists of ",
+            "elements of the 1st argument <S> (a semigroup)");
+    fi;
+  od;
+
+  # Create the Object
+  fam := GeneralMappingsFamily(ElementsFamily(FamilyObj(S)),
+                               ElementsFamily(FamilyObj(S)));
+
+  C := Objectify(NewType(fam, filt and IsAttributeStoringRep),
+                 rec());
+  SetSource(C, S);
+  SetRange(C, S);
+  return C;
+end);
+
+InstallMethod(SemigroupCongruenceByGeneratingPairs,
+"for a semigroup and a list",
+[IsSemigroup, IsList],
+19,  # to beat the library method for IsList and IsEmpty
+function(S, pairs)
+  local filt, C;
+  if not (CanUseFroidurePin(S) or IsFpSemigroup(S) or IsFpMonoid(S)
+      or (HasIsFreeSemigroup(S) and IsFreeSemigroup(S))
+      or (HasIsFreeMonoid(S) and IsFreeMonoid(S))) then
+    TryNextMethod();
+  fi;
+  filt := IsSemigroupCongruence
+          and IsMagmaCongruence
+          and CanComputeEquivalenceRelationPartition;
+  C := _AnyCongruenceByGeneratingPairs(S, pairs, filt);
+  SetGeneratingPairsOfMagmaCongruence(C, pairs);
+  return C;
+end);
+
+InstallMethod(LeftSemigroupCongruenceByGeneratingPairs,
+"for a semigroup and a list",
+[IsSemigroup, IsList],
+19,  # to beat the library method for IsList and IsEmpty
+function(S, pairs)
+  local filt, C;
+  if not (CanUseFroidurePin(S) or IsFpSemigroup(S) or IsFpMonoid(S)
+      or (HasIsFreeSemigroup(S) and IsFreeSemigroup(S))
+      or (HasIsFreeMonoid(S) and IsFreeMonoid(S))) then
+    TryNextMethod();
+  fi;
+  filt := IsLeftSemigroupCongruence
+          and IsLeftMagmaCongruence
+          and CanComputeEquivalenceRelationPartition;
+  C := _AnyCongruenceByGeneratingPairs(S, pairs, filt);
+  SetGeneratingPairsOfLeftMagmaCongruence(C, pairs);
+  return C;
+end);
+
+InstallMethod(RightSemigroupCongruenceByGeneratingPairs,
+"for a semigroup and a list",
+[IsSemigroup, IsList],
+19,  # to beat the library method for IsList and IsEmpty
+function(S, pairs)
+  local filt, C;
+  if not (CanUseFroidurePin(S) or IsFpSemigroup(S) or IsFpMonoid(S)
+      or (HasIsFreeSemigroup(S) and IsFreeSemigroup(S))
+      or (HasIsFreeMonoid(S) and IsFreeMonoid(S))) then
+    TryNextMethod();
+  fi;
+  filt := IsRightSemigroupCongruence
+          and IsRightMagmaCongruence
+          and CanComputeEquivalenceRelationPartition;
+  C := _AnyCongruenceByGeneratingPairs(S, pairs, filt);
+  SetGeneratingPairsOfRightMagmaCongruence(C, pairs);
+  return C;
+end);
+
+############################################################################
+# Congruence attributes/operations/etc that don't require CanUseFroidurePin
+############################################################################
+
+InstallMethod(NonTrivialEquivalenceClasses,
+"for a left, right, or 2-sided congruence that can compute partition",
+[CanComputeEquivalenceRelationPartition],
+function(C)
+  local part, nr_classes, classes, i;
+  part := EquivalenceRelationPartition(C);
+  nr_classes := Length(part);
+  classes := EmptyPlist(nr_classes);
+  for i in [1 .. nr_classes] do
+    classes[i] := EquivalenceClassOfElementNC(C, part[i][1]);
+    SetAsList(classes[i], part[i]);
+  od;
+  return classes;
+end);
+
+InstallMethod(EquivalenceRelationCanonicalLookup,
+"for a left, right, or 2-sided congruence that can compute partition",
+[CanComputeEquivalenceRelationPartition],
+function(C)
+  local S, lookup;
+  S := Range(C);
+  if not IsFinite(S) then
+    ErrorNoReturn("the argument (a ",
+                  CongruenceCategoryString(C),
+                  " congruence) must have finite range");
+  fi;
+  lookup := EquivalenceRelationLookup(C);
+  return FlatKernelOfTransformation(Transformation(lookup), Length(lookup));
+end);
+
+InstallMethod(\=, "for a left, right, or 2-sided semigroup congruence",
+[IsLeftRightOrTwoSidedCongruence, IsLeftRightOrTwoSidedCongruence],
+function(lhop, rhop)
+  local S;
+  S := Range(lhop);
+  if S <> Range(rhop) then
+    return false;
+  elif HasIsFinite(S) and IsFinite(S) then
+    return EquivalenceRelationCanonicalLookup(lhop) =
+           EquivalenceRelationCanonicalLookup(rhop);
+  fi;
+  return EquivalenceRelationCanonicalPartition(lhop) =
+         EquivalenceRelationCanonicalPartition(rhop);
+end);
+
+# This is declared only for CanComputeEquivalenceRelationPartition because no
+# other types of congruence have CongruenceTestMembershipNC implemented.
+InstallMethod(\in,
+"for pair of mult. elt. and left, right, or 2-sided congruence",
+[IsMultiplicativeElementCollection, CanComputeEquivalenceRelationPartition],
+function(pair, C)
+  local S, string;
+
+  if Size(pair) <> 2 then
+    ErrorNoReturn("the 1st argument (a list) does not have length 2");
+  fi;
+
+  S      := Range(C);
+  string := CongruenceCategoryString(C);
+  if not (pair[1] in S and pair[2] in S) then
+    ErrorNoReturn("the items in the 1st argument (a list) do not all belong to ",
+                  "the range of the 2nd argument (a ", string, " semigroup ",
+                  "congruence)");
+  elif CanEasilyCompareElements(pair[1]) and pair[1] = pair[2] then
+    return true;
+  fi;
+  return CongruenceTestMembershipNC(C, pair[1], pair[2]);
+end);
+
+############################################################################
+# Congruence attributes that do use FroidurePin directly
+############################################################################
+
+InstallMethod(EquivalenceRelationLookup,
+"for a left, right, or 2-sided congruence that can compute partition",
+[CanComputeEquivalenceRelationPartition],
+function(C)
+  local S, lookup, class, nr, elm;
+  S := Range(C);
+  if not IsFinite(S) then
+    ErrorNoReturn("the argument (a ",
+                  CongruenceCategoryString(C),
+                  " congruence) must have finite range");
+  elif not CanUseFroidurePin(S) then
+    # CanUseFroidurePin is required because PositionCanonical is not a thing
+    # for other types of semigroups.
+    TryNextMethod();
+  fi;
+
+  lookup := [1 .. Size(S)];
+  for class in EquivalenceRelationPartition(C) do
+    nr := PositionCanonical(S, Representative(class));
+    for elm in class do
+      lookup[PositionCanonical(S, elm)] := nr;
+    od;
+  od;
+  return lookup;
+end);
+
+InstallMethod(EquivalenceRelationCanonicalPartition,
+"for a left, right, or 2-sided congruence that can compute partition",
+[CanComputeEquivalenceRelationPartition],
+function(C)
+  local S, result, cmp, i;
+  S := Range(C);
+  if not IsFinite(S) then
+    ErrorNoReturn("the argument (a ",
+                  CongruenceCategoryString(C),
+                  " congruence) must have finite range");
+  elif not CanUseFroidurePin(S) then
+    # CanUseFroidurePin is required because PositionCanonical is not a thing
+    # for other types of semigroups.
+    TryNextMethod();
+  fi;
+  result := ShallowCopy(EquivalenceRelationPartition(C));
+  cmp := {x, y} -> PositionCanonical(S, x) < PositionCanonical(S, y);
+  for i in [1 .. Length(result)] do
+    result[i] := ShallowCopy(result[i]);
+    Sort(result[i], cmp);
+  od;
+  Sort(result, {x, y} -> cmp(Representative(x), Representative(y)));
+  return result;
+end);
+

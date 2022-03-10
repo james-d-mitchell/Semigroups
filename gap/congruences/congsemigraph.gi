@@ -207,11 +207,6 @@ function(C)
   return result;
 end);
 
-InstallMethod(JoinAnyCongruences,
-"for two congruences by Wang pair",
-[IsCongruenceByWangPair, IsCongruenceByWangPair],
-JoinSemigroupCongruences);
-
 InstallMethod(JoinSemigroupCongruences,
 "for two congruences by Wang pair",
 [IsCongruenceByWangPair, IsCongruenceByWangPair],
@@ -262,5 +257,5 @@ InstallMethod(LatticeOfCongruences,
 function(S)
   local D;
   D := PosetOfCongruences(GeneratingCongruencesOfLattice(S));
-  return JoinSemilatticeOfCongruences(D);
+  return JoinSemilatticeOfCongruences(D, JoinSemigroupCongruences);
 end);

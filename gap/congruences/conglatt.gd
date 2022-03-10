@@ -20,7 +20,8 @@ DeclareCategory("IsCongruencePoset", IsDigraph);
 
 DeclareAttribute("UnderlyingSemigroupOfCongruencePoset", IsCongruencePoset);
 DeclareAttribute("PosetOfPrincipalCongruences", IsCongruencePoset);
-DeclareOperation("JoinSemilatticeOfCongruences", [IsCongruencePoset]);
+DeclareOperation("JoinSemilatticeOfCongruences",
+                 [IsCongruencePoset, IsFunction]);
 DeclareAttribute("MinimalCongruences", IsCongruencePoset);
 
 DeclareAttribute("CongruencesOfPoset", IsCongruencePoset);

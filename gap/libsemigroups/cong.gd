@@ -8,9 +8,9 @@
 ############################################################################
 
 # A congruence satisfies CanUseLibsemigroupsCongruence if it should use a
-# libsemigroups Congruence objects to compute things about itself.
+# libsemigroups Congruence object to compute things about itself.
 DeclareProperty("CanUseLibsemigroupsCongruence",
-                IsLeftRightOrTwoSidedCongruence);
+                CanComputeEquivalenceRelationPartition);
 
 # The next operation is the only one supplied by libsemigroups/cong.gd/i that
 # is exported.
