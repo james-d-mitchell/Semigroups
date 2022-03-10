@@ -199,8 +199,8 @@ function(C)
       table := LeftCayleyGraphSemigroup(Range(C)) - 1;
     fi;
     libsemigroups.ToddCoxeter.prefill(tc, table);
-    CC := libsemigroups.Congruence.make_from_table([CongruenceHandednessString(C),
-                                                    "none"]);
+    CC := libsemigroups.Congruence.make_from_table(
+            [CongruenceHandednessString(C), "none"]);
     libsemigroups.Congruence.set_number_of_generators(CC, N);
     libsemigroups.Congruence.add_runner(CC, tc);
     factor := MinimalFactorization;

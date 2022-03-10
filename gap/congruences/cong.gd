@@ -34,11 +34,11 @@
 # of left congruences. We introduce synonyms for these to simplify their use.
 #
 # Note that IsMagmaCongruence implies IsLeftMagmaCongruence and
-# IsRightMagmaCongruence, and so IsLeftMagmaCongruence and IsLeftSemigroupCongruence returns true when
-# applied to a 2-sided congruence. In other words, we cannot use
-# IsLeftMagmaCongruence to determine whether or not a congruence was created as
-# a left congruence or not (we can use IsLeftMagmaCongruence and not
-# IsRightMagmaCongruence).
+# IsRightMagmaCongruence, and so IsLeftMagmaCongruence and
+# IsLeftSemigroupCongruence returns true when applied to a 2-sided congruence.
+# In other words, we cannot use IsLeftMagmaCongruence to determine whether or
+# not a congruence was created as a left congruence or not (we can use
+# IsLeftMagmaCongruence and not IsRightMagmaCongruence).
 #
 # It might be tempting to introduce things like JoinOfAnyCongruences, or
 # JoinOfLeftRightOrTwoSidedCongruences, but this doesn't make sense in for the

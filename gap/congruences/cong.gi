@@ -220,7 +220,7 @@ InstallMethod(EquivalenceClassOfElement,
 "for a left, right, or 2-sided semigroup congruence and mult. elt.",
 [IsLeftRightOrTwoSidedCongruence, IsMultiplicativeElement],
 function(C, x)
- if not x in Range(C) then
+  if not x in Range(C) then
     ErrorNoReturn("the 2nd argument (a mult. elt.) does not belong ",
                   "to the range of the 1st argument (a ",
                   CongruenceHandednessString(C),

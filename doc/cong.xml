@@ -333,7 +333,7 @@ gap> congs[pos];
 gap> S := Semigroup(Transformation([1, 3, 2]),
 >                   Transformation([3, 1, 3]));;
 gap> min := MinimalCongruencesOfSemigroup(S);
-[ <semigroup congruence over <transformation semigroup of size 13, 
+[ <2-sided semigroup congruence over <transformation semigroup of 
      degree 3 with 2 generators> with 1 generating pairs> ]
 gap> minl := MinimalLeftCongruencesOfSemigroup(S);
 [ <left semigroup congruence over <transformation semigroup 
@@ -391,15 +391,15 @@ gap> minl := MinimalLeftCongruencesOfSemigroup(S);
 gap> S := Semigroup(Transformation([1, 3, 2]),
 >                   Transformation([3, 1, 3]));;
 gap> congs := PrincipalCongruencesOfSemigroup(S);
-[ <semigroup congruence over <transformation semigroup of size 13, 
+[ <2-sided semigroup congruence over <transformation semigroup of 
      degree 3 with 2 generators> with 1 generating pairs>, 
-  <semigroup congruence over <transformation semigroup of size 13, 
+  <2-sided semigroup congruence over <transformation semigroup of 
      degree 3 with 2 generators> with 1 generating pairs>, 
-  <semigroup congruence over <transformation semigroup of size 13, 
+  <2-sided semigroup congruence over <transformation semigroup of 
      degree 3 with 2 generators> with 1 generating pairs>, 
-  <semigroup congruence over <transformation semigroup of size 13, 
+  <2-sided semigroup congruence over <transformation semigroup of 
      degree 3 with 2 generators> with 1 generating pairs>, 
-  <semigroup congruence over <transformation semigroup of size 13, 
+  <2-sided semigroup congruence over <transformation semigroup of 
      degree 3 with 2 generators> with 1 generating pairs> ]
 ]]></Example>
     </Description>
@@ -554,11 +554,11 @@ gap> cong := SemigroupCongruence(S, [Transformation([1, 2, 1]),
 >                                    Transformation([2, 1, 2])]);;
 gap> classes := NonTrivialEquivalenceClasses(cong);;
 gap> Set(classes);
-[ <congruence class of Transformation( [ 1, 2, 2 ] )>, 
-  <congruence class of Transformation( [ 3, 1, 3 ] )>, 
-  <congruence class of Transformation( [ 3, 1, 1 ] )>, 
-  <congruence class of Transformation( [ 2, 1, 2 ] )>, 
-  <congruence class of Transformation( [ 3, 3, 3 ] )> ]
+[ <2-sided congruence class of Transformation( [ 1, 2, 2 ] )>, 
+  <2-sided congruence class of Transformation( [ 3, 1, 3 ] )>, 
+  <2-sided congruence class of Transformation( [ 3, 1, 1 ] )>, 
+  <2-sided congruence class of Transformation( [ 2, 1, 2 ] )>, 
+  <2-sided congruence class of Transformation( [ 3, 3, 3 ] )> ]
 gap> cong := RightSemigroupCongruence(S, [Transformation([1, 2, 1]),
 >                                         Transformation([2, 1, 2])]);;
 gap> classes := NonTrivialEquivalenceClasses(cong);;
@@ -585,7 +585,7 @@ gap> cong := SemigroupCongruence(S, [Transformation([1, 2, 1]),
 >                                    Transformation([2, 1, 2])]);;
 gap> class := EquivalenceClassOfElement(cong,
 >                                       Transformation([3, 1, 1]));
-<congruence class of Transformation( [ 3, 1, 1 ] )>
+<2-sided congruence class of Transformation( [ 3, 1, 1 ] )>
 gap> IsCongruenceClass(class);
 true]]></Example>
     </Description>

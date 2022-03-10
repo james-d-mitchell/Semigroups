@@ -170,6 +170,51 @@ function(pair, C)
   return CongruenceTestMembershipNC(C, pair[1], pair[2]);
 end);
 
+########################################################################
+# Comparison operators
+########################################################################
+
+InstallMethod(\=,
+"for left, right, or 2-sided congruences with known generating pairs",
+[CanComputeEquivalenceRelationPartition and
+ HasGeneratingPairsOfLeftRightOrTwoSidedCongruence,
+ CanComputeEquivalenceRelationPartition and
+ HasGeneratingPairsOfLeftRightOrTwoSidedCongruence],
+function(lhop, rhop)
+  local lpairs, rpairs;
+  if CongruenceHandednessString(lhop) <> CongruenceHandednessString(rhop) then
+    TryNextMethod();
+  fi;
+
+  lpairs := GeneratingPairsOfLeftRightOrTwoSidedCongruence(lhop);
+  rpairs := GeneratingPairsOfLeftRightOrTwoSidedCongruence(rhop);
+  return Range(lhop) = Range(rhop)
+         and ForAll(lpairs, x -> CongruenceTestMembershipNC(rhop, x[1], x[2]))
+         and ForAll(rpairs, x -> CongruenceTestMembershipNC(lhop, x[1], x[2]));
+end);
+
+# This is implemented only for CanComputeEquivalenceRelationPartition because
+# no other types of congruence have CongruenceTestMembershipNC implemented.
+InstallMethod(IsSubrelation,
+"for left, right, or 2-sided congruences with known generating pairs",
+[CanComputeEquivalenceRelationPartition
+ and HasGeneratingPairsOfLeftRightOrTwoSidedCongruence,
+ CanComputeEquivalenceRelationPartition
+ and HasGeneratingPairsOfLeftRightOrTwoSidedCongruence],
+function(lhop, rhop)
+  # Only valid for certain combinations of types
+  if CongruenceHandednessString(lhop) <> CongruenceHandednessString(rhop)
+      and not IsMagmaCongruence(lhop) then
+    TryNextMethod();
+  fi;
+
+  # We use CongruenceTestMembershipNC instead of \in because using \in causes a
+  # 33% slow down in tst/standard/congruences/conglatt.tst
+  return Range(lhop) = Range(rhop)
+    and ForAll(GeneratingPairsOfLeftRightOrTwoSidedCongruence(rhop),
+               x -> CongruenceTestMembershipNC(lhop, x[1], x[2]));
+end);
+
 ############################################################################
 # Congruence attributes that do use FroidurePin directly
 ############################################################################

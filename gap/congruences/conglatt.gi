@@ -617,10 +617,30 @@ end);
 
 InstallMethod(ViewObj, "for a congruence poset", [IsCongruencePoset],
 function(poset)
+  local prefix, S, C, hand;
   if DigraphNrVertices(poset) = 0 then
     Print("<empty congruence poset>");
   else
-    Print("<poset of ", DigraphNrVertices(poset), " congruences over ");
+    if IsLatticeDigraph(poset) then
+      prefix := "lattice";
+    else
+      prefix := "poset";
+    fi;
+    S := UnderlyingSemigroupOfCongruencePoset(poset);
+    C := First(CongruencesOfPoset(poset),
+               x -> not NrEquivalenceClasses(x) in [1, Size(S)]);
+    if C = fail or IsMagmaCongruence(C) then
+      hand := "two-sided";
+    else
+      hand := CongruenceHandednessString(C);
+    fi;
+    Print("<\>",
+          prefix,
+          " of ",
+          DigraphNrVertices(poset),
+          " ",
+          hand,
+          " congruences over \<");
     ViewObj(UnderlyingSemigroupOfCongruencePoset(poset));
     Print(">");
   fi;

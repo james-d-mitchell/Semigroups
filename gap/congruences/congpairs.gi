@@ -124,7 +124,8 @@ IsLeftSemigroupCongruence);
 
 InstallMethod(PrintObj,
 "for left, right, or 2-sided congruences with known generating pairs",
-[IsLeftRightOrTwoSidedCongruence and HasGeneratingPairsOfLeftRightOrTwoSidedCongruence],
+[IsLeftRightOrTwoSidedCongruence
+ and HasGeneratingPairsOfLeftRightOrTwoSidedCongruence],
 10,
 function(C)
   local string;
@@ -146,7 +147,8 @@ end);
 
 InstallMethod(ViewObj,
 "for left, right, or 2-sided congruences with known generating pairs",
-[IsLeftRightOrTwoSidedCongruence and HasGeneratingPairsOfLeftRightOrTwoSidedCongruence],
+[IsLeftRightOrTwoSidedCongruence
+ and HasGeneratingPairsOfLeftRightOrTwoSidedCongruence],
 9,  # to beat the library method
 function(C)
   Print("<", CongruenceHandednessString(C), " semigroup congruence over ");
@@ -177,25 +179,6 @@ function(lhop, rhop)
   return Range(lhop) = Range(rhop)
          and ForAll(lpairs, x -> x in rhop)
          and ForAll(rpairs, x -> x in lhop);
-end);
-
-InstallMethod(IsSubrelation,
-"for left, right, or 2-sided congruences with known generating pairs",
-[IsLeftRightOrTwoSidedCongruence
- and HasGeneratingPairsOfLeftRightOrTwoSidedCongruence,
- IsLeftRightOrTwoSidedCongruence
- and HasGeneratingPairsOfLeftRightOrTwoSidedCongruence],
-function(lhop, rhop)
-  # Only valid for certain combinations of types
-  if CongruenceHandednessString(lhop) <> CongruenceHandednessString(rhop)
-      and not IsMagmaCongruence(lhop) then
-    TryNextMethod();
-  fi;
-
-  # Test whether lhop contains all the pairs in rhop
-  return Range(lhop) = Range(rhop)
-    and ForAll(GeneratingPairsOfLeftRightOrTwoSidedCongruence(rhop),
-               x -> x in lhop);
 end);
 
 ########################################################################

@@ -300,22 +300,22 @@ gap> D := ChainDigraph(4);
 gap> S := GraphInverseSemigroup(D);
 <finite graph inverse semigroup with 4 vertices, 3 edges>
 gap> LatticeOfCongruences(S);
-<poset of 
-16 congruences over <finite graph inverse semigroup with 4 vertices, 3 edges>>
+<lattice of 16 two-sided congruences over 
+ <finite graph inverse semigroup with 4 vertices, 3 edges>>
 gap> D := Digraph([[2, 3], [3], [4], []]);
 <immutable digraph with 4 vertices, 4 edges>
 gap> S := GraphInverseSemigroup(D);
 <finite graph inverse semigroup with 4 vertices, 4 edges>
 gap> LatticeOfCongruences(S);
-<poset of 
-10 congruences over <finite graph inverse semigroup with 4 vertices, 4 edges>>
+<lattice of 10 two-sided congruences over 
+ <finite graph inverse semigroup with 4 vertices, 4 edges>>
 gap> D := Digraph([[2], [3, 4], [4], []]);
 <immutable digraph with 4 vertices, 4 edges>
 gap> S := GraphInverseSemigroup(D);
 <finite graph inverse semigroup with 4 vertices, 4 edges>
 gap> LatticeOfCongruences(S);
-<poset of 
-12 congruences over <finite graph inverse semigroup with 4 vertices, 4 edges>>
+<lattice of 12 two-sided congruences over 
+ <finite graph inverse semigroup with 4 vertices, 4 edges>>
 
 #
 gap> SEMIGROUPS.StopTest();
