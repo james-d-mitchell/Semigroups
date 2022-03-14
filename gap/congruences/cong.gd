@@ -150,6 +150,8 @@ DeclareOperation("IsSuperrelation",
 
 # Actions
 DeclareOperation("OnLeftCongruenceClasses",
-                 [IsLeftCongruenceClass, IsMultiplicativeElement]);
+                 [IsLeftRightOrTwoSidedCongruenceClass,
+                  IsMultiplicativeElement]);
 DeclareOperation("OnRightCongruenceClasses",
-                 [IsRightCongruenceClass, IsMultiplicativeElement]);
+                 [IsLeftRightOrTwoSidedCongruenceClass,
+                  IsMultiplicativeElement]);

@@ -12,6 +12,9 @@
 DeclareProperty("CanUseLibsemigroupsCongruence",
                 CanComputeEquivalenceRelationPartition);
 
+InstallTrueMethod(CanComputeEquivalenceRelationPartition,
+                  CanUseLibsemigroupsCongruence);
+
 # The next operation is the only one supplied by libsemigroups/cong.gd/i that
 # is exported.
 

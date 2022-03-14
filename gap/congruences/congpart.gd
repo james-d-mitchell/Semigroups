@@ -14,8 +14,6 @@
 # Provide default implementations of the following:
 # * EquivalenceClasses
 # * ImagesElm (for the calculation of the elements of an equivalence class)
-# * NrEquivalenceClasses (this could be computed from EquivalenceClasses, but
-#   usually there's a lower cost way of counting the number)
 # * CongruenceTestMembershipNC
 
 ###############################################################################
@@ -73,4 +71,3 @@
 
 DeclareProperty("CanComputeEquivalenceRelationPartition",
                 IsLeftRightOrTwoSidedCongruence);
-

@@ -63,6 +63,11 @@ InstallImmediateMethod(CanUseLibsemigroupsCongruence,
                        0,
                        ReturnFalse);
 
+InstallImmediateMethod(CanUseLibsemigroupsCongruence,
+                       IsInverseSemigroupCongruenceByKernelTrace,
+                       0,
+                       ReturnFalse);
+
 InstallMethod(CanUseLibsemigroupsCongruence,
 "for a left, right, or 2-sided congruence that can compute partition",
 [CanComputeEquivalenceRelationPartition],
@@ -375,7 +380,7 @@ function(C)
   local result, CC, gens, class_index_to_word, rep, i;
 
   if NrEquivalenceClasses(C) = infinity then
-    Error("the argument (a congruence) must have a finite ",
+    ErrorNoReturn("the argument (a congruence) must have a finite ",
                   "number of classes");
   fi;
 
@@ -400,11 +405,7 @@ InstallMethod(EquivalenceRelationPartitionWithSingletons,
 function(C)
   local part, i, x;
   if not IsFinite(Range(C)) then
-    Error("the argument (a congruence) must have finite range");
-  elif not CanUseFroidurePin(Range(C)) then
-    # CanUseFroidurePin is required because EnumeratorCanonical is not a thing
-    # for other types of semigroups.
-    TryNextMethod();
+    ErrorNoReturn("the argument (a congruence) must have finite range");
   fi;
 
   part := [];

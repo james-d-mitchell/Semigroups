@@ -186,32 +186,6 @@ InstallMethod(IsSuperrelation, "for semigroup congruences",
 [IsLeftRightOrTwoSidedCongruence, IsLeftRightOrTwoSidedCongruence],
 {lhop, rhop} -> IsSubrelation(rhop, lhop));
 
-# TODO what about MeetLeftSemigroupCongruences, MeetRightSemigroupCongruences?
-InstallMethod(MeetSemigroupCongruences, "for semigroup congruences",
-[IsSemigroupCongruence, IsSemigroupCongruence],
-function(lhop, rhop)
-  if Range(lhop) <> Range(rhop) then
-    Error("cannot form the meet of congruences over different semigroups");
-  elif lhop = rhop then
-    return lhop;
-  elif IsSubrelation(lhop, rhop) then
-    return rhop;
-  elif IsSubrelation(rhop, lhop) then
-    return lhop;
-  fi;
-  # lhop_lookup := EquivalenceRelationCanonicalLookup(lhop);
-  # rhop_lookup := EquivalenceRelationCanonicalLookup(rhop);
-  # N           := Length(lhop);
-
-  # hash := HashMap();
-  # next := 1;
-  # for i in [1 .. N] do
-  # The problem is how to represent the meet of the congruences
-  # od;
-  # TODO actually implement a method
-  TryNextMethod();
-end);
-
 ########################################################################
 # Congruence classes
 ########################################################################
@@ -310,6 +284,7 @@ end);
 InstallMethod(\in,
 "for a mult. elt. and a class of a left, right or 2-sided congruence",
 [IsMultiplicativeElement, IsLeftRightOrTwoSidedCongruenceClass],
+3, # to beat the library method
 function(x, class)
   local C;
   C := EquivalenceClassRelation(class);
@@ -333,18 +308,28 @@ end);
 
 InstallMethod(OnLeftCongruenceClasses,
 "for a left congruence class and a multiplicative element",
-[IsLeftCongruenceClass, IsMultiplicativeElement],
+[IsLeftRightOrTwoSidedCongruenceClass, IsMultiplicativeElement],
 function(class, x)
   local C;
+  # This is necessary because IsCongruenceClass is not a sub-category of
+  # IsLeftCongruenceClass or IsRightCongruenceClass
+  if IsRightCongruenceClass(class) then
+    TryNextMethod();
+  fi;
   C := EquivalenceClassRelation(class);
   return EquivalenceClassOfElementNC(C, x * Representative(class));
 end);
 
 InstallMethod(OnRightCongruenceClasses,
 "for a right congruence class and a multiplicative element",
-[IsRightCongruenceClass, IsMultiplicativeElement],
+[IsLeftRightOrTwoSidedCongruenceClass, IsMultiplicativeElement],
 function(class, x)
   local C;
+  # This is necessary because IsCongruenceClass is not a sub-category of
+  # IsLeftCongruenceClass or IsRightCongruenceClass
+  if IsLeftCongruenceClass(class) then
+    TryNextMethod();
+  fi;
   C := EquivalenceClassRelation(class);
   return EquivalenceClassOfElementNC(C, Representative(class) * x);
 end);

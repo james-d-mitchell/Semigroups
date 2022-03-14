@@ -101,6 +101,58 @@ end);
 # Congruence attributes/operations/etc that don't require CanUseFroidurePin
 ############################################################################
 
+# TODO what about MeetLeftSemigroupCongruences, MeetRightSemigroupCongruences?
+InstallMethod(MeetSemigroupCongruences,
+"for semigroup congruences that can compute partition",
+[CanComputeEquivalenceRelationPartition and IsSemigroupCongruence,
+ CanComputeEquivalenceRelationPartition and IsSemigroupCongruence],
+function(lhop, rhop)
+  local result, lhop_nr_pairs, rhop_nr_pairs, cong1, cong2, pairs, class, i, j;
+
+  if Range(lhop) <> Range(rhop) then
+    Error("cannot form the meet of congruences over different semigroups");
+  elif lhop = rhop then
+    return lhop;
+  elif IsSubrelation(lhop, rhop) then
+    return rhop;
+  elif IsSubrelation(rhop, lhop) then
+    return lhop;
+  fi;
+  result := SemigroupCongruenceByGeneratingPairs(Source(lhop), []);
+
+  lhop_nr_pairs := Sum(EquivalenceRelationPartition(lhop), x -> Binomial(Size(x), 2));
+  rhop_nr_pairs := Sum(EquivalenceRelationPartition(rhop), x -> Binomial(Size(x), 2));
+
+  if lhop_nr_pairs < rhop_nr_pairs then
+    cong1 := lhop;
+    cong2 := rhop;
+  else
+    cong1 := rhop;
+    cong2 := lhop;
+  fi;
+
+  for class in EquivalenceRelationPartition(cong1) do
+    for i in [1 .. Length(class) - 1] do
+      for j in [i + 1 .. Length(class)] do
+        if [class[i], class[j]] in cong2
+            and not [class[i], class[j]] in result then
+          pairs := GeneratingPairsOfSemigroupCongruence(result);
+          pairs := Concatenation(pairs, [[class[i], class[j]]]);
+          result := SemigroupCongruenceByGeneratingPairs(Source(cong1), pairs);
+        fi;
+      od;
+    od;
+  od;
+  return result;
+end);
+
+InstallMethod(NrEquivalenceClasses,
+"for a left, right, or 2-sided congruence that can compute partition",
+[CanComputeEquivalenceRelationPartition],
+function(C)
+  return Length(EquivalenceClasses(C));
+end);
+
 InstallMethod(NonTrivialEquivalenceClasses,
 "for a left, right, or 2-sided congruence that can compute partition",
 [CanComputeEquivalenceRelationPartition],
@@ -269,4 +321,3 @@ function(C)
   Sort(result, {x, y} -> cmp(Representative(x), Representative(y)));
   return result;
 end);
-

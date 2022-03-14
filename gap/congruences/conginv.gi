@@ -160,12 +160,28 @@ function(C, elm)
   return images;
 end);
 
+# TODO make this the default method for CanComputeEquivalenceRelationPartition
 InstallMethod(EquivalenceClasses,
 "for inverse semigroup congruence by kernel and trace",
 [IsInverseSemigroupCongruenceByKernelTrace],
 function(C)
-  local S, reps, elmlists, kernel, traceBlock, blockreps, blockelmlists, id,
-        elm, pos, classes, i;
+  local part, classes, i;
+
+  part := EquivalenceRelationPartitionWithSingletons(C);
+  classes := [];
+  for i in [1 .. Length(part)] do
+    classes[i] := EquivalenceClassOfElementNC(C, part[i][1]);
+    SetAsList(classes[i], part[i]);
+  od;
+  return classes;
+end);
+
+InstallMethod(EquivalenceRelationPartitionWithSingletons,
+"for inverse semigroup congruence by kernel and trace",
+[IsInverseSemigroupCongruenceByKernelTrace],
+function(C)
+  local S, reps, elmlists, kernel, blockelmlists, pos, traceBlock, id, elm;
+
   S := Range(C);
   reps := [];
   elmlists := [];
@@ -174,15 +190,13 @@ function(C)
   # Consider each trace-class in turn
   for traceBlock in C!.traceBlocks do
     # Consider all the congruence classes corresponding to this trace-class
-    blockreps := [];       # List of class reps
     blockelmlists := [];   # List of lists of elms in class
     for id in traceBlock do
       for elm in LClass(S, id) do
         # Find the congruence class that this element lies in
-        pos := PositionProperty(blockreps, rep -> elm * rep ^ -1 in kernel);
+        pos := PositionProperty(blockelmlists, class -> elm * class[1] ^ -1 in kernel);
         if pos = fail then
           # New class
-          Add(blockreps, elm);
           Add(blockelmlists, [elm]);
         else
           # Add to the old class
@@ -190,50 +204,17 @@ function(C)
         fi;
       od;
     od;
-    Append(reps, blockreps);
     Append(elmlists, blockelmlists);
   od;
-
-  # Create the class objects
-  classes := [];
-  for i in [1 .. Length(reps)] do
-    classes[i] := EquivalenceClassOfElementNC(C, reps[i]);
-    SetAsList(classes[i], elmlists[i]);
-  od;
-  return classes;
+  return elmlists;
 end);
 
-InstallMethod(NrEquivalenceClasses,
+# TODO make this the default method for CanComputeEquivalenceRelationPartition
+InstallMethod(EquivalenceRelationPartition,
 "for inverse semigroup congruence by kernel and trace",
 [IsInverseSemigroupCongruenceByKernelTrace],
 function(C)
-  return Length(EquivalenceClasses(C));
-end);
-
-# Although the next method doesn't use the representation, it also doesn't
-# require additional computation of the uncongruence, since it calls
-# EquivalenceClasses.
-# TODO(now): this should be a method for EquivalenceRelationPartition
-InstallMethod(EquivalenceRelationCanonicalLookup,
-"for inverse semigroup congruence by kernel and trace",
-[IsInverseSemigroupCongruenceByKernelTrace],
-function(C)
-  local S, n, classes, elms, table, next, i, x;
-  S := Range(C);
-  n := Size(S);
-  classes := EquivalenceClasses(C);
-  elms := AsListCanonical(S);
-  table := EmptyPlist(n);
-  next := 1;
-  for i in [1 .. n] do
-    if not IsBound(table[i]) then
-      for x in First(classes, class -> elms[i] in class) do
-        table[Position(S, x)] := next;
-      od;
-      next := next + 1;
-    fi;
-  od;
-  return table;
+  return Filtered(EquivalenceRelationPartitionWithSingletons(C), x -> Size(x) > 1);
 end);
 
 InstallMethod(CongruenceTestMembershipNC,
