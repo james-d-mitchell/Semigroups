@@ -284,7 +284,7 @@ end);
 InstallMethod(\in,
 "for a mult. elt. and a class of a left, right or 2-sided congruence",
 [IsMultiplicativeElement, IsLeftRightOrTwoSidedCongruenceClass],
-3, # to beat the library method
+3,  # to beat the library method
 function(x, class)
   local C;
   C := EquivalenceClassRelation(class);

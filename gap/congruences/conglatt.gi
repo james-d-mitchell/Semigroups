@@ -183,18 +183,24 @@ end;
 # IsLeftMagmaCongruence is true for every elements of the
 # GeneralMappingsFamily. This is a requirement according to the GAP reference
 # manual entry for CategoryCollections.
-DeclareCategory("IsWrappedLeftRightOrTwoSidedCongruence", IsAssociativeElement);
-DeclareCategory("IsWrappedRightCongruence", IsWrappedLeftRightOrTwoSidedCongruence);
-DeclareCategory("IsWrappedLeftCongruence", IsWrappedLeftRightOrTwoSidedCongruence);
-DeclareCategory("IsWrappedTwoSidedCongruence", IsWrappedLeftRightOrTwoSidedCongruence);
+DeclareCategory("IsWrappedLeftRightOrTwoSidedCongruence",
+                IsAssociativeElement);
+DeclareCategory("IsWrappedRightCongruence",
+                IsWrappedLeftRightOrTwoSidedCongruence);
+DeclareCategory("IsWrappedLeftCongruence",
+                IsWrappedLeftRightOrTwoSidedCongruence);
+DeclareCategory("IsWrappedTwoSidedCongruence",
+                IsWrappedLeftRightOrTwoSidedCongruence);
 
 DeclareCategoryCollections("IsWrappedLeftRightOrTwoSidedCongruence");
 
 InstallTrueMethod(CanUseGapFroidurePin,
-                  IsWrappedLeftRightOrTwoSidedCongruenceCollection and IsSemigroup);
+                  IsWrappedLeftRightOrTwoSidedCongruenceCollection and
+                  IsSemigroup);
 
 InstallTrueMethod(IsFinite,
-                  IsWrappedLeftRightOrTwoSidedCongruenceCollection and IsSemigroup);
+                  IsWrappedLeftRightOrTwoSidedCongruenceCollection and
+                  IsSemigroup);
 
 BindGlobal("WrappedLeftCongruenceFamily",
            NewFamily("WrappedLeftCongruenceFamily",

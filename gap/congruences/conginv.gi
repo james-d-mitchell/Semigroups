@@ -180,10 +180,9 @@ InstallMethod(EquivalenceRelationPartitionWithSingletons,
 "for inverse semigroup congruence by kernel and trace",
 [IsInverseSemigroupCongruenceByKernelTrace],
 function(C)
-  local S, reps, elmlists, kernel, blockelmlists, pos, traceBlock, id, elm;
+  local S, elmlists, kernel, blockelmlists, pos, traceBlock, id, elm;
 
   S := Range(C);
-  reps := [];
   elmlists := [];
   kernel := Elements(C!.kernel);
 
@@ -194,7 +193,8 @@ function(C)
     for id in traceBlock do
       for elm in LClass(S, id) do
         # Find the congruence class that this element lies in
-        pos := PositionProperty(blockelmlists, class -> elm * class[1] ^ -1 in kernel);
+        pos := PositionProperty(blockelmlists,
+                                class -> elm * class[1] ^ -1 in kernel);
         if pos = fail then
           # New class
           Add(blockelmlists, [elm]);
@@ -214,7 +214,8 @@ InstallMethod(EquivalenceRelationPartition,
 "for inverse semigroup congruence by kernel and trace",
 [IsInverseSemigroupCongruenceByKernelTrace],
 function(C)
-  return Filtered(EquivalenceRelationPartitionWithSingletons(C), x -> Size(x) > 1);
+  return Filtered(EquivalenceRelationPartitionWithSingletons(C),
+                  x -> Size(x) > 1);
 end);
 
 InstallMethod(CongruenceTestMembershipNC,
