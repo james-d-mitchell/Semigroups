@@ -257,5 +257,5 @@ InstallMethod(LatticeOfCongruences,
 function(S)
   local D;
   D := PosetOfCongruences(GeneratingCongruencesOfLattice(S));
-  return JoinSemilatticeOfCongruences(D, JoinSemigroupCongruences);
+  return JoinSemilatticeOfCongruences(D, WrappedTwoSidedCongruence);
 end);

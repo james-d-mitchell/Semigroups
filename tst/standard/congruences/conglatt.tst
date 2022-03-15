@@ -35,12 +35,12 @@ gap> IsLatticeDigraph(l);
 true
 gap> S := OrderEndomorphisms(2);;
 gap> CongruencesOfSemigroup(S);
-[ <2-sided semigroup congruence over <regular transformation monoid of 
-     degree 2 with 2 generators> with 0 generating pairs>, 
-  <2-sided semigroup congruence over <regular transformation monoid of 
-     degree 2 with 2 generators> with 1 generating pairs>, 
-  <2-sided semigroup congruence over <regular transformation monoid of 
-     degree 2 with 2 generators> with 1 generating pairs> ]
+[ <2-sided semigroup congruence over <regular transformation monoid 
+     of size 3, degree 2 with 2 generators> with 0 generating pairs>, 
+  <2-sided semigroup congruence over <regular transformation monoid 
+     of size 3, degree 2 with 2 generators> with 1 generating pairs>, 
+  <2-sided semigroup congruence over <regular transformation monoid 
+     of size 3, degree 2 with 2 generators> with 1 generating pairs> ]
 gap> l := LatticeOfCongruences(S);
 <lattice of 3 two-sided congruences over <regular transformation monoid 
  of size 3, degree 2 with 2 generators>>
@@ -131,18 +131,16 @@ gap> restriction := Subsemigroup(S, [Transformation([1, 1, 1]),
 gap> latt := LatticeOfLeftCongruences(S, Combinations(AsList(restriction), 2));
 <lattice of 5 left congruences over <transformation semigroup of size 11, 
  degree 3 with 2 generators>>
-gap> InNeighbours(latt);
-[ [ 1 ], [ 1, 2 ], [ 1, 3 ], [ 1, 4 ], [ 1, 2, 3, 4, 5 ] ]
-gap> OutNeighbours(latt);
-[ [ 1, 2, 3, 4, 5 ], [ 2, 5 ], [ 3, 5 ], [ 4, 5 ], [ 5 ] ]
+gap> IsIsomorphicDigraph(latt, DigraphFromDigraph6String("&D}cgo_"));
+true
 gap> restriction := [Transformation([3, 2, 3]),
 >                    Transformation([3, 1, 3]),
 >                    Transformation([2, 2, 2])];;
 gap> latt := LatticeOfRightCongruences(S, Combinations(restriction, 2));
 <lattice of 4 right congruences over <transformation semigroup of size 11, 
  degree 3 with 2 generators>>
-gap> InNeighbours(latt);
-[ [ 1 ], [ 1, 2, 3, 4 ], [ 1, 3 ], [ 1, 4 ] ]
+gap> IsIsomorphicDigraph(latt, DigraphFromDigraph6String("&C|ES"));
+true
 gap> congs := CongruencesOfPoset(latt);;
 gap> Length(congs);
 4
@@ -324,11 +322,11 @@ gap> pair3 := [PartialPerm([1, 2], [1, 2]), PartialPerm([1, 2], [2, 1])];;
 gap> coll := [RightSemigroupCongruence(S, pair1),
 >             RightSemigroupCongruence(S, pair2),
 >             RightSemigroupCongruence(S, pair3)];;
-gap> l := JoinSemilatticeOfCongruences(PosetOfCongruences(coll), 
-> JoinRightSemigroupCongruences);
+gap> l := JoinSemilatticeOfCongruences(PosetOfCongruences(coll),
+> WrappedRightCongruence);
 <poset of 4 right congruences over <symmetric inverse monoid of degree 2>>
-gap> InNeighbours(l);
-[ [ 1 ], [ 2 ], [ 1, 3 ], [ 1, 2, 3, 4 ] ]
+gap> IsIsomorphicDigraph(l, DigraphFromDigraph6String("&ClRC"));
+true
 gap> JoinSemilatticeOfCongruences(coll);
 Error, no method found! For debugging hints type ?Recovery from NoMethodFound
 Error, no 1st choice method found for `JoinSemilatticeOfCongruences' on 1 argu\
@@ -349,8 +347,8 @@ true
 gap> poset := LatticeOfCongruences(S);
 <lattice of 4 two-sided congruences over 
  <symmetric inverse monoid of degree 2>>
-gap> InNeighbours(poset);
-[ [ 1 ], [ 1, 2 ], [ 1, 2, 3, 4 ], [ 1, 2, 4 ] ]
+gap> IsIsomorphicDigraph(poset, DigraphFromDigraph6String("&C|qK"));
+true
 gap> Print(l, "\n");
 PosetOfCongruences( 
 [ RightSemigroupCongruence( InverseMonoid( 

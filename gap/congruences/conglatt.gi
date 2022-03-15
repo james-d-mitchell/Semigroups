@@ -172,87 +172,130 @@ SEMIGROUPS.AddTrivialCongruence := function(poset, SemigroupXCongruence)
   return poset;
 end;
 
+# We declare the following for the sole purpose of being able to use the
+# Froidure-Pin (GAP implementation) algorithm for computing the join
+# semilattice of congruences. We could not just implement multiplication of
+# left, right, 2-sided congruences (which would have been less code) for family
+# reasons (i.e. if we declare DeclareCategoryCollections for
+# IsLeftMagmaCongruence, it turns out that [LeftSemigroupCongruence(*)] does
+# not belong to IsLeftMagmaCongruenceCollection, because the family of these
+# objects is GeneralMappingsFamily, and it is not the case that
+# IsLeftMagmaCongruence is true for every elements of the
+# GeneralMappingsFamily. This is a requirement according to the GAP reference
+# manual entry for CategoryCollections.
+DeclareCategory("IsWrappedLeftRightOrTwoSidedCongruence", IsAssociativeElement);
+DeclareCategory("IsWrappedRightCongruence", IsWrappedLeftRightOrTwoSidedCongruence);
+DeclareCategory("IsWrappedLeftCongruence", IsWrappedLeftRightOrTwoSidedCongruence);
+DeclareCategory("IsWrappedTwoSidedCongruence", IsWrappedLeftRightOrTwoSidedCongruence);
+
+DeclareCategoryCollections("IsWrappedLeftRightOrTwoSidedCongruence");
+
+InstallTrueMethod(CanUseGapFroidurePin,
+                  IsWrappedLeftRightOrTwoSidedCongruenceCollection and IsSemigroup);
+
+InstallTrueMethod(IsFinite,
+                  IsWrappedLeftRightOrTwoSidedCongruenceCollection and IsSemigroup);
+
+BindGlobal("WrappedLeftCongruenceFamily",
+           NewFamily("WrappedLeftCongruenceFamily",
+                     IsWrappedLeftCongruence));
+BindGlobal("WrappedRightCongruenceFamily",
+           NewFamily("WrappedRightCongruenceFamily",
+                     IsWrappedRightCongruence));
+BindGlobal("WrappedTwoSidedCongruenceFamily",
+           NewFamily("WrappedTwoSidedCongruenceFamily",
+                     IsWrappedTwoSidedCongruence));
+
+BindGlobal("WrappedLeftCongruenceType",
+           NewType(WrappedLeftCongruenceFamily,
+                   IsWrappedLeftCongruence and IsPositionalObjectRep));
+BindGlobal("WrappedRightCongruenceType",
+           NewType(WrappedRightCongruenceFamily,
+                   IsWrappedRightCongruence and IsPositionalObjectRep));
+BindGlobal("WrappedTwoSidedCongruenceType",
+           NewType(WrappedTwoSidedCongruenceFamily,
+                   IsWrappedTwoSidedCongruence and IsPositionalObjectRep));
+
+BindGlobal("WrappedLeftCongruence",
+function(x)
+  return Objectify(WrappedLeftCongruenceType, [x]);
+end);
+
+BindGlobal("WrappedRightCongruence",
+function(x)
+  return Objectify(WrappedRightCongruenceType, [x]);
+end);
+
+BindGlobal("WrappedTwoSidedCongruence",
+function(x)
+  return Objectify(WrappedTwoSidedCongruenceType, [x]);
+end);
+
+InstallMethod(\=, "for wrapped left, right, or 2-sided congruences",
+[IsWrappedLeftRightOrTwoSidedCongruence,
+ IsWrappedLeftRightOrTwoSidedCongruence],
+function(x, y)
+  return x![1] = y![1];
+end);
+
+InstallMethod(\<, "for wrapped left, right, or 2-sided congruences",
+[IsWrappedLeftRightOrTwoSidedCongruence,
+ IsWrappedLeftRightOrTwoSidedCongruence],
+function(x, y)
+  return EquivalenceRelationCanonicalLookup(x![1])
+  < EquivalenceRelationCanonicalLookup(y![1]);
+end);
+
+InstallMethod(ChooseHashFunction,
+"for a wrapped left, right, or 2-sided congruence and integer",
+[IsLeftRightOrTwoSidedCongruence, IsInt],
+function(cong, data)
+  local HashFunc;
+  HashFunc := function(cong, data)
+    local x;
+    x := EquivalenceRelationCanonicalLookup(cong![1]);
+    return ORB_HashFunctionForPlainFlatList(x, data);
+  end;
+  return rec(func := HashFunc, data := data);
+end);
+
+InstallMethod(\*, "for wrapped left semigroup congruences",
+[IsWrappedLeftCongruence, IsWrappedLeftCongruence],
+{x, y} -> WrappedLeftCongruence(JoinLeftSemigroupCongruences(x![1], y![1])));
+
+InstallMethod(\*, "for wrapped right semigroup congruences",
+[IsWrappedRightCongruence, IsWrappedRightCongruence],
+{x, y} -> WrappedRightCongruence(JoinRightSemigroupCongruences(x![1], y![1])));
+
+InstallMethod(\*, "for wrapped 2-sided semigroup congruences",
+[IsWrappedTwoSidedCongruence, IsWrappedTwoSidedCongruence],
+{x, y} -> WrappedTwoSidedCongruence(JoinSemigroupCongruences(x![1], y![1])));
+
 InstallMethod(JoinSemilatticeOfCongruences,
 "for a congruence poset and a function",
 [IsCongruencePoset, IsFunction],
-function(poset, JoinXCongruences)
-  local children, parents, congs, princ_congs, nrcongs, S, length, found,
-  start, newcong, badcong, newchildren, newparents, i, j, k, c, p;
+function(gen_congs, WrappedXCongruence)
+  local gens, U, S, poset, all_congs;
 
   # Trivial case
-  if DigraphNrVertices(poset) = 0 then
-    return poset;
+  if DigraphNrVertices(gen_congs) = 0 then
+    return gen_congs;
   fi;
 
-  # Extract the info
-  children := InNeighboursMutableCopy(poset);
-  parents := OutNeighboursMutableCopy(poset);
-  congs := ShallowCopy(CongruencesOfPoset(poset));
-  # FIXME this has the built in assumption that all the congruences in poset
-  # are principal
-  princ_congs := ShallowCopy(congs);
-  nrcongs := Length(congs);
-  S := UnderlyingSemigroupOfCongruencePoset(poset);
+  gens := List(CongruencesOfPoset(gen_congs), WrappedXCongruence);
+  U := Range(gens[1]![1]);
+  # Add(gens, WrappedXCongruence(RightSemigroupCongruence(U, [])));
 
-  # Take all the joins
-  Info(InfoSemigroups, 1, "Finding joins of congruences . . .");
-  length := 0;
-  found := true;
-  while found do
-    # There are new congs to try joining
-    start := length + 1;      # New congs start here
-    found := false;           # Have we found any more congs on this sweep?
-    length := Length(congs);  # Remember starting position for next sweep
-
-    for i in [start .. Length(congs)] do      # for each new cong
-      for j in [1 .. Length(princ_congs)] do  # for each 1-generated cong
-        newcong := JoinXCongruences(congs[i], princ_congs[j]);
-        badcong := false;   # Is newcong the same as another cong?
-        newchildren := [];  # Children of newcong
-        newparents := [];   # Parents of newcong
-        for k in [1 .. Length(congs)] do
-          if IsSubrelation(congs[k], newcong) then
-            if IsSubrelation(newcong, congs[k]) then
-              # This is the same as an old cong - discard it!
-              badcong := true;
-              break;
-            else
-              Add(newparents, k);
-            fi;
-          elif IsSubrelation(newcong, congs[k]) then
-            Add(newchildren, k);
-          fi;
-        od;
-        if not badcong then
-          nrcongs := nrcongs + 1;
-          congs[nrcongs] := newcong;
-          for c in newchildren do
-            Add(parents[c], nrcongs);
-          od;
-          for p in newparents do
-            Add(children[p], nrcongs);
-          od;
-          Add(newchildren, nrcongs);  # Include loops (reflexive)
-          Add(newparents, nrcongs);
-          children[nrcongs] := newchildren;
-          parents[nrcongs] := newparents;
-          found := true;
-        fi;
-      od;
-      Info(InfoSemigroups, 2, "Processed cong ", i, " of ", Length(congs),
-           " (", Length(congs) - i, " remaining)");
-    od;
-  od;
-
-  # We are done: make the object and return
-  princ_congs := poset;
-  poset := Digraph(parents);
-  SetInNeighbours(poset, children);
-  SetCongruencesOfPoset(poset, congs);
-  SetDigraphVertexLabels(poset, congs);
-  SetUnderlyingSemigroupOfCongruencePoset(poset, S);
+  S := Semigroup(List(CongruencesOfPoset(gen_congs), WrappedXCongruence));
+  poset := DigraphReflexiveTransitiveClosure(PartialOrderOfDClasses(S));
+  all_congs := List(AsList(S), x -> x![1]);
+  SetCongruencesOfPoset(poset, all_congs);
+  SetDigraphVertexLabels(poset, all_congs);
+  SetUnderlyingSemigroupOfCongruencePoset(poset, U);
   SetFilterObj(poset, IsCongruencePoset);
-  SetPosetOfPrincipalCongruences(poset, princ_congs);
+  SetPosetOfPrincipalCongruences(poset,
+    Filtered(CongruencesOfPoset(gen_congs),
+     x -> Size(GeneratingPairsOfLeftRightOrTwoSidedCongruence(x)) = 1));
   return poset;
 end);
 
@@ -438,7 +481,7 @@ InstallMethod(LatticeOfCongruencesNC,
 function(S, pairs)
   local poset;
   poset := PosetOfPrincipalCongruences(S, pairs);
-  poset := JoinSemilatticeOfCongruences(poset, JoinSemigroupCongruences);
+  poset := JoinSemilatticeOfCongruences(poset, WrappedTwoSidedCongruence);
   return SEMIGROUPS.AddTrivialCongruence(poset, SemigroupCongruence);
 end);
 
@@ -461,8 +504,8 @@ InstallMethod(LatticeOfRightCongruencesNC,
 function(S, pairs)
   local poset;
   poset := PosetOfPrincipalRightCongruences(S, pairs);
-  poset := JoinSemilatticeOfCongruences(poset, JoinRightSemigroupCongruences);
-  return SEMIGROUPS.AddTrivialCongruence(poset, SemigroupCongruence);
+  poset := JoinSemilatticeOfCongruences(poset, WrappedRightCongruence);
+  return SEMIGROUPS.AddTrivialCongruence(poset, RightSemigroupCongruence);
 end);
 
 InstallMethod(LatticeOfRightCongruences,
@@ -485,8 +528,8 @@ InstallMethod(LatticeOfLeftCongruencesNC,
 function(S, pairs)
   local poset;
   poset := PosetOfPrincipalLeftCongruences(S, pairs);
-  poset := JoinSemilatticeOfCongruences(poset, JoinLeftSemigroupCongruences);
-  return SEMIGROUPS.AddTrivialCongruence(poset, SemigroupCongruence);
+  poset := JoinSemilatticeOfCongruences(poset, WrappedLeftCongruence);
+  return SEMIGROUPS.AddTrivialCongruence(poset, LeftSemigroupCongruence);
 end);
 
 InstallMethod(LatticeOfLeftCongruences,
@@ -627,6 +670,7 @@ function(poset)
       prefix := "poset";
     fi;
     S := UnderlyingSemigroupOfCongruencePoset(poset);
+    # Find a non-trivial non-universal congruence if it exists
     C := First(CongruencesOfPoset(poset),
                x -> not NrEquivalenceClasses(x) in [1, Size(S)]);
     if C = fail or IsMagmaCongruence(C) then
