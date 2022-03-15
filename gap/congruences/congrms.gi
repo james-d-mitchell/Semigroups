@@ -881,7 +881,7 @@ function(lhop, rhop)
                     b2 -> ForAny(lhop!.rowBlocks, b1 -> IsSubset(b1, b2)));
 end);
 
-# EquivalenceClasses
+# EquivalenceClasses
 
 InstallMethod(EquivalenceClasses,
 "for Rees matrix semigroup congruence by linked triple",

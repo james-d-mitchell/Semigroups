@@ -189,7 +189,6 @@ function(C)
                   x -> Size(x) > 1);
 end);
 
-
 InstallMethod(EquivalenceRelationCanonicalLookup,
 "for a left, right, or 2-sided congruence that can compute partition",
 [CanComputeEquivalenceRelationPartition],

@@ -21,7 +21,7 @@
 # or otherwise when it is more convenient).
 # * ImagesElm (for the calculation of the elements of an equivalence class)
 # * CongruenceTestMembershipNC
-# 
+#
 # If the equivalence classes of a congruence have their own representation
 # (because they too have better methods than the default ones), then it is also
 # necessary to implement a method for:
@@ -57,7 +57,7 @@
 # object representing for <C>, then an immediate method should be installed in
 # libsemigroups/cong.gi explicitly excluding this type of congruence, and the
 # following mandatory methods listed above for
-# CanComputeEquivalenceRelationPartition should be implemented. 
+# CanComputeEquivalenceRelationPartition should be implemented.
 #
 # To define a new type of congruence that does not implement any of the above
 # (i.e. that uses libsemigroups Congruence objects to compute
