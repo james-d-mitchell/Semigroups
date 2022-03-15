@@ -137,6 +137,10 @@ DeclareOperation("JoinLeftSemigroupCongruences",
                  [IsLeftSemigroupCongruence, IsLeftSemigroupCongruence]);
 DeclareOperation("JoinRightSemigroupCongruences",
                  [IsRightSemigroupCongruence, IsRightSemigroupCongruence]);
+DeclareOperation("MeetLeftSemigroupCongruences",
+                 [IsLeftSemigroupCongruence, IsLeftSemigroupCongruence]);
+DeclareOperation("MeetRightSemigroupCongruences",
+                 [IsRightSemigroupCongruence, IsRightSemigroupCongruence]);
 
 # Comparison operators
 DeclareOperation("IsSubrelation",

@@ -619,6 +619,60 @@ gap> MeetSemigroupCongruences(cong1, cong2);
 gap> MeetSemigroupCongruences(cong3, cong3) = cong3;
 true
 
+# MeetRightSemigroupCongruences
+gap> S := PartitionMonoid(3);;
+gap> pairs1 := [[Bipartition([[1, 2, 3, -1, -2, -3]]),
+>                Bipartition([[1, 2, -1, -2, -3], [3]])]];;
+gap> pairs2 := [[Bipartition([[1, 2, 3, -1, -2, -3]]),
+>                Bipartition([[1, 2, 3, -1, -2], [-3]])],
+>               [Bipartition([[1, 2, -1, -2], [3, -3]]),
+>                Bipartition([[1, 2, -3], [3, -1, -2]])]];;
+gap> cong1 := RightSemigroupCongruence(S, pairs1);;
+gap> cong2 := RightSemigroupCongruence(S, pairs2);;
+gap> cong3 := JoinRightSemigroupCongruences(cong1, cong2);
+<right semigroup congruence over <regular bipartition *-monoid of size 203, 
+ degree 3 with 4 generators> with 3 generating pairs>
+gap> MeetRightSemigroupCongruences(cong1, cong3) = cong1;
+true
+gap> MeetRightSemigroupCongruences(cong2, cong3) = cong2;
+true
+gap> MeetRightSemigroupCongruences(cong3, cong1) = cong1;
+true
+gap> MeetRightSemigroupCongruences(cong3, cong2) = cong2;
+true
+gap> MeetRightSemigroupCongruences(cong1, cong2);
+<right semigroup congruence over <regular bipartition *-monoid of size 203, 
+ degree 3 with 4 generators> with 0 generating pairs>
+gap> MeetRightSemigroupCongruences(cong3, cong3) = cong3;
+true
+
+# MeetLeftSemigroupCongruences
+gap> S := PartitionMonoid(3);;
+gap> pairs1 := [[Bipartition([[1, 2, 3, -1, -2, -3]]),
+>                Bipartition([[1, 2, -1, -2, -3], [3]])]];;
+gap> pairs2 := [[Bipartition([[1, 2, 3, -1, -2, -3]]),
+>                Bipartition([[1, 2, 3, -1, -2], [-3]])],
+>               [Bipartition([[1, 2, -1, -2], [3, -3]]),
+>                Bipartition([[1, 2, -3], [3, -1, -2]])]];;
+gap> cong1 := LeftSemigroupCongruence(S, pairs1);;
+gap> cong2 := LeftSemigroupCongruence(S, pairs2);;
+gap> cong3 := JoinLeftSemigroupCongruences(cong1, cong2);
+<left semigroup congruence over <regular bipartition *-monoid of size 203, 
+ degree 3 with 4 generators> with 3 generating pairs>
+gap> MeetLeftSemigroupCongruences(cong1, cong3) = cong1;
+true
+gap> MeetLeftSemigroupCongruences(cong2, cong3) = cong2;
+true
+gap> MeetLeftSemigroupCongruences(cong3, cong1) = cong1;
+true
+gap> MeetLeftSemigroupCongruences(cong3, cong2) = cong2;
+true
+gap> MeetLeftSemigroupCongruences(cong1, cong2);
+<left semigroup congruence over <regular bipartition *-monoid of size 203, 
+ degree 3 with 4 generators> with 0 generating pairs>
+gap> MeetLeftSemigroupCongruences(cong3, cong3) = cong3;
+true
+
 #
 gap> S := PartitionMonoid(3);;
 gap> pairs1 := [[Bipartition([[1, 2, 3, -1, -2, -3]]),

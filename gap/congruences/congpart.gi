@@ -101,12 +101,8 @@ end);
 # Congruence attributes/operations/etc that don't require CanUseFroidurePin
 ############################################################################
 
-# TODO what about MeetLeftSemigroupCongruences, MeetRightSemigroupCongruences?
-InstallMethod(MeetSemigroupCongruences,
-"for semigroup congruences that can compute partition",
-[CanComputeEquivalenceRelationPartition and IsSemigroupCongruence,
- CanComputeEquivalenceRelationPartition and IsSemigroupCongruence],
-function(lhop, rhop)
+BindGlobal("_MeetXCongruences",
+function(XCongruenceByGeneratingPairs, GeneratingPairsOfXCongruence, lhop, rhop)
   local result, lhop_nr_pairs, rhop_nr_pairs, cong1, cong2, pairs, class, i, j;
 
   if Range(lhop) <> Range(rhop) then
@@ -118,10 +114,12 @@ function(lhop, rhop)
   elif IsSubrelation(rhop, lhop) then
     return lhop;
   fi;
-  result := SemigroupCongruenceByGeneratingPairs(Source(lhop), []);
+  result := XCongruenceByGeneratingPairs(Source(lhop), []);
 
-  lhop_nr_pairs := Sum(EquivalenceRelationPartition(lhop), x -> Binomial(Size(x), 2));
-  rhop_nr_pairs := Sum(EquivalenceRelationPartition(rhop), x -> Binomial(Size(x), 2));
+  lhop_nr_pairs := Sum(EquivalenceRelationPartition(lhop),
+                       x -> Binomial(Size(x), 2));
+  rhop_nr_pairs := Sum(EquivalenceRelationPartition(rhop),
+                       x -> Binomial(Size(x), 2));
 
   if lhop_nr_pairs < rhop_nr_pairs then
     cong1 := lhop;
@@ -136,14 +134,47 @@ function(lhop, rhop)
       for j in [i + 1 .. Length(class)] do
         if [class[i], class[j]] in cong2
             and not [class[i], class[j]] in result then
-          pairs := GeneratingPairsOfSemigroupCongruence(result);
+          pairs := GeneratingPairsOfXCongruence(result);
           pairs := Concatenation(pairs, [[class[i], class[j]]]);
-          result := SemigroupCongruenceByGeneratingPairs(Source(cong1), pairs);
+          result := XCongruenceByGeneratingPairs(Source(cong1), pairs);
         fi;
       od;
     od;
   od;
   return result;
+end);
+
+InstallMethod(MeetLeftSemigroupCongruences,
+"for semigroup congruences that can compute partition",
+[CanComputeEquivalenceRelationPartition and IsLeftSemigroupCongruence,
+ CanComputeEquivalenceRelationPartition and IsLeftSemigroupCongruence],
+function(lhop, rhop)
+  return _MeetXCongruences(LeftSemigroupCongruenceByGeneratingPairs,
+                           GeneratingPairsOfLeftMagmaCongruence,
+                           lhop,
+                           rhop);
+end);
+
+InstallMethod(MeetRightSemigroupCongruences,
+"for semigroup congruences that can compute partition",
+[CanComputeEquivalenceRelationPartition and IsRightSemigroupCongruence,
+ CanComputeEquivalenceRelationPartition and IsRightSemigroupCongruence],
+function(lhop, rhop)
+  return _MeetXCongruences(RightSemigroupCongruenceByGeneratingPairs,
+                           GeneratingPairsOfRightMagmaCongruence,
+                           lhop,
+                           rhop);
+end);
+
+InstallMethod(MeetSemigroupCongruences,
+"for semigroup congruences that can compute partition",
+[CanComputeEquivalenceRelationPartition and IsSemigroupCongruence,
+ CanComputeEquivalenceRelationPartition and IsSemigroupCongruence],
+function(lhop, rhop)
+  return _MeetXCongruences(SemigroupCongruenceByGeneratingPairs,
+                           GeneratingPairsOfSemigroupCongruence,
+                           lhop,
+                           rhop);
 end);
 
 InstallMethod(NrEquivalenceClasses,
