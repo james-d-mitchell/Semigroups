@@ -207,7 +207,7 @@ function(x, class)
   return x in Parent(class);
 end);
 
-# TODO more \* methods for universal and non-universal congruences??
+# TODO(later) more \* methods for universal and non-universal congruences??
 InstallMethod(\*,
 "for two universal semigroup congruence classes",
 [IsUniversalSemigroupCongruenceClass, IsUniversalSemigroupCongruenceClass],

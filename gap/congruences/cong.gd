@@ -39,15 +39,6 @@
 # In other words, we cannot use IsLeftMagmaCongruence to determine whether or
 # not a congruence was created as a left congruence or not (we can use
 # IsLeftMagmaCongruence and not IsRightMagmaCongruence).
-#
-# It might be tempting to introduce things like JoinOfAnyCongruences, or
-# JoinOfLeftRightOrTwoSidedCongruences, but this doesn't make sense in for the
-# following reasons. We might have two left congruences rho and sigma (created
-# as left congruences) which happen to be 2-sided congruences and know this and
-# their generating pairs as 2-sided congruences (although there are mostly no
-# methods for computing these at present), then when we call
-# JoinOfAnyCongruences would we be taking their join as 2-sided congruences or
-# as left congruences? Presuming that these are different TODO(now)???
 ###############################################################################
 
 DeclareProperty("IsLeftRightOrTwoSidedCongruence",

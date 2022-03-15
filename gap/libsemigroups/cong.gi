@@ -54,11 +54,6 @@ InstallImmediateMethod(CanUseLibsemigroupsCongruence,
                        ReturnFalse);
 
 InstallImmediateMethod(CanUseLibsemigroupsCongruence,
-                       IsReesCongruence,
-                       0,
-                       ReturnFalse);
-
-InstallImmediateMethod(CanUseLibsemigroupsCongruence,
                        IsSimpleSemigroupCongruence,
                        0,
                        ReturnFalse);
@@ -327,7 +322,7 @@ function(C, elm1, elm2)
 end);
 
 InstallMethod(EquivalenceRelationPartition, "for CanUseLibsemigroupsCongruence",
-[CanUseLibsemigroupsCongruence], 100,
+[CanUseLibsemigroupsCongruence],
 function(C)
   local S, CC, ntc, gens, class, i, j;
   S := Range(C);

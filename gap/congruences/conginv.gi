@@ -160,22 +160,6 @@ function(C, elm)
   return images;
 end);
 
-# TODO make this the default method for CanComputeEquivalenceRelationPartition
-InstallMethod(EquivalenceClasses,
-"for inverse semigroup congruence by kernel and trace",
-[IsInverseSemigroupCongruenceByKernelTrace],
-function(C)
-  local part, classes, i;
-
-  part := EquivalenceRelationPartitionWithSingletons(C);
-  classes := [];
-  for i in [1 .. Length(part)] do
-    classes[i] := EquivalenceClassOfElementNC(C, part[i][1]);
-    SetAsList(classes[i], part[i]);
-  od;
-  return classes;
-end);
-
 InstallMethod(EquivalenceRelationPartitionWithSingletons,
 "for inverse semigroup congruence by kernel and trace",
 [IsInverseSemigroupCongruenceByKernelTrace],
@@ -207,15 +191,6 @@ function(C)
     Append(elmlists, blockelmlists);
   od;
   return elmlists;
-end);
-
-# TODO make this the default method for CanComputeEquivalenceRelationPartition
-InstallMethod(EquivalenceRelationPartition,
-"for inverse semigroup congruence by kernel and trace",
-[IsInverseSemigroupCongruenceByKernelTrace],
-function(C)
-  return Filtered(EquivalenceRelationPartitionWithSingletons(C),
-                  x -> Size(x) > 1);
 end);
 
 InstallMethod(CongruenceTestMembershipNC,

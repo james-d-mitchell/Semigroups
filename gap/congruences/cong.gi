@@ -236,7 +236,7 @@ end);
 # Congruence class attributes
 ########################################################################
 
-# TODO maybe these should only be for CanComputeEquivalenceRelationPartition
+# Maybe these should only be for CanComputeEquivalenceRelationPartition?
 
 InstallMethod(AsList,
 "for a class of a left, right, or 2-sided semigroup congruence",
