@@ -15,8 +15,12 @@
 # Testers + fundamental representation specific attributes
 #############################################################################
 
+# The following requires CanComputeEquivalenceRelationPartition, because
+# otherwise, it applies to other congruences, which don't have a method for
+# NrEquivalenceClasses.
+
 InstallMethod(IsReesCongruence, "for a semigroup congruence",
-[IsLeftRightOrTwoSidedCongruence],
+[CanComputeEquivalenceRelationPartition],
 9,  # to beat the library method
 function(C)
   local S, classes, nontrivial, i, class, I;
