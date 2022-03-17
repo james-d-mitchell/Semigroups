@@ -15,8 +15,128 @@
 ## (www-circa.mcs.st-and.ac.uk/~mct25/files/mt5099-report.pdf) for more details.
 ##
 
-# TODO use a congruence on the semilattice of idempotents for the trace,
-# instead of traceBlocks and traceLookup.
+TracePicture := function(C)
+  local S, D, reps, trace, part, lookup, colors, i, j;
+
+  S := IdempotentGeneratedSubsemigroup(Source(C));
+  D := PartialOrderOfDClasses(S);
+  reps := DClassReps(S);
+  trace := TraceOfSemigroupCongruence(C);
+  part := List(EquivalenceRelationPartitionWithSingletons(trace), ShallowCopy);
+  for i in [1 .. Length(part)] do
+    for j in [1 .. Length(part[i])] do
+      part[i][j] := Position(reps, part[i][j]);
+    od;
+  od;
+  lookup := [];
+  colors := DIGRAPHS_GraphvizColors();
+  for i in [1 .. Length(part)] do
+    lookup{part[i]} := ListWithIdenticalEntries(Length(part[i]), colors[i * 5]);
+  od;
+  return [D, lookup];
+end;
+
+CheckHypothesis := function(C)
+  local S, K, result, seen, HK, DS, pos, HS, DK;
+
+  S := Source(C);
+  K := KernelOfSemigroupCongruence(C);
+  result := NrEquivalenceClasses(TraceOfSemigroupCongruence(C));
+  seen := BlistList([1 .. NrDClasses(S)], []);
+
+  for DK in DClasses(K) do
+    HK := GroupHClass(DK);
+    DS := DClass(S, MultiplicativeNeutralElement(HK));
+    pos := Position(DClasses(S), DS);
+    if not seen[pos] then 
+      seen[pos] := true;
+      Print(pos, ": ", (Size(DS) / Size(DK)) - (NrRClasses(DS) / NrRClasses(DK)), "\n");
+      result := result + (Size(DS) / Size(DK)) - (NrRClasses(DS) / NrRClasses(DK));
+    fi;
+  od;
+  return result;
+end;
+
+PartitionDClass := function(C, D)
+  return Filtered(List(EquivalenceRelationPartitionWithSingletons(C), x -> Filtered(x, y -> y in D)), x -> not IsEmpty(x));
+end;
+
+CheckHypothesis2 := function(C)
+  local i, part, sizes, D;
+  
+  i := 0;
+  for D in DClasses(Source(C)) do
+    i := i + 1;
+    part := List(EquivalenceRelationPartitionWithSingletons(C), x -> Filtered(x, y -> y in D));
+    sizes := ShallowCopy(AsSSortedList(List(part, Size)));
+    RemoveSet(sizes, 0);
+    if Size(sizes) > 1 then
+      Print(C, D, part, "\n");
+      return false;
+    fi;
+    Print(i, " : ", sizes[1], "\n");
+  od;
+  return true;
+end;
+
+CheckHypothesis3 := function(C)
+  local part, sizes, D;
+  
+  for D in DClasses(Source(C)) do
+    part := List(EquivalenceRelationPartitionWithSingletons(C), x -> Filtered(x, y -> y in D));
+    sizes := ShallowCopy(AsSSortedList(List(part, Size)));
+    RemoveSet(sizes, 0);
+    if Size(sizes) = 1 and not 
+      Print(C, D, part, "\n");
+      return false;
+    fi;
+  od;
+  return true;
+end;
+
+if IsPackageMarkedForLoading("io", "4.4.4") then
+
+  __JDMS_GLOBAL_TIMINGS_RECORD := rec(running := false);
+
+  StartTimer := function()
+    if not __JDMS_GLOBAL_TIMINGS_RECORD.running then
+      __JDMS_GLOBAL_TIMINGS_RECORD.timeofday := IO_gettimeofday();
+    fi;
+  end;
+
+  # Time in microseconds!
+  ElapsedTimer := function()
+    local  timeofday, elapsed;
+    if IsBound(__JDMS_GLOBAL_TIMINGS_RECORD) and
+        IsBound(__JDMS_GLOBAL_TIMINGS_RECORD.timeofday) then
+
+      timeofday := IO_gettimeofday();
+      elapsed := (timeofday.tv_sec - __JDMS_GLOBAL_TIMINGS_RECORD.timeofday.tv_sec)
+                  * 10 ^ 6 + Int((timeofday.tv_usec -
+                   __JDMS_GLOBAL_TIMINGS_RECORD.timeofday.tv_usec));
+      return elapsed;
+    else
+      return 0;
+    fi;
+  end;
+
+  StopTimer := function()
+    local t;
+    t := ElapsedTimer();
+    __JDMS_GLOBAL_TIMINGS_RECORD.running := false;
+    Unbind(__JDMS_GLOBAL_TIMINGS_RECORD.timeofday);
+    return t;
+  end;
+
+  Benchmark := function(func, arg)
+    local t;
+    StartTimer();
+    CallFuncList(func, arg);
+    t := StopTimer();
+    GASMAN("collect");
+    return t;
+  end;
+fi;
 
 InstallGlobalFunction(InverseSemigroupCongruenceByKernelTrace,
 function(S, kernel, traceBlocks)
@@ -71,31 +191,17 @@ function(S, kernel, traceBlocks)
 end);
 
 InstallGlobalFunction(InverseSemigroupCongruenceByKernelTraceNC,
-function(S, kernel, traceBlocks)
-  local traceLookup, ES, fam, C, i, elm;
+function(S, kernel, trace)
+  local fam, C;
 
-  # Sort blocks
-  # traceBlocks := SortedList(List(traceBlocks, SortedList));
-
-  # Calculate lookup table for trace
-  # Might remove lookup - might never be better than blocks
-  # traceLookup := [];
-  # ES := IdempotentGeneratedSubsemigroup(S);
-
-  # for i in [1 .. Length(traceBlocks)] do
-  #   for elm in traceBlocks[i] do
-  #     traceLookup[PositionCanonical(ES, elm)] := i;
-  #   od;
-  # od;
-  # Construct the object
   fam := GeneralMappingsFamily(ElementsFamily(FamilyObj(S)),
                                ElementsFamily(FamilyObj(S)));
   C := Objectify(NewType(fam, IsInverseSemigroupCongruenceByKernelTrace),
-                    rec( ));
+                 rec());
   SetSource(C, S);
   SetRange(C, S);
   SetKernelOfSemigroupCongruence(C, kernel);
-  SetTraceOfSemigroupCongruence(C, traceBlocks);
+  SetTraceOfSemigroupCongruence(C, trace);
   return C;
 end);
 
@@ -166,7 +272,7 @@ function(C)
 
   S := Range(C);
   elmlists := [];
-  kernel := Elements(KernelOfSemigroupCongruence(C));
+  kernel := KernelOfSemigroupCongruence(C);
 
   # Consider each trace-class in turn
   for traceBlock in
@@ -188,6 +294,7 @@ function(C)
         fi;
       od;
     od;
+    Print(Length(blockelmlists), "\n");
     Append(elmlists, blockelmlists);
   od;
   return elmlists;
@@ -199,15 +306,9 @@ InstallMethod(CongruenceTestMembershipNC,
  IsMultiplicativeElement,
  IsMultiplicativeElement],
 function(C, x, y)
-  # Is (a^-1 a, b^-1 b) in the trace?
-  if x ^ -1 * x in
-      First(TraceOfSemigroupCongruence(C), c -> y ^ -1 * y in c) then
-    # Is ab^-1 in the kernel?
-    if x * y ^ -1 in KernelOfSemigroupCongruence(C) then
-      return true;
-    fi;
-  fi;
-  return false;
+  return CongruenceTestMembershipNC(TraceOfSemigroupCongruence(C),
+                                    x * x ^ -1,
+                                    y * y ^ -1);
 end);
 
 InstallMethod(EquivalenceClassOfElementNC,
@@ -234,27 +335,27 @@ end);
 InstallMethod(TraceOfSemigroupCongruence, "for semigroup congruence",
 [IsSemigroupCongruence],
 function(C)
-  local S, invcong;
+  local S, invcong, copy;
   S := Range(C);
   if not (IsInverseSemigroup(S) and IsGeneratorsOfInverseSemigroup(S)) then
     ErrorNoReturn("the range of the argument (a congruence) must be an ",
                   "inverse semigroup with inverse op");
   fi;
-  invcong := AsInverseSemigroupCongruenceByKernelTrace(C);
-  return invcong!.traceBlocks;
+  copy := AsInverseSemigroupCongruenceByKernelTrace(C);
+  return TraceOfSemigroupCongruence(copy);
 end);
 
 InstallMethod(KernelOfSemigroupCongruence, "for semigroup congruence",
 [IsSemigroupCongruence],
 function(C)
-  local S, invcong;
+  local S, invcong, copy;
   S := Range(C);
   if not (IsInverseSemigroup(S) and IsGeneratorsOfInverseSemigroup(S)) then
     ErrorNoReturn("the range of the argument (a congruence) must be an ",
                   "inverse semigroup with inverse op");
   fi;
-  invcong := AsInverseSemigroupCongruenceByKernelTrace(C);
-  return invcong!.kernel;
+  copy := AsInverseSemigroupCongruenceByKernelTrace(C);
+  return KernelOfSemigroupCongruence(copy);
 end);
 
 InstallMethod(AsInverseSemigroupCongruenceByKernelTrace,
@@ -577,26 +678,48 @@ SEMIGROUPS.KernelTraceClosureNew := function(S, kernel, trace, pairs)
   end;
 
   enforce_conditions := function()
-    local f, e, a;
+    local e, f, enum, D, i, j, a;
+    Print(ListWithIdenticalEntries(72, '#'), "\n");
+    Print("#I  enforce_conditions()\n");
+
+    StartTimer();
+    # C2 condition
+    for D in DClasses(kernel) do
+      for i in [1 .. NrIdempotents(D) - 1] do
+        e := Idempotents(D)[i];
+        for j in [i + 1 .. NrIdempotents(D)] do
+          f := Idempotents(D)[j];
+          if not CongruenceTestMembershipNC(trace, e, f) then
+            Add(tracepairs, Set([e, f]));
+          fi;
+        od;
+      od;
+    od;
+    if not IsEmpty(tracepairs) then
+      Print("#I  elapsed time: ", StopTimer(), " microseconds\n");
+      return;
+    fi;
+
+    enum := EnumeratorCanonical(kernel);
     for a in EnumeratorCanonical(S) do
-      f := RightOne(a);
-      if a in kernel then
-        e := LeftOne(a);
-        if not CongruenceTestMembershipNC(trace, e, f) then
-          Add(tracepairs, [e, f]);
-        fi;
-      else
-        for e in EquivalenceClassOfElementNC(trace, f) do
-          if a * e in kernel then
+      if not a in enum then
+        f := RightOne(a);
+        for e in ImagesElm(trace, f) do
+          # C1 condition
+          if a * e in enum then
             AddSet(kernelgenstoapply, a);
             break;
           fi;
         od;
       fi;
     od;
+    Print("#I  elapsed time: ", StopTimer(), " microseconds\n");
   end;
 
   compute_kernel := function()
+    Print(ListWithIdenticalEntries(72, '#'), "\n");
+    Print("#I  compute_kernel(", Size(kernelgenstoapply), " generators)\n");
+    StartTimer();
     if not IsEmpty(kernelgenstoapply) then
       kernel := NormalClosureInverseSemigroup(S,
                                               kernel,
@@ -604,43 +727,42 @@ SEMIGROUPS.KernelTraceClosureNew := function(S, kernel, trace, pairs)
       Enumerate(kernel);
       kernelgenstoapply := [];
     fi;
+    Print("#I  elapsed time: ", StopTimer(), " microseconds\n");
   end;
 
   enumerate_trace := function()
-    local pairs, pair;
-    tracepairs := Set(tracepairs);
+    local opts, act, pairs, x, pair;
+
+    Print(ListWithIdenticalEntries(72, '#'), "\n");
+    Print("#I  enumerate_trace(", Size(tracepairs), " pairs)\n");
+    StartTimer();
+
+    tracepairs := Filtered(Set(tracepairs), x -> Size(x) = 2);
     for pair in tracepairs do
-      if not pair in trace then
+      if not CongruenceTestMembershipNC(trace, pair[1], pair[2]) then
         pairs := ShallowCopy(GeneratingPairsOfSemigroupCongruence(trace));
         Add(pairs, pair);
         trace := SemigroupCongruenceByGeneratingPairs(Source(trace), pairs);
       fi;
     od;
     tracepairs := [];
+    Print("#I  elapsed time: ", StopTimer(), " microseconds\n");
   end;
 
-  Info(InfoSemigroups, 3, "kernel size: ", Size(kernel));
-  Info(InfoSemigroups, 3, "trace # classes: ", NrEquivalenceClasses(trace));
-  Info(InfoSemigroups, 3, "# kernel generators ", Size(kernelgenstoapply));
-  Info(InfoSemigroups, 3, "# trace pairs: ", Size(tracepairs));
-    # Print(kernelgenstoapply, "\n");
   compute_kernel();
   enforce_conditions();
 
   # Keep applying the method until no new info is found
   while not IsEmpty(kernelgenstoapply) or not IsEmpty(tracepairs) do
-    Info(InfoSemigroups, 3, "kernel size: ", Size(kernel));
-    Info(InfoSemigroups, 3, "trace # classes: ", NrEquivalenceClasses(trace));
-    Info(InfoSemigroups, 3, "# kernel generators ", Size(kernelgenstoapply));
-    Info(InfoSemigroups, 3, "# trace pairs: ", Size(tracepairs));
+    #Info(InfoSemigroups, 3, "kernel size: ", Size(kernel));
+    #Info(InfoSemigroups, 3, "number of trace classes: ", NrEquivalenceClasses(trace));
+    #Info(InfoSemigroups, 3, "number of kernel generators: ", Size(kernelgenstoapply));
+    #Info(InfoSemigroups, 3, "number of trace pairs: ", Size(tracepairs));
+    Print(ListWithIdenticalEntries(72, '#'), "\n");
     enumerate_trace();
     compute_kernel();
     enforce_conditions();
   od;
-  #trace := SemigroupCongruenceByGeneratingPairs(kernel,
-  #           GeneratingPairsOfSemigroupCongruence(trace));
-  # return [S, kernel, trace];
-
   return InverseSemigroupCongruenceByKernelTraceNC(S, kernel, trace);
 end;
 
