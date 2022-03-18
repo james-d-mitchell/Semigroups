@@ -79,21 +79,6 @@ CheckHypothesis2 := function(C)
   return true;
 end;
 
-CheckHypothesis3 := function(C)
-  local part, sizes, D;
-  
-  for D in DClasses(Source(C)) do
-    part := List(EquivalenceRelationPartitionWithSingletons(C), x -> Filtered(x, y -> y in D));
-    sizes := ShallowCopy(AsSSortedList(List(part, Size)));
-    RemoveSet(sizes, 0);
-    if Size(sizes) = 1 and not 
-      Print(C, D, part, "\n");
-      return false;
-    fi;
-  od;
-  return true;
-end;
-
 if IsPackageMarkedForLoading("io", "4.4.4") then
 
   __JDMS_GLOBAL_TIMINGS_RECORD := rec(running := false);
@@ -294,7 +279,6 @@ function(C)
         fi;
       od;
     od;
-    Print(Length(blockelmlists), "\n");
     Append(elmlists, blockelmlists);
   od;
   return elmlists;
@@ -306,9 +290,15 @@ InstallMethod(CongruenceTestMembershipNC,
  IsMultiplicativeElement,
  IsMultiplicativeElement],
 function(C, x, y)
-  return CongruenceTestMembershipNC(TraceOfSemigroupCongruence(C),
-                                    x * x ^ -1,
-                                    y * y ^ -1);
+  # Is (a^-1 a, b^-1 b) in the trace?
+  if x ^ -1 * x in
+      First(TraceOfSemigroupCongruence(C), c -> y ^ -1 * y in c) then
+    # Is ab^-1 in the kernel?
+    if x * y ^ -1 in KernelOfSemigroupCongruence(C) then
+      return true;
+    fi;
+  fi;
+  return false;
 end);
 
 InstallMethod(EquivalenceClassOfElementNC,
