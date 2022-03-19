@@ -48,7 +48,7 @@ CheckHypothesis := function(C)
     HK := GroupHClass(DK);
     DS := DClass(S, MultiplicativeNeutralElement(HK));
     pos := Position(DClasses(S), DS);
-    if not seen[pos] then 
+    if not seen[pos] then
       seen[pos] := true;
       Print(pos, ": ", (Size(DS) / Size(DK)) - (NrRClasses(DS) / NrRClasses(DK)), "\n");
       result := result + (Size(DS) / Size(DK)) - (NrRClasses(DS) / NrRClasses(DK));
@@ -63,7 +63,7 @@ end;
 
 CheckHypothesis2 := function(C)
   local i, part, sizes, D;
-  
+
   i := 0;
   for D in DClasses(Source(C)) do
     i := i + 1;
@@ -669,8 +669,8 @@ SEMIGROUPS.KernelTraceClosureNew := function(S, kernel, trace, pairs)
 
   enforce_conditions := function()
     local e, f, enum, D, i, j, a;
-    Print(ListWithIdenticalEntries(72, '#'), "\n");
-    Print("#I  enforce_conditions()\n");
+    #Print(ListWithIdenticalEntries(72, '#'), "\n");
+    #Print("#I  enforce_conditions()\n");
 
     StartTimer();
     # C2 condition
@@ -686,7 +686,7 @@ SEMIGROUPS.KernelTraceClosureNew := function(S, kernel, trace, pairs)
       od;
     od;
     if not IsEmpty(tracepairs) then
-      Print("#I  elapsed time: ", StopTimer(), " microseconds\n");
+      #Print("#I  elapsed time: ", StopTimer(), " microseconds\n");
       return;
     fi;
 
@@ -703,12 +703,12 @@ SEMIGROUPS.KernelTraceClosureNew := function(S, kernel, trace, pairs)
         od;
       fi;
     od;
-    Print("#I  elapsed time: ", StopTimer(), " microseconds\n");
+    #Print("#I  elapsed time: ", StopTimer(), " microseconds\n");
   end;
 
   compute_kernel := function()
-    Print(ListWithIdenticalEntries(72, '#'), "\n");
-    Print("#I  compute_kernel(", Size(kernelgenstoapply), " generators)\n");
+    #Print(ListWithIdenticalEntries(72, '#'), "\n");
+    #Print("#I  compute_kernel(", Size(kernelgenstoapply), " generators)\n");
     StartTimer();
     if not IsEmpty(kernelgenstoapply) then
       kernel := NormalClosureInverseSemigroup(S,
@@ -717,14 +717,14 @@ SEMIGROUPS.KernelTraceClosureNew := function(S, kernel, trace, pairs)
       Enumerate(kernel);
       kernelgenstoapply := [];
     fi;
-    Print("#I  elapsed time: ", StopTimer(), " microseconds\n");
+    #Print("#I  elapsed time: ", StopTimer(), " microseconds\n");
   end;
 
   enumerate_trace := function()
     local opts, act, pairs, x, pair;
 
-    Print(ListWithIdenticalEntries(72, '#'), "\n");
-    Print("#I  enumerate_trace(", Size(tracepairs), " pairs)\n");
+    #Print(ListWithIdenticalEntries(72, '#'), "\n");
+    #Print("#I  enumerate_trace(", Size(tracepairs), " pairs)\n");
     StartTimer();
 
     tracepairs := Filtered(Set(tracepairs), x -> Size(x) = 2);
@@ -736,7 +736,7 @@ SEMIGROUPS.KernelTraceClosureNew := function(S, kernel, trace, pairs)
       fi;
     od;
     tracepairs := [];
-    Print("#I  elapsed time: ", StopTimer(), " microseconds\n");
+    #Print("#I  elapsed time: ", StopTimer(), " microseconds\n");
   end;
 
   compute_kernel();
@@ -748,7 +748,7 @@ SEMIGROUPS.KernelTraceClosureNew := function(S, kernel, trace, pairs)
     #Info(InfoSemigroups, 3, "number of trace classes: ", NrEquivalenceClasses(trace));
     #Info(InfoSemigroups, 3, "number of kernel generators: ", Size(kernelgenstoapply));
     #Info(InfoSemigroups, 3, "number of trace pairs: ", Size(tracepairs));
-    Print(ListWithIdenticalEntries(72, '#'), "\n");
+    #Print(ListWithIdenticalEntries(72, '#'), "\n");
     enumerate_trace();
     compute_kernel();
     enforce_conditions();
