@@ -45,6 +45,7 @@ SEMIGROUPS.PrincipalXCongruencePosetNC :=
   last_collected := 0;
   nr := 0;
   for pair in pairs do
+    nr := nr + 1;
     if pair[1] = pair[2] then
       continue;
     fi;
@@ -69,7 +70,6 @@ SEMIGROUPS.PrincipalXCongruencePosetNC :=
         fi;
       fi;
     od;
-    nr := nr + 1;
     if nr > last_collected + 1999 then
       Info(InfoSemigroups,
            1,
@@ -95,6 +95,10 @@ SEMIGROUPS.PrincipalXCongruencePosetNC :=
       parents[nrcongs] := newparents;
     fi;
   od;
+  Info(InfoSemigroups,
+       1,
+       StringFormatted("Found {} principal congruences in total!",
+                       Length(parents)));
 
   # We are done: make the object and return
   poset := Digraph(parents);
@@ -294,6 +298,8 @@ function(gen_congs, WrappedXCongruence)
 
   S := Semigroup(List(CongruencesOfPoset(gen_congs), WrappedXCongruence));
   poset := DigraphReflexiveTransitiveClosure(PartialOrderOfDClasses(S));
+  Info(InfoSemigroups, 1, StringFormatted("Found {} congruences in total!", 
+       Size(S)));
   all_congs := List(AsList(S), x -> x![1]);
   SetCongruencesOfPoset(poset, all_congs);
   SetDigraphVertexLabels(poset, all_congs);

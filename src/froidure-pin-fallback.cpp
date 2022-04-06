@@ -18,22 +18,22 @@
 
 #include "froidure-pin-fallback.hpp"
 
-#include <string.h>  // for size_t, memcpy
+#include <string.h> // for size_t, memcpy
 
-#include <algorithm>  // for max
-#include <iostream>   // for operator<<, cout, ostream
-#include <string>     // for string
+#include <algorithm> // for max
+#include <iostream>  // for operator<<, cout, ostream
+#include <string>    // for string
 
 // GAP headers
-#include "compiled.h"  // for RNamName etc
+#include "compiled.h" // for RNamName etc
 
 // Semigroups package for GAP headers
-#include "pkg.hpp"               // for HTAdd, HTValue, IsSemigroup, SEMIGROUPS
-#include "semigroups-debug.hpp"  // for SEMIGROUPS_ASSERT
+#include "pkg.hpp"              // for HTAdd, HTValue, IsSemigroup, SEMIGROUPS
+#include "semigroups-debug.hpp" // for SEMIGROUPS_ASSERT
 
 // libsemigroups headers
-#include "libsemigroups/report.hpp"  // for REPORTER, Reporter
-#include "libsemigroups/timer.hpp"   // for Timer
+#include "libsemigroups/report.hpp" // for REPORTER, Reporter
+#include "libsemigroups/timer.hpp"  // for Timer
 
 using libsemigroups::detail::Timer;
 
@@ -43,25 +43,19 @@ using libsemigroups::detail::Timer;
 #define INT_PLIST2(plist, i, j) INT_INTOBJ(ELM_PLIST2(plist, i, j))
 #define ELM_PLIST2(plist, i, j) ELM_PLIST(ELM_PLIST(plist, i), j)
 
-#define SEMIGROUPS_REPORT(...)                                             \
-  (libsemigroups::REPORTER.report() ? libsemigroups::REPORTER(__VA_ARGS__) \
-                                    : libsemigroups::REPORTER)
+#define SEMIGROUPS_REPORT_TIME(var)                                            \
+  SEMIGROUPS_REPORT_DEFAULT("elapsed time (%s): %s\n", __func__,               \
+                            var.string().c_str());
 
-#define SEMIGROUPS_REPORT_DEFAULT(...) SEMIGROUPS_REPORT(__VA_ARGS__).flush();
-
-#define SEMIGROUPS_REPORT_TIME(var) \
-  SEMIGROUPS_REPORT_DEFAULT(        \
-      "elapsed time (%s): %s\n", __func__, var.string().c_str());
-
-static Int RNam_batch_size        = 0;
+static Int RNam_batch_size = 0;
 static Int RNam_DefaultOptionsRec = 0;
-static Int RNam_opts              = 0;
+static Int RNam_opts = 0;
 
 static inline void initRNams() {
   if (!RNam_batch_size) {
-    RNam_batch_size        = RNamName("batch_size");
+    RNam_batch_size = RNamName("batch_size");
     RNam_DefaultOptionsRec = RNamName("DefaultOptionsRec");
-    RNam_opts              = RNamName("opts");
+    RNam_opts = RNamName("opts");
   }
 }
 
@@ -95,7 +89,7 @@ static inline size_t get_batch_size(Obj so) {
 //
 // Assumes the length of data!.elts is at most 2 ^ 28.
 
-Obj RUN_FROIDURE_PIN(Obj self, Obj obj, Obj limit) {
+Obj RUN_FROIDURE_PIN(Obj self, Obj obj, Obj limit, Obj report) {
   Obj found, elts, gens, genslookup, right, left, first, final, prefix, suffix,
       reduced, words, ht, rules, lenindex, newElt, newword, objval, newrule,
       empty, oldword, x, data, parent, stopper;
@@ -104,18 +98,17 @@ Obj RUN_FROIDURE_PIN(Obj self, Obj obj, Obj limit) {
 
   if (!IS_PREC(obj)) {
     ErrorQuit("expected a plain record as 1st argument, found %s",
-              (Int) TNAM_OBJ(obj),
-              0L);
-  }  // TODO(now) other checks
+              (Int)TNAM_OBJ(obj), 0L);
+  } // TODO(now) other checks
 
   initRNams();
 
   parent = ElmPRec(obj, RNamName("parent"));
   SEMIGROUPS_ASSERT(CALL_1ARGS(IsSemigroup, parent) == True);
-  data              = obj;
+  data = obj;
   size_t batch_size = get_batch_size(parent);
 
-  i  = INT_INTOBJ(ElmPRec(data, RNamName("pos")));
+  i = INT_INTOBJ(ElmPRec(data, RNamName("pos")));
   nr = INT_INTOBJ(ElmPRec(data, RNamName("nr")));
 
   if (i > nr || static_cast<size_t>(INT_INTOBJ(limit)) <= nr) {
@@ -123,7 +116,9 @@ Obj RUN_FROIDURE_PIN(Obj self, Obj obj, Obj limit) {
     return data;
   }
   int_limit = std::max(static_cast<UInt>(INT_INTOBJ(limit)), nr + batch_size);
-  SEMIGROUPS_REPORT_DEFAULT("limit = %llu\n", uint64_t(int_limit));
+  if (report == True) {
+    std::cout << "#I  limit = " << int_limit << std::endl;
+  }
 
   Timer timer;
 
@@ -196,43 +191,39 @@ Obj RUN_FROIDURE_PIN(Obj self, Obj obj, Obj limit) {
   nrrules = INT_INTOBJ(ElmPRec(data, RNamName("nrrules")));
 
   nrgens = LEN_PLIST(gens);
-  stop   = 0;
-  found  = False;
+  stop = 0;
+  found = False;
 
   while (i <= nr && !stop) {
-    while (i <= nr && (UInt) LEN_PLIST(ELM_PLIST(words, i)) == len && !stop) {
+    while (i <= nr && (UInt)LEN_PLIST(ELM_PLIST(words, i)) == len && !stop) {
       b = INT_INTOBJ(ELM_PLIST(first, i));
       s = INT_INTOBJ(ELM_PLIST(suffix, i));
       RetypeBag(ELM_PLIST(right, i),
-                T_PLIST_CYC);  // from T_PLIST_EMPTY
+                T_PLIST_CYC); // from T_PLIST_EMPTY
       for (j = 1; j <= nrgens; j++) {
         if (s != 0 && ELM_PLIST2(reduced, s, j) == False) {
           r = INT_PLIST2(right, s, j);
           if (INT_PLIST(prefix, r) != 0) {
             intval = INT_PLIST2(left, INT_PLIST(prefix, r), b);
-            SET_ELM_PLIST2(
-                right, i, j, ELM_PLIST2(right, intval, INT_PLIST(final, r)));
+            SET_ELM_PLIST2(right, i, j,
+                           ELM_PLIST2(right, intval, INT_PLIST(final, r)));
             SET_ELM_PLIST2(reduced, i, j, False);
           } else if (r == one) {
             SET_ELM_PLIST2(right, i, j, ELM_PLIST(genslookup, b));
             SET_ELM_PLIST2(reduced, i, j, False);
           } else {
-            SET_ELM_PLIST2(right,
-                           i,
-                           j,
-                           ELM_PLIST2(right,
-                                      INT_PLIST(genslookup, b),
+            SET_ELM_PLIST2(right, i, j,
+                           ELM_PLIST2(right, INT_PLIST(genslookup, b),
                                       INT_PLIST(final, r)));
             SET_ELM_PLIST2(reduced, i, j, False);
           }
         } else {
-          newElt  = PROD(ELM_PLIST(elts, i), ELM_PLIST(gens, j));
+          newElt = PROD(ELM_PLIST(elts, i), ELM_PLIST(gens, j));
           oldword = ELM_PLIST(words, i);
-          len     = LEN_PLIST(oldword);
+          len = LEN_PLIST(oldword);
           newword = NEW_PLIST(T_PLIST_CYC, len + 1);
 
-          memcpy(ADDR_OBJ(newword) + 1,
-                 CONST_ADDR_OBJ(oldword) + 1,
+          memcpy(ADDR_OBJ(newword) + 1, CONST_ADDR_OBJ(oldword) + 1,
                  static_cast<size_t>(len * sizeof(Obj)));
           SET_ELM_PLIST(newword, len + 1, INTOBJ_INT(j));
           SET_LEN_PLIST(newword, len + 1);
@@ -299,58 +290,55 @@ Obj RUN_FROIDURE_PIN(Obj self, Obj obj, Obj limit) {
             stop = (nr >= int_limit);
           }
         }
-      }  // finished applying gens to
-         // <elts[i]>
+      } // finished applying gens to
+        // <elts[i]>
       stop = (stop || i == stopper_int);
       i++;
-    }  // finished words of length <len> or
-       // <stop>
-    if (i > nr || (UInt) LEN_PLIST(ELM_PLIST(words, i)) != len) {
+    } // finished words of length <len> or
+      // <stop>
+    if (i > nr || (UInt)LEN_PLIST(ELM_PLIST(words, i)) != len) {
       if (len > 1) {
         for (j = INT_INTOBJ(ELM_PLIST(lenindex, len)); j <= i - 1; j++) {
           RetypeBag(ELM_PLIST(left, j),
-                    T_PLIST_CYC);  // from
-                                   // T_PLIST_EMPTY
+                    T_PLIST_CYC); // from
+                                  // T_PLIST_EMPTY
           p = INT_INTOBJ(ELM_PLIST(prefix, j));
           b = INT_INTOBJ(ELM_PLIST(final, j));
           for (k = 1; k <= nrgens; k++) {
-            SET_ELM_PLIST2(
-                left, j, k, ELM_PLIST2(right, INT_PLIST2(left, p, k), b));
+            SET_ELM_PLIST2(left, j, k,
+                           ELM_PLIST2(right, INT_PLIST2(left, p, k), b));
           }
         }
       } else if (len == 1) {
         for (j = INT_INTOBJ(ELM_PLIST(lenindex, len)); j <= i - 1; j++) {
           RetypeBag(ELM_PLIST(left, j),
-                    T_PLIST_CYC);  // from
-                                   // T_PLIST_EMPTY
+                    T_PLIST_CYC); // from
+                                  // T_PLIST_EMPTY
           b = INT_INTOBJ(ELM_PLIST(final, j));
           for (k = 1; k <= nrgens; k++) {
-            SET_ELM_PLIST2(
-                left, j, k, ELM_PLIST2(right, INT_PLIST(genslookup, k), b));
+            SET_ELM_PLIST2(left, j, k,
+                           ELM_PLIST2(right, INT_PLIST(genslookup, k), b));
           }
         }
       }
       len++;
       AssPlist(lenindex, len, INTOBJ_INT(i));
     }
-    if (i <= nr) {
-      SEMIGROUPS_REPORT_DEFAULT("found %llu elements, %llu "
-                                "rules, max word length %llu, so "
-                                "far\n",
-                                uint64_t(nr),
-                                uint64_t(nrrules),
-                                uint64_t(len - 1));
-    } else {
-      SEMIGROUPS_REPORT_DEFAULT("found %llu elements, %llu "
-                                "rules, max word length %llu, "
-                                "finished!\n",
-                                uint64_t(nr),
-                                uint64_t(nrrules),
-                                uint64_t(len - 1));
+    if (report == True) {
+      std::cout << "#I  found " << nr << " elements, " << nrrules
+                << " rules, max word length " << len - 1 << ", ";
+      if (i <= nr) {
+        std::cout << "so far";
+      } else {
+        std::cout << "finished!";
+      }
+      std::cout << std::endl;
     }
   }
 
-  SEMIGROUPS_REPORT_TIME(timer);
+  if (report == True) {
+    std::cout << "#I  elapsed time: " << timer << std::endl;
+  }
   AssPRec(data, RNamName("nr"), INTOBJ_INT(nr));
   AssPRec(data, RNamName("nrrules"), INTOBJ_INT(nrrules));
   AssPRec(data, RNamName("one"), ((one != 0) ? INTOBJ_INT(one) : False));
@@ -372,8 +360,8 @@ Obj RUN_FROIDURE_PIN(Obj self, Obj obj, Obj limit) {
 
 Obj SCC_UNION_LEFT_RIGHT_CAYLEY_GRAPHS(Obj self, Obj scc1, Obj scc2) {
   UInt *ptr;
-  Int   i, n, len, nr, j, k, l;
-  Obj   comps1, id2, comps2, id, comps, seen, comp1, comp2, new_comp, x, out;
+  Int i, n, len, nr, j, k, l;
+  Obj comps1, id2, comps2, id, comps, seen, comp1, comp2, new_comp, x, out;
 
   n = LEN_PLIST(ElmPRec(scc1, RNamName("id")));
 
@@ -386,7 +374,7 @@ Obj SCC_UNION_LEFT_RIGHT_CAYLEY_GRAPHS(Obj self, Obj scc1, Obj scc2) {
 
   comps1 = ElmPRec(scc1, RNamName("comps"));
   comps2 = ElmPRec(scc2, RNamName("comps"));
-  id2    = ElmPRec(scc2, RNamName("id"));
+  id2 = ElmPRec(scc2, RNamName("id"));
 
   id = NEW_PLIST_IMM(T_PLIST_CYC, n);
   SET_LEN_PLIST(id, n);
@@ -396,7 +384,7 @@ Obj SCC_UNION_LEFT_RIGHT_CAYLEY_GRAPHS(Obj self, Obj scc1, Obj scc2) {
   }
 
   seen = NewBag(T_DATOBJ, (LEN_PLIST(comps2) + 1) * sizeof(UInt));
-  ptr  = reinterpret_cast<UInt *>(ADDR_OBJ(seen));
+  ptr = reinterpret_cast<UInt *>(ADDR_OBJ(seen));
   for (i = 0; i < LEN_PLIST(comps2) + 1; i++) {
     ptr[i] = 0;
   }
@@ -416,7 +404,7 @@ Obj SCC_UNION_LEFT_RIGHT_CAYLEY_GRAPHS(Obj self, Obj scc1, Obj scc2) {
         k = INT_INTOBJ(ELM_PLIST(id2, INT_INTOBJ(ELM_PLIST(comp1, j))));
         if (reinterpret_cast<UInt *>(ADDR_OBJ(seen))[k] == 0) {
           reinterpret_cast<UInt *>(ADDR_OBJ(seen))[k] = 1;
-          comp2                                       = ELM_PLIST(comps2, k);
+          comp2 = ELM_PLIST(comps2, k);
           for (l = 1; l <= LEN_PLIST(comp2); l++) {
             x = ELM_PLIST(comp2, l);
             SET_ELM_PLIST(id, INT_INTOBJ(x), INTOBJ_INT(nr));
@@ -441,23 +429,20 @@ Obj SCC_UNION_LEFT_RIGHT_CAYLEY_GRAPHS(Obj self, Obj scc1, Obj scc2) {
   return out;
 }
 
-// <right> and <left> should be scc data
-// structures for the right and left Cayley
-// graphs of a semigroup, as produced by
-// DigraphStronglyConnectedComponents. This
-// function find the H-classes of the
-// semigroup from <right> and <left>. The
-// method used is that described in:
+// <right> and <left> should be scc data structures for the right and left
+// Cayley graphs of a semigroup, as produced by
+// DigraphStronglyConnectedComponents. This function find the H-classes of the
+// semigroup from <right> and <left>. The method used is that described in:
 // https://www.irif.fr/~jep//PDF/Exposes/StAndrews.pdf
 
 Obj FIND_HCLASSES(Obj self, Obj right, Obj left) {
   UInt *nextpos, *sorted, *lookup, init;
-  Int   n, nrcomps, i, hindex, rindex, j, k, len;
-  Obj   rightid, leftid, comps, buf, id, out, comp;
+  Int n, nrcomps, i, hindex, rindex, j, k, len;
+  Obj rightid, leftid, comps, buf, id, out, comp;
 
   rightid = ElmPRec(right, RNamName("id"));
-  leftid  = ElmPRec(left, RNamName("id"));
-  n       = LEN_PLIST(rightid);
+  leftid = ElmPRec(left, RNamName("id"));
+  n = LEN_PLIST(rightid);
 
   if (n == 0) {
     out = NEW_PREC(2);
@@ -465,10 +450,10 @@ Obj FIND_HCLASSES(Obj self, Obj right, Obj left) {
     AssPRec(out, RNamName("comps"), NEW_PLIST_IMM(T_PLIST_EMPTY, 0));
     return out;
   }
-  comps   = ElmPRec(right, RNamName("comps"));
+  comps = ElmPRec(right, RNamName("comps"));
   nrcomps = LEN_PLIST(comps);
 
-  buf     = NewBag(T_DATOBJ, (2 * n + nrcomps + 1) * sizeof(UInt));
+  buf = NewBag(T_DATOBJ, (2 * n + nrcomps + 1) * sizeof(UInt));
   nextpos = reinterpret_cast<UInt *>(ADDR_OBJ(buf));
 
   nextpos[1] = 1;
@@ -479,7 +464,7 @@ Obj FIND_HCLASSES(Obj self, Obj right, Obj left) {
   sorted = reinterpret_cast<UInt *>(ADDR_OBJ(buf)) + nrcomps;
   lookup = reinterpret_cast<UInt *>(ADDR_OBJ(buf)) + nrcomps + n;
   for (i = 1; i <= n; i++) {
-    j                  = INT_INTOBJ(ELM_PLIST(rightid, i));
+    j = INT_INTOBJ(ELM_PLIST(rightid, i));
     sorted[nextpos[j]] = i;
     nextpos[j]++;
     lookup[i] = 0;
@@ -492,16 +477,16 @@ Obj FIND_HCLASSES(Obj self, Obj right, Obj left) {
 
   hindex = 0;
   rindex = 0;
-  init   = 0;
+  init = 0;
 
   for (i = 1; i <= n; i++) {
     sorted = reinterpret_cast<UInt *>(ADDR_OBJ(buf)) + nrcomps;
     lookup = reinterpret_cast<UInt *>(ADDR_OBJ(buf)) + nrcomps + n;
-    j      = sorted[i];
-    k      = INT_INTOBJ(ELM_PLIST(rightid, j));
+    j = sorted[i];
+    k = INT_INTOBJ(ELM_PLIST(rightid, j));
     if (k > rindex) {
       rindex = k;
-      init   = hindex;
+      init = hindex;
     }
     k = INT_INTOBJ(ELM_PLIST(leftid, j));
     if (lookup[k] <= init) {
@@ -517,9 +502,9 @@ Obj FIND_HCLASSES(Obj self, Obj right, Obj left) {
       sorted = reinterpret_cast<UInt *>(ADDR_OBJ(buf)) + nrcomps;
       lookup = reinterpret_cast<UInt *>(ADDR_OBJ(buf)) + nrcomps + n;
     }
-    k    = lookup[k];
+    k = lookup[k];
     comp = ELM_PLIST(comps, k);
-    len  = LEN_PLIST(comp) + 1;
+    len = LEN_PLIST(comp) + 1;
     AssPlist(comp, len, INTOBJ_INT(j));
     SET_LEN_PLIST(comp, len);
 
