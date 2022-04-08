@@ -58,7 +58,8 @@ CheckHypothesis := function(C)
 end;
 
 PartitionDClass := function(C, D)
-  return Filtered(List(EquivalenceRelationPartitionWithSingletons(C), x -> Filtered(x, y -> y in D)), x -> not IsEmpty(x));
+  return Filtered(List(EquivalenceRelationPartitionWithSingletons(C), x ->
+                  Filtered(x, y -> y in D)), x -> not IsEmpty(x));
 end;
 
 CheckHypothesis2 := function(C)
