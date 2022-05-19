@@ -108,7 +108,7 @@ function(stz)
   end;
 
   # TODO(later) are we okay to assume this is necessarily an isomorphism?
-  return MagmaIsomorphismByFunctionsNC(source,
+  return SemigroupIsomorphismByFunctionNC(source,
                                        range,
                                        forward_map,
                                        backward_map);

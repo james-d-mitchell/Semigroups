@@ -125,16 +125,7 @@ function(S)
   T := Semigroup(gen);
   UseIsomorphismRelation(S, T);
 
-  iso := function(x)
-    return EvaluateWord(gen, MinimalFactorization(S, x));
-  end;
-
-  inv := function(x)
-    return EvaluateWord(GeneratorsOfSemigroup(S), Factorization(T, x));
-  end;
-
-  # TODO(later) replace this with SemigroupIsomorphismByImagesOfGenerators
-  return MagmaIsomorphismByFunctionsNC(S, T, iso, inv);
+  return SemigroupIsomorphismByImagesNC(S, T, GeneratorsOfSemigroup(S), gen);
 end);
 
 InstallMethod(IsomorphismTransformationSemigroup,
@@ -162,7 +153,7 @@ function(S)
   fi;
   UseIsomorphismRelation(S, T);
 
-  return MagmaIsomorphismByFunctionsNC(S, T, map, inv);
+  return SemigroupIsomorphismByFunctionNC(S, T, map, inv);
 end);
 
 InstallMethod(IsomorphismTransformationSemigroup,
@@ -179,7 +170,7 @@ function(S)
   n := DegreeOfBipartitionSemigroup(S);
   UseIsomorphismRelation(S, T);
 
-  return MagmaIsomorphismByFunctionsNC(S,
+  return SemigroupIsomorphismByFunctionNC(S,
                                        T,
                                        AsTransformation,
                                        x -> AsBipartition(x, n));
@@ -207,7 +198,7 @@ function(S)
   T := Semigroup(List(GeneratorsOfSemigroup(S),
                  x -> TransformationOpNC(x, pts, OnPoints)));
 
-  return MappingByFunction(S,
+  return SemigroupIsomorphismByFunctionNC(S,
                            T,
                            x -> TransformationOpNC(x, pts, OnPoints),
                            x -> BinaryRelationOnPoints(List([1 .. n], i ->
@@ -236,7 +227,7 @@ function(S)
   SetIsGroupAsSemigroup(U, true);
   UseIsomorphismRelation(U, G);
 
-  iso := MagmaIsomorphismByFunctionsNC(U,
+  iso := SemigroupIsomorphismByFunctionNC(U,
                                        G,
                                        PermutationOfImage,
                                        x -> x ^ map);

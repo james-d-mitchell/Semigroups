@@ -276,7 +276,7 @@ end);
 InstallMethod(IsomorphismSemigroups, "for two McAlister triple semigroups",
 [IsMcAlisterTripleSemigroup, IsMcAlisterTripleSemigroup],
 function(S, T)
-  local YS, YT, XT, iso_g, iso_x, im_YS, rep, A;
+  local YS, YT, XT, iso_g, iso_x, im_YS, rep, A, hom;
 
   iso_g := IsomorphismGroups(McAlisterTripleSemigroupGroup(S),
                              McAlisterTripleSemigroupGroup(T));
@@ -318,7 +318,9 @@ function(S, T)
       g -> ForAll(DigraphVertices(McAlisterTripleSemigroupPartialOrder(S)),
       x -> (McAlisterTripleSemigroupAction(S)(x, g)) ^ (rep * iso_x) =
       McAlisterTripleSemigroupAction(T)((x ^ iso_x), (g ^ iso_g)) ^ rep)) then
-    return MappingByFunction(S, T, s -> MTSE(T, s[1] ^ iso_x, s[2] ^ iso_g));
+    hom := SemigroupHomomorphismByFunction(S, T, s -> MTSE(T, s[1] ^ iso_x, s[2] ^ iso_g));
+    SetIsBijective(hom, true);
+    return hom;
   fi;
   return fail;
 end);
@@ -560,7 +562,7 @@ InstallMethod(IsomorphismSemigroup,
 function(filt, S)
   local Es, iso_pg, G, H, map, xx, M, iso, yy, ids, cong, grp, hom, map_G, Dcl,
   n, cosets, x, xiny, yinx, D, s, R, e, Ge, h, y_pos, x_pos, act, ah, edgy,
-  act2, i;
+  act2, i, isom;
 
   if not IsEUnitaryInverseSemigroup(S) then
     ErrorNoReturn("the 2nd argument (a semigroup) is not E-unitary");
@@ -579,7 +581,9 @@ function(filt, S)
     iso := function(s)
       return MTSE(M, 1, (s ^ iso_pg) ^ map);
     end;
-    return MappingByFunction(S, M, iso);
+    isom := SemigroupHomomorphismByFunction(S, M, iso);
+    SetIsBijective(isom, true);
+    return isom;
   fi;
 
   yy  := Digraph(NaturalPartialOrder(Es));
@@ -643,7 +647,9 @@ function(filt, S)
     return MTSE(M, yinx[Position(ids, LeftOne(s))], s ^ map_G);
   end;
 
-  return MappingByFunction(S, M, iso);
+  isom := SemigroupHomomorphismByFunction(S, M, iso);
+  SetIsBijective(isom, true);
+  return isom;
 
 end);
 
@@ -866,7 +872,7 @@ function(S)
   od;
 
   cover := SemigroupDirectProductInfo(P).projection;
-  return MappingByFunction(InverseSemigroup(cover_gens), S, x -> cover(x, 1));
+  return SemigroupHomomorphismByFunction(InverseSemigroup(cover_gens), S, x -> cover(x, 1));
 end);
 
 # This method extends a partial perm 'x' to a permutation of degree 'deg'.

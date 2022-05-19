@@ -355,7 +355,7 @@ function(S)
 
   map := x -> EvaluateWord(B, Factorization(S, x));
   inv := x -> MappedWord(UnderlyingElement(x), A, GeneratorsOfSemigroup(S));
-  result := MagmaIsomorphismByFunctionsNC(S, Q, map, inv);
+  result := SemigroupIsomorphismByFunctionNC(S, Q, map, inv);
   if IsTransformationSemigroup(S) or IsPartialPermSemigroup(S)
       or IsBipartitionSemigroup(S) then
     SetNiceMonomorphism(Q, InverseGeneralMapping(result));
@@ -486,7 +486,7 @@ function(S)
     return MultiplicativeNeutralElement(S);
   end;
 
-  return MagmaIsomorphismByFunctionsNC(S, Q, map, inv);
+  return SemigroupIsomorphismByFunctionNC(S, Q, map, inv);
 end);
 
 InstallMethod(AssignGeneratorVariables, "for a free semigroup",
@@ -531,7 +531,7 @@ function(G)
   iso2 := IsomorphismFpSemigroup(Range(iso1));
   inv2 := InverseGeneralMapping(iso2);
 
-  return MagmaIsomorphismByFunctionsNC(G,
+  return SemigroupIsomorphismByFunctionNC(G,
                                        Range(iso2),
                                        x -> (x ^ iso1) ^ iso2,
                                        x -> (x ^ inv2) ^ inv1);
@@ -554,7 +554,7 @@ function(G)
   iso2 := IsomorphismFpMonoid(Range(iso1));
   inv2 := InverseGeneralMapping(iso2);
 
-  return MagmaIsomorphismByFunctionsNC(G,
+  return SemigroupIsomorphismByFunctionNC(G,
                                        Range(iso2),
                                        x -> (x ^ iso1) ^ iso2,
                                        x -> (x ^ inv2) ^ inv1);
@@ -717,7 +717,7 @@ function(M)
   inv := x -> EvaluateWord(GeneratorsOfSemigroup(T),
                            SEMIGROUPS.ExtRepObjToWord(ExtRepOfObj(x)));
 
-  return MagmaIsomorphismByFunctionsNC(M, MF, map, inv);
+  return SemigroupIsomorphismByFunctionNC(M, MF, map, inv);
 end);
 
 InstallMethod(ParseRelations,

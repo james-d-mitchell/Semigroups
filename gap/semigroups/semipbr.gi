@@ -78,7 +78,7 @@ function(filt, S)
   T := Semigroup(List(GeneratorsOfSemigroup(S), x -> AsPBR(x, deg)));
   UseIsomorphismRelation(S, T);
 
-  return MagmaIsomorphismByFunctionsNC(S,
+  return SemigroupIsomorphismByFunctionNC(S,
                                        T,
                                        x -> AsPBR(x, deg),
                                        AsTransformation);
@@ -95,7 +95,7 @@ function(filt, S)
   T := Semigroup(List(GeneratorsOfSemigroup(S), AsPBR));
   UseIsomorphismRelation(S, T);
 
-  return MagmaIsomorphismByFunctionsNC(S,
+  return SemigroupIsomorphismByFunctionNC(S,
                                        T,
                                        AsPBR,
                                        AsBipartition);
@@ -105,7 +105,7 @@ InstallMethod(IsomorphismSemigroup,
 "for IsPBRSemigroup and a pbr semigroup",
 [IsPBRSemigroup, IsPBRSemigroup],
 function(filter, S)
-  return MagmaIsomorphismByFunctionsNC(S, S, IdFunc, IdFunc);
+  return SemigroupIsomorphismByFunctionNC(S, S, IdFunc, IdFunc);
 end);
 
 InstallMethod(AsMonoid, "for a PBR semigroup",
@@ -132,7 +132,7 @@ function(filt, S)
   T := Monoid(List(GeneratorsOfSemigroup(S), x -> AsPBR(x, deg)));
   UseIsomorphismRelation(S, T);
 
-  return MagmaIsomorphismByFunctionsNC(S,
+  return SemigroupIsomorphismByFunctionNC(S,
                                        T,
                                        x -> AsPBR(x, deg),
                                        AsTransformation);
@@ -142,7 +142,7 @@ InstallMethod(IsomorphismMonoid,
 "for IsPBRMonoid and a pbr monoid",
 [IsPBRMonoid, IsPBRMonoid],
 function(filter, S)
-  return MagmaIsomorphismByFunctionsNC(S, S, IdFunc, IdFunc);
+  return SemigroupIsomorphismByFunctionNC(S, S, IdFunc, IdFunc);
 end);
 
 InstallMethod(\<, "for pbr semigroups",

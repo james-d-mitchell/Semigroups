@@ -107,7 +107,7 @@ function(S)
   T := Semigroup(List(GeneratorsOfSemigroup(S), AsPartialPerm));
   UseIsomorphismRelation(S, T);
   n := DegreeOfBipartitionSemigroup(S);
-  return MagmaIsomorphismByFunctionsNC(S,
+  return SemigroupIsomorphismByFunctionNC(S,
                                        T,
                                        AsPartialPerm,
                                        x -> AsBipartition(x, n));
@@ -130,7 +130,7 @@ function(S)
   UseIsomorphismRelation(S, T);
   n := DegreeOfBipartitionSemigroup(S);
 
-  return MagmaIsomorphismByFunctionsNC(S,
+  return SemigroupIsomorphismByFunctionNC(S,
                                        T,
                                        AsPartialPerm,
                                        x -> AsBipartition(x, n));
@@ -146,7 +146,7 @@ function(I)
   J := SemigroupIdeal(Range(iso), Images(iso, GeneratorsOfSemigroupIdeal(I)));
   UseIsomorphismRelation(I, J);
 
-  return MagmaIsomorphismByFunctionsNC(I, J, x -> x ^ iso, x -> x ^ inv);
+  return SemigroupIsomorphismByFunctionNC(I, J, x -> x ^ iso, x -> x ^ inv);
 end);
 
 InstallMethod(IsomorphismPartialPermSemigroup, "for a group as semigroup",
@@ -155,7 +155,7 @@ function(G)
   local perm_iso, perm_inv, perm_grp, pperm_iso, pperm_inv;
 
   if IsPartialPermSemigroup(G) then
-    return MagmaIsomorphismByFunctionsNC(G, G, IdFunc, IdFunc);
+    return SemigroupIsomorphismByFunctionNC(G, G, IdFunc, IdFunc);
   fi;
 
   perm_iso := IsomorphismPermGroup(G);
@@ -166,7 +166,7 @@ function(G)
                                 # HasGensOfGp
   pperm_iso := IsomorphismPartialPermSemigroup(perm_grp);
   pperm_inv := InverseGeneralMapping(pperm_iso);
-  return MagmaIsomorphismByFunctionsNC(G, Range(pperm_iso),
+  return SemigroupIsomorphismByFunctionNC(G, Range(pperm_iso),
                                        x -> (x ^ perm_iso) ^ pperm_iso,
                                        x -> (x ^ pperm_inv) ^ perm_inv);
 end);
@@ -199,7 +199,7 @@ function(S)
       return one;
     end;
     T := SymmetricInverseSemigroup(1);
-    return MagmaIsomorphismByFunctionsNC(S, T, iso, inv);
+    return SemigroupIsomorphismByFunctionNC(S, T, iso, inv);
   fi;
 
   iso_pp := IsomorphismPartialPermSemigroup(grp);
@@ -221,7 +221,7 @@ function(S)
     return (x ^ inv_pp) ^ inj_zm;
   end;
 
-  return MagmaIsomorphismByFunctionsNC(S, T, iso, inv);
+  return SemigroupIsomorphismByFunctionNC(S, T, iso, inv);
 end);
 
 InstallMethod(SmallerDegreePartialPermRepresentation,
@@ -343,7 +343,7 @@ function(S)
   map := x -> EvaluateWord(newgens, Factorization(S, x));
   inv := x -> EvaluateWord(oldgens, Factorization(T, x));
 
-  return MagmaIsomorphismByFunctionsNC(S, T, map, inv);
+  return SemigroupIsomorphismByFunctionNC(S, T, map, inv);
 end);
 
 #############################################################################
@@ -399,7 +399,7 @@ function(S)
   SetIsGroupAsSemigroup(U, true);
   UseIsomorphismRelation(U, G);
 
-  iso := MagmaIsomorphismByFunctionsNC(U,
+  iso := SemigroupIsomorphismByFunctionNC(U,
                                        G,
                                        x -> x ^ map,
                                        x -> x ^ inv);

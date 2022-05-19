@@ -152,7 +152,7 @@ function(S)
   SetIsGroupAsSemigroup(U, true);
   UseIsomorphismRelation(U, G);
 
-  map := MagmaIsomorphismByFunctionsNC(U,
+  map := SemigroupIsomorphismByFunctionNC(U,
                                        G,
                                        AsPermutation,
                                        x -> AsBipartition(x, deg));
@@ -307,7 +307,7 @@ function(filter, S)
   T := Semigroup(List(GeneratorsOfSemigroup(S), x -> AsBipartition(x, n)));
   UseIsomorphismRelation(S, T);
 
-  return MagmaIsomorphismByFunctionsNC(S,
+  return SemigroupIsomorphismByFunctionNC(S,
                                        T,
                                        x -> AsBipartition(x, n),
                                        AsTransformation);
@@ -326,7 +326,7 @@ function(filter, S)
   T := Semigroup(List(GeneratorsOfSemigroup(S), x -> AsBipartition(x, n)));
   UseIsomorphismRelation(S, T);
 
-  return MagmaIsomorphismByFunctionsNC(S,
+  return SemigroupIsomorphismByFunctionNC(S,
                                        T,
                                        x -> AsBipartition(x, n),
                                        AsPartialPerm);
@@ -345,7 +345,7 @@ function(filter, S)
                              x -> AsBipartition(x, n)));
   UseIsomorphismRelation(S, T);
 
-  return MagmaIsomorphismByFunctionsNC(S,
+  return SemigroupIsomorphismByFunctionNC(S,
                                        T,
                                        x -> AsBipartition(x, n),
                                        AsPartialPerm);
@@ -361,7 +361,7 @@ function(filt, S)
   T := Semigroup(List(GeneratorsOfGroup(S), x -> AsBipartition(x, n)));
   UseIsomorphismRelation(S, T);
 
-  return MagmaIsomorphismByFunctionsNC(S,
+  return SemigroupIsomorphismByFunctionNC(S,
                                        T,
                                        x -> AsBipartition(x, n),
                                        AsPermutation);
@@ -384,7 +384,7 @@ function(filter, S)
   iso2 := IsomorphismSemigroup(filter, Range(iso1));
   inv2 := InverseGeneralMapping(iso2);
 
-  return MagmaIsomorphismByFunctionsNC(S,
+  return SemigroupIsomorphismByFunctionNC(S,
                                        Range(iso2),
                                        x -> (x ^ iso1) ^ iso2,
                                        x -> (x ^ inv2) ^ inv1);
@@ -430,7 +430,7 @@ function(filter, S)
     return PartialPerm(out);
   end;
 
-  return MagmaIsomorphismByFunctionsNC(S,
+  return SemigroupIsomorphismByFunctionNC(S,
                                        T,
                                        x -> AsBlockBijection(x, n),
                                        inv);
@@ -476,7 +476,7 @@ function(filter, S)
     return PartialPerm(out);
   end;
 
-  return MagmaIsomorphismByFunctionsNC(S,
+  return SemigroupIsomorphismByFunctionNC(S,
                                        T,
                                        x -> AsBlockBijection(x, n),
                                        inv);
@@ -494,7 +494,7 @@ function(filt, I)
   J := SemigroupIdeal(Range(iso), Images(iso, GeneratorsOfSemigroupIdeal(I)));
   UseIsomorphismRelation(I, J);
 
-  return MagmaIsomorphismByFunctionsNC(I, J, x -> x ^ iso, x -> x ^ inv);
+  return SemigroupIsomorphismByFunctionNC(I, J, x -> x ^ iso, x -> x ^ inv);
 end);
 
 InstallMethod(IsomorphismSemigroup,
@@ -510,21 +510,21 @@ function(filt, I)
   J := SemigroupIdeal(Range(iso), Images(iso, GeneratorsOfSemigroupIdeal(I)));
   UseIsomorphismRelation(I, J);
 
-  return MagmaIsomorphismByFunctionsNC(I, J, x -> x ^ iso, x -> x ^ inv);
+  return SemigroupIsomorphismByFunctionNC(I, J, x -> x ^ iso, x -> x ^ inv);
 end);
 
 InstallMethod(IsomorphismSemigroup,
 "for IsBlockBijectionSemigroup and a block bijection semigroup",
 [IsBlockBijectionSemigroup, IsBlockBijectionSemigroup],
 function(filter, S)
-  return MagmaIsomorphismByFunctionsNC(S, S, IdFunc, IdFunc);
+  return SemigroupIsomorphismByFunctionNC(S, S, IdFunc, IdFunc);
 end);
 
 InstallMethod(IsomorphismSemigroup,
 "for IsBipartitionSemigroup and a bipartition semigroup",
 [IsBipartitionSemigroup, IsBipartitionSemigroup],
 function(filter, S)
-  return MagmaIsomorphismByFunctionsNC(S, S, IdFunc, IdFunc);
+  return SemigroupIsomorphismByFunctionNC(S, S, IdFunc, IdFunc);
 end);
 
 # TODO(later) could have a method for IsomorphismSemigroup for

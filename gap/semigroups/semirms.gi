@@ -186,7 +186,7 @@ function(S)
   inv := InverseGeneralMapping(iso);
   UseIsomorphismRelation(S, Range(iso));
 
-  return MagmaIsomorphismByFunctionsNC(S,
+  return SemigroupIsomorphismByFunctionNC(S,
                                        Range(iso),
                                        x -> x ^ iso,
                                        x -> x ^ inv);
@@ -225,7 +225,7 @@ function(S)
     return x ^ InverseGeneralMapping(map);
   end;
 
-  return MagmaIsomorphismByFunctionsNC(S,
+  return SemigroupIsomorphismByFunctionNC(S,
                                        Range(map),
                                        inj,
                                        inv);
@@ -279,14 +279,14 @@ function(S)
 
   r := Representative(S);
   if r![1] = 0 then  # special case for the group consisting of 0
-    return MagmaIsomorphismByFunctionsNC(S, Group(()), x -> (), x -> r);
+    return SemigroupIsomorphismByFunctionNC(S, Group(()), x -> (), x -> r);
   fi;
 
   mat := Matrix(ReesMatrixSemigroupOfFamily(FamilyObj(r)));
   G := Group(List(GeneratorsOfSemigroup(S), x -> x![2] * mat[x![3]][x![1]]));
   UseIsomorphismRelation(S, G);
 
-  iso := MagmaIsomorphismByFunctionsNC;
+  iso := SemigroupIsomorphismByFunctionNC;
   return iso(S, G,
              x -> x![2] * mat[x![3]][x![1]],
              x -> RMSElement(S, r![1], x * mat[r![3]][r![1]] ^ -1, r![3]));
@@ -840,7 +840,7 @@ function(R)
                       cols[x![3] ^ p.col_i]);
   end;
 
-  return MagmaIsomorphismByFunctionsNC(R, S, iso, inv);
+  return SemigroupIsomorphismByFunctionNC(R, S, iso, inv);
 end);
 
 # Makes entries in the first row and col of the matrix equal to identity
@@ -895,7 +895,7 @@ function(R)
                             r[x![1]] * x![2] * c[x![3]],
                             Columns(R)[x![3]]);
 
-  return MagmaIsomorphismByFunctionsNC(R, S, iso, inv);
+  return SemigroupIsomorphismByFunctionNC(R, S, iso, inv);
 end);
 
 InstallMethod(IsIdempotentGenerated, "for a Rees 0-matrix subsemigroup",

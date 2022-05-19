@@ -1942,9 +1942,8 @@ gap> S := Semigroup([
 <partial perm semigroup of rank 3 with 3 generators>
 gap> T := AsSemigroup(IsBipartitionSemigroup, S);;
 gap> IsomorphismPartialPermSemigroup(T);
-MappingByFunction( <bipartition semigroup of degree 3 with 3 generators>, 
+<bipartition semigroup of degree 3 with 3 generators> -> 
 <partial perm semigroup of rank 3 with 3 generators>
- , <Operation "AsPartialPerm">, function( x ) ... end )
 gap> I := SemigroupIdeal(T, T.1 * T.2 * T.3);;
 gap> IsomorphismPartialPermSemigroup(I);;
 
@@ -1981,9 +1980,8 @@ true
 gap> S := Range(InjectionZeroMagma(SymmetricGroup(5)));
 <Sym( [ 1 .. 5 ] ) with 0 adjoined>
 gap> map := IsomorphismPartialPermSemigroup(S);
-MappingByFunction( <Sym( [ 1 .. 5 ] ) with 0 adjoined>, <inverse partial perm 
- monoid of rank 5 with 3 generators>
- , function( x ) ... end, function( x ) ... end )
+<Sym( [ 1 .. 5 ] ) with 0 adjoined> -> <inverse partial perm monoid of rank 5 
+ with 3 generators>
 gap> Range(map);
 <inverse partial perm monoid of rank 5 with 3 generators>
 gap> BruteForceIsoCheck(map);
@@ -2006,8 +2004,8 @@ true
 gap> S := Range(InjectionZeroMagma(SL(2, 2)));
 <SL(2,2) with 0 adjoined>
 gap> map := IsomorphismPartialPermSemigroup(S);
-MappingByFunction( <SL(2,2) with 0 adjoined>, <inverse partial perm monoid of 
- rank 3 with 3 generators>, function( x ) ... end, function( x ) ... end )
+<SL(2,2) with 0 adjoined> -> <inverse partial perm monoid of rank 3 with 3 
+ generators>
 gap> Range(map);
 <inverse partial perm monoid of rank 3 with 3 generators>
 gap> BruteForceIsoCheck(map);
@@ -2085,9 +2083,8 @@ gap> S := Range(VagnerPrestonRepresentation(DualSymmetricInverseMonoid(3)));;
 gap> S := Semigroup(S, rec(acting := false));
 <partial perm monoid of rank 25 with 3 generators>
 gap> SmallerDegreePartialPermRepresentation(S);
-MappingByFunction( <inverse partial perm monoid of size 25, rank 25 with 3 
- generators>, <inverse partial perm monoid of rank 6 with 3 generators>
- , function( x ) ... end, function( x ) ... end )
+<inverse partial perm monoid of size 25, rank 25 with 3 generators> -> 
+<inverse partial perm semigroup of rank 6 with 3 generators>
 
 #  GeneratorsOfGroup
 gap> S := Group([], PartialPerm([1, 2]));;
