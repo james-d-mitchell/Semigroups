@@ -710,3 +710,33 @@ InstallMethod(InversesOfSemigroupElementNC,
 function(S, elm)
   return [elm ^ -1];
 end);
+
+IsIdempotentPureCongruence := function(C)
+  local S, e;
+  
+  S := Range(C);
+  for e in Idempotents(S) do
+    if ForAny(EquivalenceClassOfElementNC(C, e), x -> x ^ 2 <> x) then
+      return false;
+    fi;
+  od;
+  return true;
+end;
+
+InstallMethod(IsEDisjunctiveInverseSemigroup, 
+"for an inverse semigroup", 
+[IsInverseSemigroup and IsGeneratorsOfInverseSemigroup], 
+function(S)
+  local ES, C, i, j;
+
+  ES := Idempotents(S);
+  for i in [1 .. Length(ES) - 1] do
+    for j in [i + 1 .. Length(ES)] do
+      C := SemigroupCongruence(S, [ES[i], ES[j]]);
+      if IsIdempotentPureCongruence(C) then
+        return false;
+      fi;
+    od;
+  od;
+  return true;
+end);
