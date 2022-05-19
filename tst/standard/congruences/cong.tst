@@ -1027,6 +1027,12 @@ gap> EquivalenceRelationPartitionWithSingletons(C);
   [ <block bijection: [ 1, 3, -2 ], [ 2, -1, -3 ]> ], 
   [ <block bijection: [ 1, -1, -3 ], [ 2, 3, -2 ]> ] ]
 
+# TrivialCongruence
+gap> S := PartitionMonoid(3);;
+gap> TrivialCongruence(S);
+<2-sided semigroup congruence over <regular bipartition *-monoid of size 203, 
+ degree 3 with 4 generators> with 0 generating pairs>
+
 # SEMIGROUPS_UnbindVariables
 gap> Unbind(F);
 gap> Unbind(I);

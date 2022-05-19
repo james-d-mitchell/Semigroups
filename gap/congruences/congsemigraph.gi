@@ -272,11 +272,19 @@ function(cong1, cong2)
   return IsSubset(Union(cong2!.H, cong2!.W), Union(cong1!.H, cong1!.W));
 end);
 
-InstallMethod(LatticeOfCongruences,
+InstallMethod(CayleyDigraphOfCongruences,
 "for a graph inverse semigroup",
 [IsGraphInverseSemigroup],
 function(S)
-  local D;
-  D := PosetOfCongruences(GeneratingCongruencesOfLattice(S));
-  return JoinSemilatticeOfCongruences(D, WrappedTwoSidedCongruence);
+  # TODO(FasterJoins) don't use _ClosureLattice directly
+  return _ClosureLattice(S,
+                         GeneratingCongruencesOfLattice(S),
+                         WrappedTwoSidedCongruence);
+end);
+
+InstallMethod(TrivialCongruence,
+"for a graph inverse semigroup",
+[IsGraphInverseSemigroup],
+function(S)
+  return AsCongruenceByWangPair(SemigroupCongruence(S, []));
 end);

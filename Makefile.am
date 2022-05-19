@@ -22,6 +22,7 @@ GAPINSTALLLIB = $(abs_top_srcdir)/$(BINARCHDIR)/semigroups.so
 lib_LTLIBRARIES = semigroups.la
 
 semigroups_la_SOURCES =  src/bipart.cpp
+semigroups_la_SOURCES += src/conglatt.cpp
 semigroups_la_SOURCES += src/cong.cpp
 semigroups_la_SOURCES += src/froidure-pin-base.cpp
 semigroups_la_SOURCES += src/froidure-pin-bipart.cpp
