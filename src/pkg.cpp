@@ -367,6 +367,61 @@ Obj IsBlocksHandler(Obj self, Obj val) {
   }
 }
 
+// TEMPORARY
+
+Obj NumberOfCongruences(Obj self, Obj list) {
+  auto foo = [](Obj lookup) {
+    auto          n = LEN_PLIST(lookup);
+    Duf<uint32_t> uf(n);
+    for (uint32_t i = 0; i < n - 1; ++i) {
+      for (uint32_t j = i + 1; j < n; ++j) {
+        if (INT_INTOBJ(ELM_PLIST(lookup, j + 1))
+            == INT_INTOBJ(ELM_PLIST(lookup, i + 1))) {
+          uf.unite(i, j);
+        }
+      }
+    }
+    return uf;
+  };
+
+  std::vector<Duf<uint32_t>> gens;
+
+  for (size_t i = 1; i <= LEN_LIST(list); ++i) {
+    gens.push_back(foo(ELM_PLIST(list, i)));
+  }
+
+  std::unordered_set<Duf<uint32_t>, Hash<Duf<uint32_t>>> res;
+  res.reserve(400);
+
+  Duf<uint32_t> one(gens.front().size());
+  Duf<uint32_t> tmp(gens.front().size());
+  res.insert(one);
+
+  std::vector<Duf<uint32_t>> todo, newtodo;
+  todo.push_back(one);
+  size_t lg = 0;
+  while (!todo.empty()) {
+    newtodo.clear();
+    lg++;
+    for (auto const& v : todo) {
+      for (auto const& g : gens) {
+        tmp = v;
+        tmp.join(g);
+        tmp.normalize();
+        if (res.insert(tmp).second) {
+          // TODO add edges and keep topologically sorted
+          newtodo.push_back(tmp);
+        }
+      }
+    }
+    std::swap(todo, newtodo);
+    std::cout << lg << ", todo = " << todo.size() << ", res = " << res.size()
+              << ", # bucks = " << res.bucket_count() << std::endl;
+  }
+  std::cout << "res =  " << res.size() << std::endl;
+  return INTOBJ_INT(res.size());
+}
+
 // Imported types and functions from the library, defined below
 
 Obj HTValue;
