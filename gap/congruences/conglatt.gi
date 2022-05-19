@@ -22,6 +22,15 @@
 ## user as the list of out-neighbours of that digraph.
 ##
 
+QuickLattice := function(S)
+  local P, L, D;
+
+  P := PrincipalCongruencesOfSemigroup(S);
+  L := List(P, EquivalenceRelationCanonicalLookup) - 1;
+  D := DigraphNC(libsemigroups.LATTICE_OF_CONGRUENCES(L));
+  return D;
+end;
+
 #############################################################################
 ## The main three functions
 #############################################################################
