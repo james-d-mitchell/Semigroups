@@ -42,12 +42,12 @@ gap> IsCongruencePoset(poset);
 true
 gap> IsDigraph(poset);
 true
-gap> OutNeighbours(poset);
-[ [ 1, 2, 3, 4 ], [ 2 ], [ 2, 3 ], [ 2, 3, 4 ] ]
+gap> IsIsomorphicDigraph(poset, 
+> Digraph([[1, 2, 3, 4], [2], [2, 3], [2, 3, 4]]));
+true
 gap> T := FullTransformationMonoid(3);;
 gap> congs := PrincipalCongruencesOfSemigroup(T);;
-gap> poset := JoinSemilatticeOfCongruences(PosetOfCongruences(congs),
->                                          WrappedTwoSidedCongruence);
+gap> poset := JoinSemilatticeOfCongruences(PosetOfCongruences(congs));
 <lattice of 6 two-sided congruences over 
  <full transformation monoid of degree 3>>
 gap> IsCongruencePoset(poset);
@@ -101,8 +101,9 @@ gap> LatticeOfLeftCongruences(S);
 gap> LatticeOfRightCongruences(S);
 <lattice of 5 right congruences over <regular transformation monoid 
  of size 3, degree 2 with 2 generators>>
-gap> OutNeighbours(LatticeOfRightCongruences(S));
-[ [ 1, 2, 3, 4, 5 ], [ 2 ], [ 2, 3 ], [ 2, 4 ], [ 2, 5 ] ]
+gap> IsIsomorphicDigraph(LatticeOfRightCongruences(S), 
+> Digraph([[1, 2, 3, 4, 5], [2], [2, 3], [2, 4], [2, 5]]));
+true
 gap> S := FullTransformationMonoid(4);;
 gap> restriction := [Transformation([1, 1, 1, 1]),
 >                    Transformation([1, 1, 1, 2]),
@@ -190,16 +191,16 @@ gap> latt := LatticeOfRightCongruences(S);
 <lattice of 5 right congruences over <regular transformation monoid 
  of size 3, degree 2 with 2 generators>>
 gap> CongruencesOfPoset(latt);
-[ <right semigroup congruence over <regular transformation monoid 
+[ <2-sided semigroup congruence over <regular transformation monoid 
      of size 3, degree 2 with 2 generators> with 0 generating pairs>, 
   <right semigroup congruence over <regular transformation monoid 
-     of size 3, degree 2 with 2 generators> with 2 generating pairs>, 
-  <right semigroup congruence over <regular transformation monoid 
      of size 3, degree 2 with 2 generators> with 1 generating pairs>, 
   <right semigroup congruence over <regular transformation monoid 
      of size 3, degree 2 with 2 generators> with 1 generating pairs>, 
   <right semigroup congruence over <regular transformation monoid 
-     of size 3, degree 2 with 2 generators> with 1 generating pairs> ]
+     of size 3, degree 2 with 2 generators> with 1 generating pairs>, 
+  <right semigroup congruence over <regular transformation monoid 
+     of size 3, degree 2 with 2 generators> with 2 generating pairs> ]
 ]]></Example>
     </Description>
   </ManSection>
@@ -291,8 +292,7 @@ gap> pair3 := [PartialPerm([1, 2], [1, 2]),
 gap> coll := [RightSemigroupCongruence(S, pair1),
 >             RightSemigroupCongruence(S, pair2),
 >             RightSemigroupCongruence(S, pair3)];;
-gap> JoinSemilatticeOfCongruences(PosetOfCongruences(coll),
-> WrappedRightCongruence);
+gap> JoinSemilatticeOfCongruences(PosetOfCongruences(coll));
 <poset of 4 right congruences over 
  <symmetric inverse monoid of degree 2>>
 ]]></Example>

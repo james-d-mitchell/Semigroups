@@ -154,8 +154,8 @@ gap> InNeighbours(latt);
 [ [ 1 ], [ 1, 2 ] ]
 gap> restriction := [Transformation([3, 3, 3])];;
 gap> latt := LatticeOfCongruences(S, Combinations(restriction, 2));
-<lattice of 1 two-sided congruences over <transformation semigroup 
- of size 11, degree 3 with 2 generators>>
+<lattice of 1 two-sided congruence over <transformation semigroup of size 11, 
+ degree 3 with 2 generators>>
 gap> InNeighbours(latt);
 [ [ 1 ] ]
 
@@ -322,8 +322,7 @@ gap> pair3 := [PartialPerm([1, 2], [1, 2]), PartialPerm([1, 2], [2, 1])];;
 gap> coll := [RightSemigroupCongruence(S, pair1),
 >             RightSemigroupCongruence(S, pair2),
 >             RightSemigroupCongruence(S, pair3)];;
-gap> l := JoinSemilatticeOfCongruences(PosetOfCongruences(coll),
-> WrappedRightCongruence);
+gap> l := JoinSemilatticeOfCongruences(PosetOfCongruences(coll));
 <poset of 4 right congruences over <symmetric inverse monoid of degree 2>>
 gap> IsIsomorphicDigraph(l, DigraphFromDigraph6String("&ClRC"));
 true
@@ -349,22 +348,20 @@ gap> poset := LatticeOfCongruences(S);
  <symmetric inverse monoid of degree 2>>
 gap> IsIsomorphicDigraph(poset, DigraphFromDigraph6String("&C|qK"));
 true
-gap> Print(l, "\n");
+gap> Print(poset, "\n");
 PosetOfCongruences( 
-[ RightSemigroupCongruence( InverseMonoid( 
-    [ PartialPerm( [ 1, 2 ], [ 2, 1 ] ), PartialPerm( [ 1 ], [ 1 ] ) ] ), 
-    [ [ PartialPerm( [ 1 ], [ 1 ] ), PartialPerm( [ 2 ], [ 1 ] ) ], 
-      [ PartialPerm( [ 1 ], [ 1 ] ), PartialPerm( [ 1, 2 ], [ 1, 2 ] ) ] ] ), 
-  RightSemigroupCongruence( InverseMonoid( 
-    [ PartialPerm( [ 1, 2 ], [ 2, 1 ] ), PartialPerm( [ 1 ], [ 1 ] ) ] ), 
+[ SemigroupCongruence( InverseMonoid( [ PartialPerm( [ 1, 2 ], [ 2, 1 ] ), 
+      PartialPerm( [ 1 ], [ 1 ] ) ] ), [  ] ), 
+  SemigroupCongruence( InverseMonoid( [ PartialPerm( [ 1, 2 ], [ 2, 1 ] ), 
+      PartialPerm( [ 1 ], [ 1 ] ) ] ), 
+    [ [ PartialPerm( [  ], [  ] ), PartialPerm( [ 1 ], [ 1 ] ) ] ] ), 
+  SemigroupCongruence( InverseMonoid( [ PartialPerm( [ 1, 2 ], [ 2, 1 ] ), 
+      PartialPerm( [ 1 ], [ 1 ] ) ] ), 
+    [ [ PartialPerm( [  ], [  ] ), PartialPerm( [ 1, 2 ], [ 1, 2 ] ) ] ] ), 
+  SemigroupCongruence( InverseMonoid( [ PartialPerm( [ 1, 2 ], [ 2, 1 ] ), 
+      PartialPerm( [ 1 ], [ 1 ] ) ] ), 
     [ [ PartialPerm( [ 1, 2 ], [ 1, 2 ] ), PartialPerm( [ 1, 2 ], [ 2, 1 ] ) 
-         ] ] ), RightSemigroupCongruence( InverseMonoid( 
-    [ PartialPerm( [ 1, 2 ], [ 2, 1 ] ), PartialPerm( [ 1 ], [ 1 ] ) ] ), 
-    [ [ PartialPerm( [ 1 ], [ 1 ] ), PartialPerm( [ 2 ], [ 1 ] ) ] ] ), 
-  RightSemigroupCongruence( InverseMonoid( 
-    [ PartialPerm( [ 1, 2 ], [ 2, 1 ] ), PartialPerm( [ 1 ], [ 1 ] ) ] ), 
-    [ [ PartialPerm( [ 1 ], [ 1 ] ), PartialPerm( [ 1, 2 ], [ 1, 2 ] ) ] ] ) 
- ] )
+         ] ] ) ] )
 gap> MinimalCongruences(poset);
 [ <2-sided semigroup congruence over <symmetric inverse monoid of degree 2> wi\
 th 0 generating pairs> ]
@@ -391,7 +388,7 @@ gap> CongruencesOfPoset(poset);
 [  ]
 gap> DigraphNrVertices(poset);
 0
-gap> JoinSemilatticeOfCongruences(poset, JoinSemigroupCongruences);
+gap> JoinSemilatticeOfCongruences(poset);
 <empty congruence poset>
 gap> MinimalCongruences(poset);
 [  ]
@@ -411,8 +408,7 @@ gap> S := InverseSemigroup(PartialPerm([1, 3], [2, 4]),
 >                          PartialPerm([1], [1]));;
 gap> D := DigraphReflexiveTransitiveReduction(LatticeOfRightCongruences(S));
 <immutable digraph with 22 vertices, 49 edges>
-gap> x := DigraphSinks(D)[1];
-2
+gap> x := DigraphSinks(D)[1];;
 gap> NrEquivalenceClasses(RightCongruencesOfSemigroup(S)[x]);
 1
 

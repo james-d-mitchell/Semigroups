@@ -245,6 +245,10 @@ BindGlobal("_GeneratingPairsOfLeftRight2SidedCongDefault",
 function(XCongruenceByGeneratingPairs, C)
   local result, pairs, class, i, j;
 
+  if NrEquivalenceClasses(C) = Size(Source(C)) then
+    return [];
+  fi;
+
   result := XCongruenceByGeneratingPairs(Source(C), []);
 
   for class in EquivalenceRelationPartition(C) do
@@ -254,11 +258,15 @@ function(XCongruenceByGeneratingPairs, C)
           pairs := GeneratingPairsOfLeftRightOrTwoSidedCongruence(result);
           pairs := Concatenation(pairs, [[class[i], class[j]]]);
           result := XCongruenceByGeneratingPairs(Source(C), pairs);
+          if NrEquivalenceClasses(result) = NrEquivalenceClasses(C) then
+            return GeneratingPairsOfLeftRightOrTwoSidedCongruence(result);
+          fi;
         fi;
       od;
     od;
   od;
-  return GeneratingPairsOfLeftRightOrTwoSidedCongruence(result);
+  Assert(1, false);  # Shouldn't be able to get here.
+  return fail;
 end);
 
 InstallMethod(GeneratingPairsOfRightMagmaCongruence,

@@ -22,11 +22,15 @@
 
 #include "pkg.hpp"
 
-#include <cstddef>      // for size_t
-#include <exception>    // for exception
-#include <iostream>     // for string
-#include <type_traits>  // for conditional<>::type
-#include <vector>       // for vector
+#include <cstddef>        // for size_t
+#include <exception>      // for exception
+#include <iostream>       // for string
+#include <type_traits>    // for conditional<>::type
+#include <unordered_map>  // for unordered_map
+#include <utility>        // for swap
+#include <vector>         // for vector
+
+#include <set>  // for set
 
 // GAP headers
 #include "compiled.h"
@@ -47,6 +51,7 @@
 // libsemigroups headers
 #include "libsemigroups/bipart.hpp"     // for Blocks, Bipartition
 #include "libsemigroups/cong-intf.hpp"  // for congruence_kind
+#include "libsemigroups/digraph.hpp"    // for ActionDigraph
 #include "libsemigroups/fpsemi.hpp"     // for FpSemigroup
 #include "libsemigroups/freeband.hpp"   // for freeband_equal_to
 #include "libsemigroups/report.hpp"     // for REPORTER, Reporter
@@ -54,8 +59,14 @@
 #include "libsemigroups/todd-coxeter.hpp"  // for ToddCoxeter, ToddCoxeter::table_type
 #include "libsemigroups/types.hpp"         // for word_type, letter_type
 
+#include "libsemigroups/adapters.hpp"
+#include "libsemigroups/uf.hpp"
+
 using libsemigroups::Bipartition;
 using libsemigroups::Blocks;
+
+using libsemigroups::Hash;
+using libsemigroups::detail::Duf;
 
 namespace {
   void set_report(bool const val) {
@@ -79,6 +90,8 @@ namespace gapbind14 {
   struct IsGapBind14Type<libsemigroups::RepOrc> : std::true_type {};
 }  // namespace gapbind14
 
+libsemigroups::ActionDigraph<uint32_t> LATTICE_OF_CONGRUENCES(Obj list);
+
 GAPBIND14_MODULE(libsemigroups) {
   ////////////////////////////////////////////////////////////////////////
   // Free functions
@@ -92,6 +105,9 @@ GAPBIND14_MODULE(libsemigroups) {
       gapbind14::overload_cast<libsemigroups::word_type,
                                libsemigroups::word_type>(
           &libsemigroups::freeband_equal_to<libsemigroups::word_type>));
+
+  gapbind14::InstallGlobalFunction("LATTICE_OF_CONGRUENCES",
+                                   &LATTICE_OF_CONGRUENCES);
 
   ////////////////////////////////////////////////////////////////////////
   // Initialise from other cpp files
@@ -350,6 +366,78 @@ Obj IsBlocksHandler(Obj self, Obj val) {
   }
 }
 
+// Function for finding the lattice of congruences when there are too many
+// generating congruences for Froidure-Pin to handle.
+
+libsemigroups::ActionDigraph<uint32_t> LATTICE_OF_CONGRUENCES(Obj list) {
+  auto foo = [](Obj lookup) {
+    auto          n = LEN_PLIST(lookup);
+    Duf<uint32_t> uf(n);
+    for (uint32_t i = 0; i < n - 1; ++i) {
+      for (uint32_t j = i + 1; j < n; ++j) {
+        if (INT_INTOBJ(ELM_PLIST(lookup, j + 1))
+            == INT_INTOBJ(ELM_PLIST(lookup, i + 1))) {
+          uf.unite(i, j);
+        }
+      }
+    }
+    return uf;
+  };
+
+  std::vector<Duf<uint32_t>> gens;
+
+  for (size_t i = 1; i <= LEN_LIST(list); ++i) {
+    gens.push_back(foo(ELM_PLIST(list, i)));
+  }
+
+  std::unordered_map<Duf<uint32_t>, uint32_t, Hash<Duf<uint32_t>>> res;
+  libsemigroups::ActionDigraph<uint32_t> latt(1, gens.size());
+
+  size_t        n = gens.front().size();
+  Duf<uint32_t> one(n);
+
+  std::vector<Duf<uint32_t>> todo, newtodo;
+  todo.push_back(one);
+
+  res.emplace(one, 0);
+  size_t lg        = 0;
+  size_t num_congs = 1;
+  while (!todo.empty()) {
+    newtodo.clear();
+    lg++;
+    for (size_t i = 0; i < todo.size(); ++i) {
+      size_t j = res.find(todo[i])->second;
+
+      for (size_t k = 0; k < gens.size(); ++k) {
+        auto const& g = gens[k];
+        one           = todo[i];
+        one.join(g);
+        one.normalize();
+        auto it = res.find(one);
+        if (it == res.end()) {
+          newtodo.push_back(one);
+          res.emplace(std::move(one), num_congs);
+          latt.add_edge_nc(j, num_congs, k);
+          num_congs++;
+        } else {
+          latt.add_edge_nc(j, it->second, k);
+        }
+      }
+    }
+
+    latt.add_nodes(newtodo.size());
+    std::swap(todo, newtodo);
+    if (libsemigroups::report::should_report()) {
+      std::cout << lg << ", todo = " << todo.size() << ", res = " << res.size()
+                << ", # bucks = " << res.bucket_count() << std::endl;
+    }
+  }
+  if (libsemigroups::report::should_report()) {
+    std::cout << "res =  " << res.size() << std::endl;
+  }
+  return latt;
+}
+
 // Imported types and functions from the library, defined below
 
 Obj HTValue;
@@ -467,6 +555,7 @@ static StructGVarFunc GVarFuncs[] = {
                BIPART_NR_IDEMPOTENTS,
                4,
                "o, scc, lookup, nr_threads"),
+
     {0, 0, 0, 0, 0} /* Finish with an empty entry */
 };
 

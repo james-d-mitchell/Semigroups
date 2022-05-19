@@ -116,7 +116,7 @@ gap> AsCongruenceByWangPair(cong);
 
 <#GAPDoc Label="GeneratingCongruencesOfLattice">
   <ManSection>
-    <Oper Name = "GeneratingCongruencesOfLattice" Arg = "S"/>
+    <Attr Name = "GeneratingCongruencesOfLattice" Arg = "S"/>
     <Returns>A semigroup.</Returns>
     <Description>
       This operation takes a finite graph inverse semigroup <A>S</A> and returns a
