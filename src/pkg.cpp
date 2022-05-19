@@ -32,6 +32,8 @@
 
 #include <set>  // for set
 
+#include <set>  // for set
+
 // GAP headers
 #include "compiled.h"
 
@@ -390,30 +392,46 @@ Obj NumberOfCongruences(Obj self, Obj list) {
     gens.push_back(foo(ELM_PLIST(list, i)));
   }
 
-  std::unordered_set<Duf<uint32_t>, Hash<Duf<uint32_t>>> res;
+  std::unordered_map<Duf<uint32_t>, std::set<uint32_t>, Hash<Duf<uint32_t>>>
+      res;
   res.reserve(400);
 
   Duf<uint32_t> one(gens.front().size());
   Duf<uint32_t> tmp(gens.front().size());
-  res.insert(one);
 
   std::vector<Duf<uint32_t>> todo, newtodo;
   todo.push_back(one);
+
+  res.emplace(one, std::set<uint32_t>({0}));
+  // first value in vector indicates the index of one (or more generally the
+  // element)
   size_t lg = 0;
   while (!todo.empty()) {
     newtodo.clear();
     lg++;
-    for (auto const& v : todo) {
+    size_t prev = res.size();
+    for (size_t i = 0; i < todo.size(); ++i) {
       for (auto const& g : gens) {
-        tmp = v;
+        tmp = todo[i];
         tmp.join(g);
         tmp.normalize();
-        if (res.insert(tmp).second) {
-          // TODO add edges and keep topologically sorted
+        auto it = res.find(tmp);
+        if (it == res.end()) {
           newtodo.push_back(tmp);
+          res.emplace(tmp,
+                      std::set<uint32_t>({static_cast<uint32_t>(res.size())}));
+        } else {
+          it->second.insert(prev + i);
+          // This records in-edges
         }
       }
     }
+
+    // TODO topologically sort res (complicated because the values in the
+    // "second" of each pair in res also have to be updated.
+    // Apply the algorithm in Listing 11.8 on p224 of Freese, Jezek, Nation,
+    // "Free Lattices" to compute the upper covers, and return this (this might
+    // be the reverse of the lattice) not sure
     std::swap(todo, newtodo);
     std::cout << lg << ", todo = " << todo.size() << ", res = " << res.size()
               << ", # bucks = " << res.bucket_count() << std::endl;
