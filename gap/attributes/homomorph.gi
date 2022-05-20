@@ -414,6 +414,14 @@ function(hom)
   return cong;
 end);
 
+InstallMethod(ViewObj, "for SHBI",
+    [IsSemigroupHomomorphismByImages],
+function(hom)
+  ViewObj(Source(hom));
+  Print(" -> ");
+  ViewObj(Range(hom));
+end);
+
 InstallMethod(String, "for a semigroup homom. by images",
 [IsSemigroupHomomorphismByImages],
 function(hom)
