@@ -2084,7 +2084,7 @@ gap> S := Semigroup(S, rec(acting := false));
 <partial perm monoid of rank 25 with 3 generators>
 gap> SmallerDegreePartialPermRepresentation(S);
 <inverse partial perm monoid of size 25, rank 25 with 3 generators> -> 
-<inverse partial perm semigroup of rank 6 with 3 generators>
+<inverse partial perm monoid of rank 6 with 3 generators>
 
 #  GeneratorsOfGroup
 gap> S := Group([], PartialPerm([1, 2]));;
@@ -2136,9 +2136,8 @@ gap> DigraphOfActionOnPoints(S, 3);
 gap> S := UniformBlockBijectionMonoid(4);
 <inverse block bijection monoid of degree 4 with 3 generators>
 gap> map := SmallerDegreePartialPermRepresentation(S);
-CompositionMapping( MappingByFunction( <inverse partial perm monoid 
- of size 131, rank 131 with 3 generators>, <inverse partial perm monoid of 
- rank 10 with 3 generators>, function( x ) ... end, function( x ) ... end ),
+CompositionMapping( <inverse partial perm monoid of size 131, rank 131 with 3 
+ generators> -> <inverse partial perm monoid of rank 10 with 3 generators>,
  MappingByFunction( <inverse block bijection monoid of size 131, degree 4 
  with 3 generators>, <inverse partial perm monoid of size 131, rank 131 with 
  3 generators>, function( x ) ... end ) )
@@ -2154,9 +2153,8 @@ gap> C := SemigroupCongruence(S,
 <2-sided semigroup congruence over <inverse block bijection monoid 
  of size 339, degree 4 with 3 generators> with 1 generating pairs>
 gap> map := SmallerDegreePartialPermRepresentation(Source(C));
-CompositionMapping( MappingByFunction( <inverse partial perm monoid 
- of size 339, rank 339 with 3 generators>, <inverse partial perm monoid of 
- rank 14 with 3 generators>, function( x ) ... end, function( x ) ... end ),
+CompositionMapping( <inverse partial perm monoid of size 339, rank 339 with 3 
+ generators> -> <inverse partial perm monoid of rank 14 with 3 generators>,
  MappingByFunction( <inverse block bijection monoid of size 339, degree 4 
  with 3 generators>, <inverse partial perm monoid of size 339, rank 339 with 
  3 generators>, function( x ) ... end ) )
