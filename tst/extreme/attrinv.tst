@@ -648,9 +648,8 @@ gap> NrMovedPoints(f);
 gap> Size(f);
 5
 gap> VPR := VagnerPrestonRepresentation(f);
-MappingByFunction( <inverse partial perm semigroup of size 5, rank 4 with 3 
- generators>, <inverse partial perm semigroup of rank 5 with 3 generators>
- , function( x ) ... end, function( x ) ... end )
+<inverse partial perm semigroup of size 5, rank 4 with 3 generators> -> 
+<inverse partial perm semigroup of rank 5 with 3 generators>
 gap> inv := InverseGeneralMapping(VPR);
 MappingByFunction( <inverse partial perm semigroup of rank 5 with 3 
  generators>, <inverse partial perm semigroup of size 5, rank 4 with 3 

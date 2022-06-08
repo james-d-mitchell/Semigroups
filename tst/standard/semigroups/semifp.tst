@@ -13,6 +13,9 @@ gap> LoadPackage("semigroups", false);;
 #
 gap> SEMIGROUPS.StartTest();
 
+# This file still contains some instances of MappingByFunction because
+# methods from the gap library are used
+
 #
 gap> Noop := 0;;
 gap> TestEnumerator := function(en)
