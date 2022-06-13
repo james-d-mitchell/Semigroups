@@ -77,3 +77,4 @@ DeclareOperation("RightIdentity", [IsSemigroup, IsMultiplicativeElement]);
 
 DeclareAttribute("MinimalFaithfulTransformationDegree", IsSemigroup);
 DeclareAttribute("MinimalFaithfulTransformationRepresentation", IsSemigroup);
+DeclareAttribute("SmallerDegreeTransformationRepresentation", IsSemigroup);

@@ -1106,7 +1106,7 @@ function(S, x)
 end);
 
 InstallMethod(MinimalFaithfulTransformationDegree, "for a right zero semigroup",
-[IsRightZeroSemigroup], 
+[IsRightZeroSemigroup],
 function(S)
   local max, deg;
 
@@ -1126,9 +1126,9 @@ function(S)
 end);
 
 InstallMethod(MinimalFaithfulTransformationDegree, "for a left zero semigroup",
-[IsLeftZeroSemigroup], 
+[IsLeftZeroSemigroup],
 function(S)
-  local max, deg, N, R, r;
+  local max, deg, N, r;
   max := 0;
   deg := 0;
   while max < Size(S) do
@@ -1137,7 +1137,6 @@ function(S)
       N := r ^ (deg - r);
       if N > max then
         max := N;
-        R := r;
       fi;
     od;
   od;
