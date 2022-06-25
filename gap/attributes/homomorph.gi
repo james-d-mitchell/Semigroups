@@ -459,6 +459,9 @@ InstallMethod(ViewObj, "for SHBI/SHBF",
 [IsSemigroupHomomorphismByImagesOrFunction],
 2,  # to beat method for mapping by function with inverse
 function(hom)
+  if UserPreference("semigroups", "HomomorphismView") <> "semigroups-pkg" then
+    TryNextMethod();
+  fi;
   Print("\>");
   ViewObj(Source(hom));
   Print("\< \>->\< \>");
@@ -469,6 +472,9 @@ end);
 InstallMethod(String, "for a semigroup homom. by function",
 [IsSemigroupHomomorphismByFunction],
 function(hom)
+  if UserPreference("semigroups", "HomomorphismView") <> "semigroups-pkg" then
+    TryNextMethod();
+  fi;
   return Concatenation("SemigroupHomomorphismByFunction( ",
           String(Source(hom)), ", ", String(Range(hom)), ", ",
           String(hom!.fun), " )");
@@ -477,6 +483,9 @@ end);
 InstallMethod(PrintObj, "for a semigroup homom. by function",
 [IsSemigroupHomomorphismByFunction],
 function(hom)
+  if UserPreference("semigroups", "HomomorphismView") <> "semigroups-pkg" then
+    TryNextMethod();
+  fi;
   Print(String(hom));
   return;
 end);
@@ -484,6 +493,9 @@ end);
 InstallMethod(String, "for a semigroup isom. by function",
 [IsSemigroupIsomorphismByFunction],
 function(iso)
+  if UserPreference("semigroups", "HomomorphismView") <> "semigroups-pkg" then
+    TryNextMethod();
+  fi;
   return Concatenation("SemigroupIsomorphismByFunction( ",
           String(Source(iso)), ", ", String(Range(iso)), ", ",
           String(iso!.fun), ", ",
@@ -493,6 +505,9 @@ end);
 InstallMethod(PrintObj, "for a semigroup isom. by function",
 [IsSemigroupIsomorphismByFunction],
 function(iso)
+  if UserPreference("semigroups", "HomomorphismView") <> "semigroups-pkg" then
+    TryNextMethod();
+  fi;
   Print(String(iso));
   return;
 end);
