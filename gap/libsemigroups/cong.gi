@@ -386,6 +386,17 @@ function(C)
   return result;
 end);
 
+InstallMethod(RightActionDigraph, 
+"for right congruence with CanUseLibsemigroupsCongruence",
+[CanUseLibsemigroupsCongruence and IsRightSemigroupCongruence],
+function(C)
+  local tc;
+  tc := LibsemigroupsCongruence(C);
+  Assert(1, libsemigroups.Congruence.has_todd_coxeter(tc));
+  tc := libsemigroups.Congruence.todd_coxeter(tc);
+  return Digraph(libsemigroups.ToddCoxeterSharedPtr.digraph(tc));
+end);
+
 ###########################################################################
 # Methods NOT using libsemigroups object directly but that use an
 # operation or function that only applies to CanUseLibsemigroupsCongruence

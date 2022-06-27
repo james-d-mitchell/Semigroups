@@ -62,6 +62,11 @@ namespace gapbind14 {
       : std::true_type {};
 
   template <>
+  struct IsGapBind14Type<
+      std::shared_ptr<libsemigroups::congruence::ToddCoxeter>>
+      : std::true_type {};
+
+  template <>
   struct IsGapBind14Type<libsemigroups::Congruence &> : std::true_type {};
 
 }  // namespace gapbind14
@@ -148,5 +153,8 @@ void init_cong(gapbind14::Module &m) {
            [](Congruence &C) {
              return gapbind14::make_iterator(C.cbegin_ntc(), C.cend_ntc());
            })
-      .def("quotient_froidure_pin", &Congruence::quotient_froidure_pin);
+      .def("quotient_froidure_pin", &Congruence::quotient_froidure_pin)
+      .def("todd_coxeter", &Congruence::todd_coxeter)
+      .def("has_todd_coxeter", &Congruence::has_todd_coxeter)
+      .def("has_knuth_bendix", &Congruence::has_knuth_bendix);
 }

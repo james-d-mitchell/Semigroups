@@ -61,6 +61,14 @@ namespace {
   }
 }  // namespace
 
+namespace gapbind14 {
+  // FIXME(ActionDigraph) this is a duplicate
+  template <>
+  struct IsGapBind14Type<
+      std::shared_ptr<libsemigroups::congruence::ToddCoxeter>>
+      : std::true_type {};
+}  // namespace gapbind14
+
 GAPBIND14_MODULE(libsemigroups, m) {
   ////////////////////////////////////////////////////////////////////////
   // Free functions
@@ -111,12 +119,30 @@ GAPBIND14_MODULE(libsemigroups, m) {
   using libsemigroups::congruence::ToddCoxeter;
   using table_type = libsemigroups::congruence::ToddCoxeter::table_type;
 
+  // TODO(ActionDigraph) (combine the following two)
   gapbind14::class_<ToddCoxeter>(m, "ToddCoxeter")
       .def(gapbind14::init<congruence_kind>{})
       .def("set_number_of_generators", &ToddCoxeter::set_number_of_generators)
       .def("number_of_generators", &ToddCoxeter::number_of_generators)
       .def("prefill",
-           gapbind14::overload_cast<table_type const&>(&ToddCoxeter::prefill));
+           gapbind14::overload_cast<table_type const&>(&ToddCoxeter::prefill))
+      .def("digraph", &ToddCoxeter::digraph);
+
+  using ToddCoxeter_ = std::shared_ptr<libsemigroups::congruence::ToddCoxeter>;
+  gapbind14::class_<ToddCoxeter_>(m, "ToddCoxeterSharedPtr")
+      .def("number_of_generators",
+           [](ToddCoxeter_ tc) { return tc->number_of_generators(); })
+      .def("number_of_generating_pairs",
+           [](ToddCoxeter_ tc) { return tc->number_of_generating_pairs(); })
+      .def("finished", [](ToddCoxeter_ tc) { return tc->finished(); })
+      .def("run", [](ToddCoxeter_ tc) { return tc->run(); })
+      .def("digraph", [](ToddCoxeter_ tc) {
+        tc->run();
+        tc->standardize(
+            libsemigroups::congruence::ToddCoxeter::order::shortlex);
+        tc->shrink_to_fit();
+        return tc->digraph();
+      });
 }
 
 ////////////////////////////////////////////////////////////////////////

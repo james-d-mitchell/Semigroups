@@ -150,3 +150,6 @@ DeclareOperation("OnLeftCongruenceClasses",
 DeclareOperation("OnRightCongruenceClasses",
                  [IsLeftRightOrTwoSidedCongruenceClass,
                   IsMultiplicativeElement]);
+
+DeclareAttribute("RightActionDigraph", IsRightSemigroupCongruence);
+DeclareAttribute("LeftActionDigraph", IsLeftSemigroupCongruence);
