@@ -390,11 +390,20 @@ InstallMethod(RightActionDigraph,
 "for right congruence with CanUseLibsemigroupsCongruence",
 [CanUseLibsemigroupsCongruence and IsRightSemigroupCongruence],
 function(C)
-  local tc;
-  tc := LibsemigroupsCongruence(C);
-  Assert(1, libsemigroups.Congruence.has_todd_coxeter(tc));
-  tc := libsemigroups.Congruence.todd_coxeter(tc);
-  return Digraph(libsemigroups.ToddCoxeterSharedPtr.digraph(tc));
+  local N, tc, table, pair;
+  N := Length(GeneratorsOfSemigroup(Range(C)));
+  tc := libsemigroups.ToddCoxeter.make([CongruenceHandednessString(C)]);
+  libsemigroups.ToddCoxeter.set_number_of_generators(tc, N);
+  if IsRightMagmaCongruence(C) then
+    table := RightCayleyGraphSemigroup(Range(C)) - 1;
+  else
+    table := LeftCayleyGraphSemigroup(Range(C)) - 1;
+  fi;
+  libsemigroups.ToddCoxeter.prefill(tc, table);
+  for pair in GeneratingPairsOfLeftRightOrTwoSidedCongruence(C) do
+    libsemigroups.ToddCoxeter.add_pair(tc, Factorization(Range(C), pair[1]) - 1, Factorization(Range(C), pair[2]) - 1);
+  od;
+  return Digraph(libsemigroups.ToddCoxeter.digraph(tc));
 end);
 
 ###########################################################################

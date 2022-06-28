@@ -67,6 +67,10 @@ namespace gapbind14 {
   struct IsGapBind14Type<
       std::shared_ptr<libsemigroups::congruence::ToddCoxeter>>
       : std::true_type {};
+
+  template <>
+  struct IsGapBind14Type<libsemigroups::congruence::ToddCoxeter const&>
+      : std::true_type {};
 }  // namespace gapbind14
 
 GAPBIND14_MODULE(libsemigroups, m) {
@@ -123,10 +127,19 @@ GAPBIND14_MODULE(libsemigroups, m) {
   gapbind14::class_<ToddCoxeter>(m, "ToddCoxeter")
       .def(gapbind14::init<congruence_kind>{})
       .def("set_number_of_generators", &ToddCoxeter::set_number_of_generators)
+      .def("add_pair",
+           gapbind14::overload_cast<word_type const&, word_type const&>(
+               &ToddCoxeter::add_pair))
       .def("number_of_generators", &ToddCoxeter::number_of_generators)
       .def("prefill",
            gapbind14::overload_cast<table_type const&>(&ToddCoxeter::prefill))
-      .def("digraph", &ToddCoxeter::digraph);
+      .def("digraph", [](ToddCoxeter const& tc) {
+        const_cast<ToddCoxeter&>(tc).run();
+        const_cast<ToddCoxeter&>(tc).standardize(
+            libsemigroups::congruence::ToddCoxeter::order::shortlex);
+        const_cast<ToddCoxeter&>(tc).shrink_to_fit();
+        return const_cast<ToddCoxeter&>(tc).digraph();
+      });
 
   using ToddCoxeter_ = std::shared_ptr<libsemigroups::congruence::ToddCoxeter>;
   gapbind14::class_<ToddCoxeter_>(m, "ToddCoxeterSharedPtr")
