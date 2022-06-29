@@ -205,6 +205,30 @@ function(S)
                                                             pts[pos[i] ^ x])));
 end);
 
+# The next method is copied directly from the GAP library the only change is
+# the return value which uses SemigroupIsomorphismByFunctionNC here but
+# MagmaIsomorphismByFunctionsNC in the GAP library.
+
+InstallMethod(IsomorphismTransformationMonoid, "for a semigroup",
+[IsSemigroup],
+1, # to beat the GAP library version
+function(S)
+  local iso1, inv1, iso2, inv2;
+  if MultiplicativeNeutralElement(S) = fail then
+      ErrorNoReturn("the argument must be a semigroup with a ",
+                    "multiplicative neutral element");
+  fi;
+  iso1 := IsomorphismTransformationSemigroup(S);
+  inv1 := InverseGeneralMapping(iso1);
+  iso2 := IsomorphismTransformationMonoid(Range(iso1));
+  inv2 := InverseGeneralMapping(iso2);
+  UseIsomorphismRelation(S, Range(iso2));
+  return SemigroupIsomorphismByFunctionNC(S,
+                                          Range(iso2),
+                                          x -> (x ^ iso1) ^ iso2,
+                                          x -> (x ^ inv2) ^ inv1);
+end);
+
 #############################################################################
 ## Algebraic attributes
 #############################################################################

@@ -18,9 +18,8 @@ gap> SEMIGROUPS.StartTest();
 gap> S := DualSymmetricInverseMonoid(4);
 <inverse block bijection monoid of degree 4 with 3 generators>
 gap> IsomorphismTransformationMonoid(S);
-MappingByFunction( <inverse block bijection monoid of size 339, degree 4 with 
- 3 generators>, <transformation monoid of size 339, degree 339 with 3 
- generators>, function( x ) ... end, function( x ) ... end )
+<inverse block bijection monoid of size 339, degree 4 with 3 generators> -> 
+<transformation monoid of size 339, degree 339 with 3 generators>
 gap> S := Semigroup(Bipartition([[1, 2, 3, 4, -2, -3], [-1], [-4]]),
 >  Bipartition([[1, 2, -1, -3], [3, 4, -2, -4]]),
 >  Bipartition([[1, 3, -1], [2, 4, -2, -3], [-4]]),
@@ -33,9 +32,8 @@ gap> S := Monoid(Bipartition([[1, 2, -2], [3], [4, -3, -4], [-1]]),
 >  Bipartition([[1, -1, -2], [2, 3, -3, -4], [4]]),
 >  Bipartition([[1, 4, -4], [2, -1], [3, -2, -3]]));;
 gap> IsomorphismTransformationMonoid(S);
-MappingByFunction( <bipartition monoid of size 41, degree 4 with 4 generators>
- , <transformation monoid of size 41, degree 41 with 4 generators>
- , function( x ) ... end, function( x ) ... end )
+<bipartition monoid of size 41, degree 4 with 4 generators> -> 
+<transformation monoid of size 41, degree 41 with 4 generators>
 
 # the number of iterations, change here to get faster test
 gap> N := 333;;
@@ -154,8 +152,8 @@ true
 gap> R := PrincipalFactor(D);
 <Rees 0-matrix semigroup 12x15 over Group(())>
 gap> f := IsomorphismSemigroup(IsBipartitionSemigroup, R);
-<Rees 0-matrix semigroup 12x15 over Group(())> -> <bipartition semigroup 
- of size 181, degree 182 with 26 generators>
+<Rees 0-matrix semigroup 12x15 over Group(())> -> 
+<bipartition semigroup of size 181, degree 182 with 26 generators>
 gap> g := InverseGeneralMapping(f);;
 gap> ForAll(R, x -> (x ^ f) ^ g = x);
 true
@@ -197,8 +195,8 @@ gap> S := Semigroup(Transformation([1, 3, 4, 1, 3]),
 gap> T := Range(IsomorphismSemigroup(IsBipartitionSemigroup, S));
 <bipartition semigroup of degree 5 with 5 generators>
 gap> f := IsomorphismTransformationSemigroup(T);
-<bipartition semigroup of degree 5 with 5 generators> -> <transformation 
- semigroup of degree 5 with 5 generators>
+<bipartition semigroup of degree 5 with 5 generators> -> 
+<transformation semigroup of degree 5 with 5 generators>
 gap> g := InverseGeneralMapping(f);;
 gap> ForAll(T, x -> (x ^ f) ^ g = x);
 true

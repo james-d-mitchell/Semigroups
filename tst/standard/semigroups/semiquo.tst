@@ -185,7 +185,7 @@ gap> GeneratorsSmallest(S / cong);
     [20,17][29,32][30,31](1,4)(2,3)(5,8)(6,7)> ]
 
 # Issue 816 - Subsemigroups of quotient semigroups
-gap> S := Semigroup(Transformation([2, 1, 5, 1, 5]), 
+gap> S := Semigroup(Transformation([2, 1, 5, 1, 5]),
 >                   Transformation([1, 1, 1, 5, 3]), 
 >                   Transformation([2, 5, 3, 5, 3]));;
 gap> cong := SemigroupCongruence(S, [Transformation([1, 2, 5, 2, 5]),
@@ -194,7 +194,7 @@ gap> cong := SemigroupCongruence(S, [Transformation([1, 2, 5, 2, 5]),
  3 generators> with 1 generating pairs>
 gap> T := S / cong;;
 gap> gens := GeneratorsOfSemigroup(S);;
-gap> images := List(gens, gen -> EquivalenceClassOfElement(cong, gen));;  
+gap> images := List(gens, gen -> EquivalenceClassOfElement(cong, gen));;
 gap> Q := Subsemigroup(T, images);
 <semigroup with 3 generators>
 gap> Q = T;
@@ -213,10 +213,10 @@ gap> map := IsomorphismFpSemigroup(T);
 <quotient of <2-sided semigroup congruence over <transformation semigroup of 
   degree 5 with 3 generators> with 1 generating pairs>> -> 
 <fp semigroup with 3 generators and 8 relations>
-gap> map := IsomorphismFpSemigroup(Q);                
+gap> map := IsomorphismFpSemigroup(Q);
 <semigroup of size 4, with 3 generators> -> 
 <fp semigroup with 3 generators and 8 relations>
-gap> IsomorphismFpSemigroup(H);  
+gap> IsomorphismFpSemigroup(H);
 <semigroup of size 4, with 3 generators> -> 
 <fp semigroup with 3 generators and 8 relations>
 
@@ -251,11 +251,10 @@ e over <transformation semigroup of degree 5 with 3 generators> with
 e over <transformation semigroup of degree 5 with 3 generators> with 
     1 generating pairs>> with 1 generating pairs> ]
 gap> map := QuotientSemigroupHomomorphism(Q);
-MappingByFunction( <transformation semigroup of degree 5 with 3 generators>
- , <quotient of <2-sided semigroup congruence over <transformation semigroup 
- of degree 5 with 3 generators> with 
-1 generating pairs>>, function( x ) ... end )
-gap> Q := Q / SemigroupCongruence(Q, 
+<transformation semigroup of degree 5 with 3 generators> -> 
+<quotient of <2-sided semigroup congruence over <transformation semigroup of 
+  degree 5 with 3 generators> with 1 generating pairs>>
+gap> Q := Q / SemigroupCongruence(Q,
 > [[Transformation([2, 1, 5, 1, 5]) ^ map, 
 >   Transformation([2, 5, 3, 5, 3]) ^ map]]);
 <quotient of <2-sided semigroup congruence over <quotient of <2-sided semigrou\

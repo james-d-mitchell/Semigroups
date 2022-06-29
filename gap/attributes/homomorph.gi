@@ -265,6 +265,19 @@ function(S, T, f, g)
   return iso;
 end);
 
+InstallMethod(InverseGeneralMapping,
+"for a semigroup isomorphism by function",
+[IsSemigroupHomomorphismByFunction and IsBijective],
+function(map)
+  local inv;
+  inv := SemigroupIsomorphismByFunctionNC(Range(map),
+                                          Source(map),
+                                          map!.invFun,
+                                          map!.fun);
+  TransferMappingPropertiesToInverse(map, inv);
+  return inv;
+end);
+
 # methods for converting between SHBI and SHBF
 InstallMethod(AsSemigroupHomomorphismByImages,
 "for a semigroup homomorphism by function",

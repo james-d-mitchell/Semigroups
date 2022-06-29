@@ -53,9 +53,8 @@ gap> map := IsomorphismFpMonoid(S);
 <transformation monoid of degree 5 with 5 generators> -> 
 <fp monoid with 5 generators and 608 relations>
 gap> inv := InverseGeneralMapping(map);
-MappingByFunction( <fp monoid with 5 generators and 608 relations>, 
+<fp monoid with 5 generators and 608 relations> -> 
 <transformation monoid of degree 5 with 5 generators>
- , function( x ) ... end, function( x ) ... end )
 gap> ForAll(S, x -> (x ^ map) ^ inv = x);
 true
 gap> map := IsomorphismFpSemigroup(S);;
@@ -2408,7 +2407,6 @@ true
 
 # IsomorphismFpSemigroup
 gap> F := FreeGroup(1);
-<free group on the generators [ f1 ]>
 gap> R := [F.1 ^ 2];;
 gap> IsomorphismFpSemigroup(F / R);
 MappingByFunction( <fp group on the generators 

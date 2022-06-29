@@ -796,6 +796,7 @@ for _IsXSemigroup in ["IsTransformationSemigroup",
 od;
 Unbind(_IsXSemigroup);
 
+# TODO(Homomorphisms): use new homomorphisms code here!
 InstallMethod(StrongSemilatticeOfSemigroups,
 "for a digraph, a list, and a list",
 [IsDigraph, IsList, IsList],

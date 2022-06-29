@@ -61,3 +61,47 @@ end);
 # function(q)
 #   return NrEquivalenceClasses(QuotientSemigroupCongruence(q));
 # end);
+
+MakeReadWriteGlobal("HomomorphismQuotientSemigroup");
+UnbindGlobal("HomomorphismQuotientSemigroup");
+
+DeclareGlobalFunction("HomomorphismQuotientSemigroup");
+
+InstallGlobalFunction(HomomorphismQuotientSemigroup,
+function(cong)
+  local S, Qrep, efam, filters, Q, hom, Qgens;
+
+    if not IsSemigroupCongruence(cong) then
+      ErrorNoReturn("the argument should be a semigroup congruence");
+    fi;
+    S := Source(cong);
+    Qrep := EquivalenceClassOfElementNC(cong, Representative(S));
+    efam := FamilyObj(Qrep);
+    filters := IsSemigroup and IsQuotientSemigroup and IsAttributeStoringRep;
+    if IsMonoid(S) then
+      filters := filters and IsMagmaWithOne;
+    fi;
+    if HasIsFinite(S) and IsFinite(S) then
+      filters := filters and IsFinite;
+    fi;
+    Q := Objectify(NewType(CollectionsFamily(efam), filters),
+                   rec());
+    SetRepresentative(Q, Qrep);
+    SetQuotientSemigroupPreimage(Q, S);
+    SetQuotientSemigroupCongruence(Q, cong);
+    hom := SemigroupHomomorphismByFunction
+            (S, Q, x -> EquivalenceClassOfElementNC(cong, x));
+    SetQuotientSemigroupHomomorphism(Q, hom);
+    efam!.quotient := Q;
+    if IsMonoid(Q) and HasOne(S) then
+      SetOne(Q, One(S) ^ QuotientSemigroupHomomorphism(Q));
+    fi;
+    if HasGeneratorsOfMagma(S) or HasGeneratorsOfMagmaWithInverses(S)
+          or HasGeneratorsOfSemigroup(S) then
+      Qgens := List(GeneratorsOfSemigroup(S), function (s)
+              return s ^ QuotientSemigroupHomomorphism(Q);
+          end);
+      SetGeneratorsOfSemigroup(Q, Qgens);
+    fi;
+    return QuotientSemigroupHomomorphism(Q);
+end);

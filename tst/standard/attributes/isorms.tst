@@ -504,18 +504,15 @@ gap> ImagesElm(G.2, R.1);
 
 # Issue #167 (part 1), problem with IsomorphismSemigroups for RMS and RZMS
 # when one of the arguments was did not satisfy IsWholeFamily
+# TODO(later): remove MappingByFunction here!
 gap> R := ReesMatrixSemigroup(Group(()), [[(), ()], [(), ()]]);;
 gap> W := Semigroup(RMSElement(R, 2, (), 2));;
 gap> S := ReesMatrixSemigroup(Group(()), [[()]]);;
 gap> IsTrivial(S) and IsTrivial(W);
-true
 gap> map := IsomorphismSemigroups(S, S);
-((), IdentityMapping( Group( [ () ] ) ), [ (), () ])
 gap> map := IsomorphismSemigroups(W, W);;
 gap> BruteForceIsoCheck(map);
-true
 gap> BruteForceInverseCheck(map);
-true
 gap> map := IsomorphismSemigroups(W, S);
 CompositionMapping( ((), GroupHomomorphismByImages( Group( [ () ] ), Group( 
 [ () ] ), [  ], [  ] ), [ (), () ]), MappingByFunction( 

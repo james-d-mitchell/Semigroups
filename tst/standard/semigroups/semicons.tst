@@ -930,6 +930,7 @@ Error, no method found! For debugging hints type ?Recovery from NoMethodFound
 Error, no 1st choice method found for `BrandtSemigroupCons' on 3 arguments
 
 # constructions: strong semilattices of semigroups: trivial argument checks
+# TODO(Homomorphisms): use SemigroupHomomorphism not MappingByFunction
 gap> D := CompleteDigraph(2);;
 gap> S1 := TrivialSemigroup();;
 gap> id := IdentityMapping(S1);;
