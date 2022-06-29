@@ -102,7 +102,7 @@ InstallMethod(IsomorphismTransformationSemigroup,
 [CanUseFroidurePin],
 ToBeat([CanUseFroidurePin], [IsFpMonoid]),
 function(S)
-  local cay, deg, gen, next, T, iso, inv, i;
+  local cay, deg, gen, next, T, i;
   if not IsFinite(S) then
     ErrorNoReturn("the argument (a semigroup) is not finite");
   elif IsPartialPermSemigroup(S) or IsTransformationSemigroup(S) then

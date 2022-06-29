@@ -446,7 +446,8 @@ function(D, i)
     map := x -> info.embedding(x ^ info.iso[i], i);
     map := SemigroupHomomorphismByFunction(info.factors[i], D, map);
   else
-    map := SemigroupHomomorphismByFunction(info.factors[i], D, x -> info.embedding(x, i));
+    map := SemigroupHomomorphismByFunction(info.factors[i], D,
+      x -> info.embedding(x, i));
   fi;
   info.embeddings[i] := map;
   return map;
@@ -476,7 +477,8 @@ function(D, i)
     map := x -> info.projection(x, i) ^ InverseGeneralMapping(info.iso[i]);
     map := SemigroupHomomorphismByFunction(D, info.factors[i], map);
   else
-    map := SemigroupHomomorphismByFunction(D, info.factors[i], x -> info.projection(x, i));
+    map := SemigroupHomomorphismByFunction(D, info.factors[i],
+      x -> info.projection(x, i));
   fi;
   info.projections[i] := map;
   return map;

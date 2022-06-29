@@ -318,7 +318,8 @@ function(S, T)
       g -> ForAll(DigraphVertices(McAlisterTripleSemigroupPartialOrder(S)),
       x -> (McAlisterTripleSemigroupAction(S)(x, g)) ^ (rep * iso_x) =
       McAlisterTripleSemigroupAction(T)((x ^ iso_x), (g ^ iso_g)) ^ rep)) then
-    hom := SemigroupHomomorphismByFunction(S, T, s -> MTSE(T, s[1] ^ iso_x, s[2] ^ iso_g));
+    hom := SemigroupHomomorphismByFunction(S, T,
+      s -> MTSE(T, s[1] ^ iso_x, s[2] ^ iso_g));
     SetIsBijective(hom, true);
     return hom;
   fi;
@@ -872,7 +873,8 @@ function(S)
   od;
 
   cover := SemigroupDirectProductInfo(P).projection;
-  return SemigroupHomomorphismByFunction(InverseSemigroup(cover_gens), S, x -> cover(x, 1));
+  return SemigroupHomomorphismByFunction(InverseSemigroup(cover_gens),
+    S, x -> cover(x, 1));
 end);
 
 # This method extends a partial perm 'x' to a permutation of degree 'deg'.
