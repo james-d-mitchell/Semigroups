@@ -924,8 +924,8 @@ gap> stz := StzPresentation(S);
  with length 11>
 gap> StzRemoveGenerator(stz, "a");
 gap> map := StzIsomorphism(stz);
-<fp semigroup with 3 generators and 2 relations> -> <fp semigroup with\
- 2 generators and 1 relation>
+<fp semigroup with 3 generators and 2 relations> -> 
+<fp semigroup with 2 generators and 1 relation>
 gap> S.1 ^ map;
 c^3]]>
 </Example>

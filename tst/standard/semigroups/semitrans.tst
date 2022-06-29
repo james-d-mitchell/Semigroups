@@ -289,8 +289,8 @@ gap> BruteForceInverseCheck := function(map)
 # isomorphism from RMS to transformation semigroup
 gap> S := RectangularBand(IsReesMatrixSemigroup, 5, 5);;
 gap> map := IsomorphismSemigroup(IsTransformationSemigroup, S);
-<Rees matrix semigroup 5x5 over Group(())> -> <transformation semigroup 
- of size 25, degree 26 with 5 generators>
+<Rees matrix semigroup 5x5 over Group(())> -> 
+<transformation semigroup of size 25, degree 26 with 5 generators>
 gap> BruteForceIsoCheck(map);
 true
 gap> BruteForceInverseCheck(map);
@@ -299,8 +299,8 @@ true
 # isomorphism from RZMS to transformation semigroup
 gap> S := ZeroSemigroup(IsReesZeroMatrixSemigroup, 10);;
 gap> map := IsomorphismSemigroup(IsTransformationSemigroup, S);
-<Rees 0-matrix semigroup 9x1 over Group(())> -> <commutative transformation 
- semigroup of size 10, degree 11 with 9 generators>
+<Rees 0-matrix semigroup 9x1 over Group(())> -> 
+<commutative transformation semigroup of size 10, degree 11 with 9 generators>
 gap> BruteForceIsoCheck(map);
 true
 gap> BruteForceInverseCheck(map);
@@ -309,8 +309,8 @@ true
 # isomorphism from fp semigroup to transformation semigroup
 gap> S := AsSemigroup(IsFpSemigroup, JonesMonoid(5));;
 gap> map := IsomorphismSemigroup(IsTransformationSemigroup, S);
-<fp semigroup with 5 generators and 28 relations> -> <transformation monoid 
- of size 42, degree 42 with 4 generators>
+<fp semigroup with 5 generators and 28 relations> -> 
+<transformation monoid of size 42, degree 42 with 4 generators>
 gap> BruteForceIsoCheck(map);
 true
 gap> BruteForceInverseCheck(map);
@@ -319,8 +319,8 @@ true
 # isomorphism from pbr semigroup to transformation semigroup
 gap> S := FullPBRMonoid(1);;
 gap> map := IsomorphismSemigroup(IsTransformationSemigroup, S);
-<pbr monoid of size 16, degree 1 with 4 generators> -> <transformation monoid 
- of size 16, degree 16 with 4 generators>
+<pbr monoid of size 16, degree 1 with 4 generators> -> 
+<transformation monoid of size 16, degree 16 with 4 generators>
 gap> BruteForceIsoCheck(map);
 true
 gap> BruteForceInverseCheck(map);
@@ -389,8 +389,8 @@ gap> S := Monoid(Matrix(IsBooleanMat,
 >                Matrix(IsBooleanMat,
 >        [[1, 0], [0, 0]]));;
 gap> map := IsomorphismSemigroup(IsTransformationSemigroup, S);
-<monoid of 2x2 boolean matrices with 4 generators> -> <transformation monoid 
- of degree 4 with 4 generators>
+<monoid of 2x2 boolean matrices with 4 generators> -> 
+<transformation monoid of degree 4 with 4 generators>
 gap> BruteForceIsoCheck(map);
 true
 gap> BruteForceInverseCheck(map);
@@ -471,8 +471,8 @@ gap> S := Monoid(
 >        0, 3));
 <monoid of 3x3 ntp matrices with 3 generators>
 gap> IsomorphismSemigroup(IsTransformationSemigroup, S);
-<monoid of size 19683, 3x3 ntp matrices with 3 generators> -> <transformation 
- monoid of size 19683, degree 19683 with 3 generators>
+<monoid of size 19683, 3x3 ntp matrices with 3 generators> -> 
+<transformation monoid of size 19683, degree 19683 with 3 generators>
 
 # isomorphism from ntp mat semigroup to transformation
 #   semigroup. This is the general linear semigroup over the field with 2
@@ -486,8 +486,8 @@ gap> S := Monoid(
 >        [[1, 0], [0, 0]], 0, 2));
 <monoid of 2x2 ntp matrices with 3 generators>
 gap> map := IsomorphismSemigroup(IsTransformationSemigroup, S);
-<monoid of size 16, 2x2 ntp matrices with 3 generators> -> <transformation 
- monoid of size 16, degree 16 with 3 generators>
+<monoid of size 16, 2x2 ntp matrices with 3 generators> -> 
+<transformation monoid of size 16, degree 16 with 3 generators>
 gap> BruteForceInverseCheck(map);
 true
 gap> BruteForceIsoCheck(map);
@@ -2747,8 +2747,8 @@ gap> R := [[F.1 ^ 2, F.1]];
 gap> IsomorphismTransformationSemigroup(F / R);
 Error, the argument (a semigroup) is not finite
 gap> IsomorphismTransformationSemigroup(MinimalIdeal(FreeBand(2)));
-<simple semigroup ideal of size 4, with 1 generator> -> <transformation 
-semigroup of size 4, degree 5 with 4 generators>
+<simple semigroup ideal of size 4, with 1 generator> -> 
+<transformation semigroup of size 4, degree 5 with 4 generators>
 
 # SEMIGROUPS_UnbindVariables
 gap> Unbind(B);

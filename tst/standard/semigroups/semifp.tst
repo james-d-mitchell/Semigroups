@@ -50,8 +50,8 @@ gap> S := Monoid(Transformation([1, 3, 4, 1, 3]),
 >                Transformation([4, 1, 2, 2, 1]),
 >                Transformation([5, 5, 1, 1, 3]));;
 gap> map := IsomorphismFpMonoid(S);
-<transformation monoid of degree 5 with 5 generators>
-  -> <fp monoid with 5 generators and 608 relations>
+<transformation monoid of degree 5 with 5 generators> -> 
+<fp monoid with 5 generators and 608 relations>
 gap> inv := InverseGeneralMapping(map);
 MappingByFunction( <fp monoid with 5 generators and 608 relations>, 
 <transformation monoid of degree 5 with 5 generators>
@@ -2237,8 +2237,8 @@ gap> S := Monoid(Transformation([1, 3, 4, 1, 3]),
 >                Transformation([4, 1, 2, 2, 1]),
 >                Transformation([5, 5, 1, 1, 3]));;
 gap> map := IsomorphismFpSemigroup(S);
-<transformation monoid of degree 5 with 5 generators>
-  -> <fp semigroup with 6 generators and 619 relations>
+<transformation monoid of degree 5 with 5 generators> -> 
+<fp semigroup with 6 generators and 619 relations>
 gap> T := Range(map);
 <fp semigroup with 6 generators and 619 relations>
 gap> AsList(T);
@@ -2364,8 +2364,8 @@ gap> S := Monoid(Transformation([1, 3, 4, 1, 3]),
 >                Transformation([4, 1, 2, 2, 1]),
 >                Transformation([5, 5, 1, 1, 3]));;
 gap> map := IsomorphismFpSemigroup(S);
-<transformation monoid of degree 5 with 3 generators>
-  -> <fp semigroup with 4 generators and 68 relations>
+<transformation monoid of degree 5 with 3 generators> -> 
+<fp semigroup with 4 generators and 68 relations>
 gap> T := Range(map);
 <fp semigroup with 4 generators and 68 relations>
 gap> TestEnumerator(Enumerator(T));

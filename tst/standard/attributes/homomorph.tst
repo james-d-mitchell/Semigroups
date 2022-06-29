@@ -198,24 +198,14 @@ gap> T := MonogenicSemigroup(IsBipartitionSemigroup, 3, 2);
 gap> imgs := GeneratorsOfSemigroup(T);;
 gap> hom := SemigroupHomomorphismByImages(S, T);
 <commutative non-regular transformation semigroup of size 4, degree 5 with 1 
-<<<<<<< HEAD
   generator> -> <commutative non-regular block bijection semigroup of size 4, 
   degree 6 with 1 generator>
-=======
- generator> -> <commutative non-regular block bijection semigroup of size 4, 
- degree 6 with 1 generator>
->>>>>>> aa4606b8 (Fix errors in display)
 gap> BruteForceHomoCheck(hom);
 true
 gap> iso := SemigroupIsomorphismByImages(S, gens, imgs);
 <commutative non-regular transformation semigroup of size 4, degree 5 with 1 
-<<<<<<< HEAD
   generator> -> <commutative block bijection semigroup of size 4, degree 6 
   with 1 generator>
-=======
- generator> -> <commutative block bijection semigroup of size 4, degree 6 
- with 1 generator>
->>>>>>> aa4606b8 (Fix errors in display)
 gap> BruteForceIsoCheck(iso);
 true
 gap> BruteForceInverseCheck(iso);
@@ -334,13 +324,8 @@ gap> T := AsMonoid(IsPBRMonoid, S);
 <pbr monoid of size 27, degree 3 with 3 generators>
 gap> imgs := GeneratorsOfSemigroup(T);;
 gap> hom := SemigroupHomomorphismByImages(S, gens, imgs);
-<<<<<<< HEAD
 <full transformation monoid of degree 3> -> 
 <pbr monoid of degree 3 with 3 generators>
-=======
-<full transformation monoid of degree 3> -> <pbr monoid of degree 3 with 3 
- generators>
->>>>>>> aa4606b8 (Fix errors in display)
 gap> BruteForceHomoCheck(hom);
 true
 gap> Print(hom, "\n");
@@ -402,13 +387,8 @@ gap> gens := GeneratorsOfSemigroup(S);;
 gap> J := FullTransformationMonoid(4);;
 gap> imgs := ListWithIdenticalEntries(4, ConstantTransformation(3, 1));;
 gap> hom := SemigroupHomomorphismByImages(S, J, gens, imgs);
-<<<<<<< HEAD
 <full transformation monoid of degree 3> -> 
 <full transformation monoid of degree 4>
-=======
-<full transformation monoid of degree 3> -> <full transformation monoid of deg\
-ree 4>
->>>>>>> aa4606b8 (Fix errors in display)
 gap> BruteForceHomoCheck(hom);
 true
 gap> ImagesSource(hom);
@@ -701,11 +681,7 @@ gap> imgs := ListX(gens, x -> IdentityTransformation);
   IdentityTransformation ]
 gap> hom := SemigroupHomomorphismByImages(S, T, gens, imgs);
 <general linear monoid 2x2 over GF(2)> -> <trivial transformation group of 
-<<<<<<< HEAD
   degree 0 with 1 generator>
-=======
- degree 0 with 1 generator>
->>>>>>> aa4606b8 (Fix errors in display)
 gap> BruteForceHomoCheck(hom);
 true
 gap> PreImagesElm(hom, IdentityTransformation);
@@ -739,11 +715,7 @@ gap> imgs := ListX(gens, x -> IdentityTransformation);
   IdentityTransformation ]
 gap> hom2 := SemigroupHomomorphismByImages(S, T, gens, imgs);
 <full transformation monoid of degree 3> -> <trivial transformation group of 
-<<<<<<< HEAD
   degree 0 with 1 generator>
-=======
- degree 0 with 1 generator>
->>>>>>> aa4606b8 (Fix errors in display)
 gap> hom = hom2;
 false
 
@@ -834,15 +806,9 @@ gap> KernelOfSemigroupHomomorphism(hom1bf);
 gap> BruteForceHomoCheck(hom1bf);
 true
 gap> hom1bfbi := AsSemigroupHomomorphismByImages(hom1bf);
-<<<<<<< HEAD
 <transformation semigroup of size 59, degree 5 with 3 generators> -> 
 <quotient of <2-sided semigroup congruence over <transformation semigroup 
   of size 59, degree 5 with 3 generators> with 1 generating pairs>>
-=======
-<transformation semigroup of size 59, degree 5 with 3 generators>
-  -> <quotient of <2-sided semigroup congruence over <transformation 
- semigroup of size 59, degree 5 with 3 generators> with 1 generating pairs>>
->>>>>>> aa4606b8 (Fix errors in display)
 gap> hom1bfbi = hom1;
 true
 gap> IsSemigroupHomomorphismByImages(hom1bf);
@@ -995,13 +961,8 @@ gap> relations := [[gens[1], gens[2]]];;
 gap> T := S / relations;;
 gap> imgs := GeneratorsOfSemigroup(T);;
 gap> hom := SemigroupHomomorphismByImages(S, T, gens, imgs);
-<<<<<<< HEAD
 <fp semigroup with 3 generators and 34 relations> -> 
 <fp semigroup with 3 generators and 35 relations>
-=======
-<fp semigroup with 3 generators and 34 relations> -> <fp semigroup with 3 gene\
-rators and 35 relations>
->>>>>>> aa4606b8 (Fix errors in display)
 gap> gens[1] ^ hom;
 s1
 gap> gens[2] ^ hom;

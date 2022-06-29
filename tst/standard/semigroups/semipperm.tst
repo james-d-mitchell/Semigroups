@@ -1981,7 +1981,7 @@ gap> S := Range(InjectionZeroMagma(SymmetricGroup(5)));
 <Sym( [ 1 .. 5 ] ) with 0 adjoined>
 gap> map := IsomorphismPartialPermSemigroup(S);
 <Sym( [ 1 .. 5 ] ) with 0 adjoined> -> <inverse partial perm monoid of rank 5 
- with 3 generators>
+  with 3 generators>
 gap> Range(map);
 <inverse partial perm monoid of rank 5 with 3 generators>
 gap> BruteForceIsoCheck(map);
@@ -2005,7 +2005,7 @@ gap> S := Range(InjectionZeroMagma(SL(2, 2)));
 <SL(2,2) with 0 adjoined>
 gap> map := IsomorphismPartialPermSemigroup(S);
 <SL(2,2) with 0 adjoined> -> <inverse partial perm monoid of rank 3 with 3 
- generators>
+  generators>
 gap> Range(map);
 <inverse partial perm monoid of rank 3 with 3 generators>
 gap> BruteForceIsoCheck(map);
@@ -2137,7 +2137,7 @@ gap> S := UniformBlockBijectionMonoid(4);
 <inverse block bijection monoid of degree 4 with 3 generators>
 gap> map := SmallerDegreePartialPermRepresentation(S);
 CompositionMapping( <inverse partial perm monoid of size 131, rank 131 with 3 
- generators> -> <inverse partial perm monoid of rank 10 with 3 generators>,
+  generators> -> <inverse partial perm monoid of rank 10 with 3 generators>,
  MappingByFunction( <inverse block bijection monoid of size 131, degree 4 
  with 3 generators>, <inverse partial perm monoid of size 131, rank 131 with 
  3 generators>, function( x ) ... end ) )
@@ -2154,7 +2154,7 @@ gap> C := SemigroupCongruence(S,
  of size 339, degree 4 with 3 generators> with 1 generating pairs>
 gap> map := SmallerDegreePartialPermRepresentation(Source(C));
 CompositionMapping( <inverse partial perm monoid of size 339, rank 339 with 3 
- generators> -> <inverse partial perm monoid of rank 14 with 3 generators>,
+  generators> -> <inverse partial perm monoid of rank 14 with 3 generators>,
  MappingByFunction( <inverse block bijection monoid of size 339, degree 4 
  with 3 generators>, <inverse partial perm monoid of size 339, rank 339 with 
  3 generators>, function( x ) ... end ) )
