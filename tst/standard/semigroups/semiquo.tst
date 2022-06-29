@@ -119,12 +119,9 @@ gap> cong := MinimumGroupCongruence(S);
 gap> Size(S / cong);
 120
 gap> IsomorphismPermGroup(S / cong);
-MappingByFunction( <quotient of <semigroup congruence over 
-<inverse partial perm semigroup of size 720, rank 10 with 14 generators>
-  with congruence pair (6,
-1
- )>>, <permutation group of size 120 with 2 generators>, function( x ) ... end,\
- function( x ) ... end )
+<quotient of <semigroup congruence over <inverse partial perm semigroup 
+ of size 720, rank 10 with 14 generators> with congruence pair (6,
+1)>> -> <permutation group of size 120 with 2 generators>
 
 # Issue 456 - Quotient semigroups are slow
 gap> S := InverseSemigroup([PartialPerm([1, 2, 3, 4, 5], [1, 2, 3, 4, 5]),
@@ -144,12 +141,9 @@ gap> cong := MinimumGroupCongruence(S);
 gap> Size(S / cong);
 120
 gap> IsomorphismPermGroup(S / cong);
-MappingByFunction( <quotient of <semigroup congruence over 
-<inverse partial perm semigroup of size 336, rank 8 with 8 generators>
-  with congruence pair (4,
-1
- )>>, <permutation group of size 120 with 2 generators>, function( x ) ... end,\
- function( x ) ... end )
+<quotient of <semigroup congruence over <inverse partial perm semigroup 
+ of size 336, rank 8 with 8 generators> with congruence pair (4,
+1)>> -> <permutation group of size 120 with 2 generators>
 
 # Issue 454 - Missing functionality for quotient semigroups
 gap> S := InverseSemigroup([PartialPerm([1, 2, 3, 4], [1, 2, 3, 4]),
@@ -216,19 +210,15 @@ true
 gap> Factorization(H, images[2]);
 [ 2 ]
 gap> map := IsomorphismFpSemigroup(T);
-MappingByFunction( <quotient of <2-sided semigroup congruence over 
-<transformation semigroup of degree 5 with 3 generators> with 
-1
-  generating pairs>>, <fp semigroup with 3 generators and 8 relations>, functio\
-n( x ) ... end, function( x ) ... end )
+<quotient of <2-sided semigroup congruence over <transformation semigroup of 
+ degree 5 with 3 generators> with 
+1 generating pairs>> -> <fp semigroup with 3 generators and 8 relations>
 gap> map := IsomorphismFpSemigroup(Q);                
-MappingByFunction( <semigroup of size 4, with 3 generators>
- , <fp semigroup with 3 generators and 8 relations>, function( x ) ... end, fu\
-nction( x ) ... end )
+<semigroup of size 4, with 3 generators>
+  -> <fp semigroup with 3 generators and 8 relations>
 gap> IsomorphismFpSemigroup(H);  
-MappingByFunction( <semigroup of size 4, with 3 generators>
- , <fp semigroup with 3 generators and 8 relations>, function( x ) ... end, fu\
-nction( x ) ... end )
+<semigroup of size 4, with 3 generators>
+  -> <fp semigroup with 3 generators and 8 relations>
 
 # Quotients of quotients
 gap> S := Semigroup(Transformation([2, 1, 5, 1, 5]),
