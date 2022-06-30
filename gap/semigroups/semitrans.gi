@@ -125,7 +125,15 @@ function(S)
   T := Semigroup(gen);
   UseIsomorphismRelation(S, T);
 
-  return SemigroupIsomorphismByImagesNC(S, T, GeneratorsOfSemigroup(S), gen);
+  iso := function(x)
+    return EvaluateWord(gen, MinimalFactorization(S, x));
+  end;
+
+  inv := function(x)
+    return EvaluateWord(GeneratorsOfSemigroup(S), Factorization(T, x));
+  end;
+
+  return SemigroupIsomorphismByFunction(S, T, iso, inv);
 end);
 
 InstallMethod(IsomorphismTransformationSemigroup,
