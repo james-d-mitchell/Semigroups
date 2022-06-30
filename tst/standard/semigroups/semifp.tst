@@ -2407,6 +2407,7 @@ true
 
 # IsomorphismFpSemigroup
 gap> F := FreeGroup(1);
+<free group on the generators [ f1 ]>
 gap> R := [F.1 ^ 2];;
 gap> IsomorphismFpSemigroup(F / R);
 MappingByFunction( <fp group on the generators 

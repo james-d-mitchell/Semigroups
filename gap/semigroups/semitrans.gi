@@ -125,15 +125,10 @@ function(S)
   T := Semigroup(gen);
   UseIsomorphismRelation(S, T);
 
-  iso := function(x)
-    return EvaluateWord(gen, MinimalFactorization(S, x));
-  end;
+  iso := x -> EvaluateWord(gen, MinimalFactorization(S, x));
+  inv := x -> EvaluateWord(GeneratorsOfSemigroup(S), Factorization(T, x));
 
-  inv := function(x)
-    return EvaluateWord(GeneratorsOfSemigroup(S), Factorization(T, x));
-  end;
-
-  return SemigroupIsomorphismByFunction(S, T, iso, inv);
+  return SemigroupIsomorphismByFunctionNC(S, T, iso, inv);
 end);
 
 InstallMethod(IsomorphismTransformationSemigroup,
@@ -219,7 +214,7 @@ end);
 
 InstallMethod(IsomorphismTransformationMonoid, "for a semigroup",
 [IsSemigroup],
-1, # to beat the GAP library version
+1,  # to beat the GAP library version
 function(S)
   local iso1, inv1, iso2, inv2;
   if MultiplicativeNeutralElement(S) = fail then

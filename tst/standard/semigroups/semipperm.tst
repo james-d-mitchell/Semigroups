@@ -2134,6 +2134,7 @@ gap> DigraphOfActionOnPoints(S, 3);
 
 # SmallerDegreePartialPermRepresentation for a non-partial perm semigroup
 gap> S := UniformBlockBijectionMonoid(4);
+<inverse block bijection monoid of degree 4 with 3 generators>
 gap> map := SmallerDegreePartialPermRepresentation(S);
 CompositionMapping( <inverse partial perm monoid of size 131, rank 131 with 3 
   generators> -> <inverse partial perm monoid of rank 10 with 3 generators>,

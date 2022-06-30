@@ -98,9 +98,8 @@ function(cong)
     fi;
     if HasGeneratorsOfMagma(S) or HasGeneratorsOfMagmaWithInverses(S)
           or HasGeneratorsOfSemigroup(S) then
-      Qgens := List(GeneratorsOfSemigroup(S), function (s)
-              return s ^ QuotientSemigroupHomomorphism(Q);
-          end);
+      Qgens := List(GeneratorsOfSemigroup(S),
+                    s -> s ^ QuotientSemigroupHomomorphism(Q));
       SetGeneratorsOfSemigroup(Q, Qgens);
     fi;
     return QuotientSemigroupHomomorphism(Q);

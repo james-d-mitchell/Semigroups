@@ -509,10 +509,14 @@ gap> R := ReesMatrixSemigroup(Group(()), [[(), ()], [(), ()]]);;
 gap> W := Semigroup(RMSElement(R, 2, (), 2));;
 gap> S := ReesMatrixSemigroup(Group(()), [[()]]);;
 gap> IsTrivial(S) and IsTrivial(W);
+true
 gap> map := IsomorphismSemigroups(S, S);
+((), IdentityMapping( Group( [ () ] ) ), [ (), () ])
 gap> map := IsomorphismSemigroups(W, W);;
 gap> BruteForceIsoCheck(map);
+true
 gap> BruteForceInverseCheck(map);
+true
 gap> map := IsomorphismSemigroups(W, S);
 CompositionMapping( ((), GroupHomomorphismByImages( Group( [ () ] ), Group( 
 [ () ] ), [  ], [  ] ), [ (), () ]), MappingByFunction( 
