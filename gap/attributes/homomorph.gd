@@ -76,19 +76,19 @@ DeclareRepresentation("IsSemigroupIsomorphismByFunction",
 DeclareAttribute("KernelOfSemigroupHomomorphism", IsSemigroupHomomorphism);
 
 DeclareOperation("AsSemigroupHomomorphismByFunction",
-        [IsSemigroupHomomorphismByImages]);
+                 [IsSemigroupHomomorphismByImages]);
 
 DeclareOperation("AsSemigroupHomomorphismByFunction",
-        [IsSemigroupHomomorphismByFunction]);
+                 [IsSemigroupHomomorphismByFunction]);
 
 DeclareOperation("AsSemigroupHomomorphismByImages",
-        [IsSemigroupHomomorphismByFunction]);
+                 [IsSemigroupHomomorphismByFunction]);
 
 DeclareOperation("AsSemigroupHomomorphismByImages",
-        [IsSemigroupHomomorphismByImages]);
+                 [IsSemigroupHomomorphismByImages]);
 
 DeclareOperation("AsSemigroupIsomorphismByFunction",
-        [IsSemigroupHomomorphismByImages]);
+                 [IsSemigroupHomomorphismByImages]);
 
 DeclareOperation("AsSemigroupIsomorphismByFunction",
-        [IsSemigroupIsomorphismByFunction]);
+                 [IsSemigroupIsomorphismByFunction]);

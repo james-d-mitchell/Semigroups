@@ -306,20 +306,20 @@ hom -> SemigroupIsomorphismByFunction(Source(hom),
 
 # Methods for SHBI/SIBI/SHBF
 InstallMethod(IsSurjective, "for a semigroup homomorphism",
-  [IsSemigroupHomomorphismByImagesOrFunction],
+[IsSemigroupHomomorphismByImagesOrFunction],
 function(hom)
   return Size(ImagesSource(hom)) = Size(Range(hom));
 end);
 
 InstallMethod(IsInjective, "for a semigroup homomorphism",
-  [IsSemigroupHomomorphismByImagesOrFunction],
+[IsSemigroupHomomorphismByImagesOrFunction],
 function(hom)
   return Size(Source(hom)) = Size(ImagesSource(hom));
 end);
 
 InstallMethod(ImagesSet, "for a semigroup homom. and list of elements",
-    [IsSemigroupHomomorphismByImagesOrFunction, IsList],
-    {hom, elms} -> List(elms, x -> ImageElm(hom, x)));
+[IsSemigroupHomomorphismByImagesOrFunction, IsList],
+{hom, elms} -> List(elms, x -> ImageElm(hom, x)));
 
 InstallMethod(ImageElm, "for a semigroup homom. by images and element",
 [IsSemigroupHomomorphismByImages, IsMultiplicativeElement],
@@ -333,8 +333,8 @@ function(hom, x)
 end);
 
 InstallMethod(ImagesSource, "for SHBI",
-    [IsSemigroupHomomorphismByImages],
-    hom -> Semigroup(MappingGeneratorsImages(hom)[2]));
+[IsSemigroupHomomorphismByImages],
+hom -> Semigroup(MappingGeneratorsImages(hom)[2]));
 
 InstallMethod(PreImagesRepresentative,
 "for a semigroup homom. by images and an element in the range",
@@ -351,8 +351,8 @@ function(hom, x)
 end);
 
 InstallMethod(ImagesElm, "for a semigroup homom. by images and an element",
-    [IsSemigroupHomomorphismByImages, IsMultiplicativeElement],
-    {hom, x} -> [ImageElm(hom, x)]);
+[IsSemigroupHomomorphismByImages, IsMultiplicativeElement],
+{hom, x} -> [ImageElm(hom, x)]);
 
 InstallMethod(PreImagesElm,
 "for a semigroup homom. by images and an element in the range",
@@ -428,7 +428,7 @@ function(hom)
 end);
 
 InstallMethod(String, "for a semigroup homom. by images",
-  [IsSemigroupHomomorphismByImages],
+[IsSemigroupHomomorphismByImages],
 function(hom)
   local mapi;
   mapi := MappingGeneratorsImages(hom);
@@ -483,7 +483,7 @@ function(hom)
 end);
 
 InstallMethod(String, "for a semigroup homom. by function",
-  [IsSemigroupHomomorphismByFunction],
+[IsSemigroupHomomorphismByFunction],
 function(hom)
   if UserPreference("semigroups", "HomomorphismView") <> "semigroups-pkg" then
     TryNextMethod();
@@ -494,7 +494,7 @@ function(hom)
 end);
 
 InstallMethod(PrintObj, "for a semigroup homom. by function",
-  [IsSemigroupHomomorphismByFunction],
+[IsSemigroupHomomorphismByFunction],
 function(hom)
   if UserPreference("semigroups", "HomomorphismView") <> "semigroups-pkg" then
     TryNextMethod();
@@ -504,7 +504,7 @@ function(hom)
 end);
 
 InstallMethod(String, "for a semigroup isom. by function",
-  [IsSemigroupIsomorphismByFunction],
+[IsSemigroupIsomorphismByFunction],
 function(iso)
   if UserPreference("semigroups", "HomomorphismView") <> "semigroups-pkg" then
     TryNextMethod();
@@ -516,7 +516,7 @@ function(iso)
 end);
 
 InstallMethod(PrintObj, "for a semigroup isom. by function",
-  [IsSemigroupIsomorphismByFunction],
+[IsSemigroupIsomorphismByFunction],
 function(iso)
   if UserPreference("semigroups", "HomomorphismView") <> "semigroups-pkg" then
     TryNextMethod();
