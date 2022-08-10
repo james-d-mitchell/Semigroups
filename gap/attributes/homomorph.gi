@@ -155,7 +155,7 @@ InstallMethod(SemigroupIsomorphismByImages, "for two semigroup and two lists",
 function(S, T, gens, imgs)
   local hom;
   hom := SemigroupHomomorphismByImages(S, T, gens, imgs);
-  if IsBijective(hom) then
+  if hom <> fail and IsBijective(hom) then
     return hom;
   fi;
   return fail;
