@@ -170,6 +170,30 @@ InstallMethod(ViewString, "for an f.p. semigroup element",
 InstallMethod(ViewString, "for an f.p. monoid element",
 [IsElementOfFpMonoid], String);
 
+InstallMethod(PrintString, "for an f.p. monoid with known generators",
+[IsFpMonoid and HasGeneratorsOfMonoid],
+function(M)
+
+  if UserPreference("semigroups", "ViewObj") <> "semigroups-pkg" then
+    TryNextMethod();
+  fi;
+
+  return PRINT_STRINGIFY(FreeMonoidOfFpMonoid(M), "/", RelationsOfFpMonoid(M));
+end);
+
+InstallMethod(PrintObj, "for an f.p. monoid with known generators",
+[IsFpMonoid and HasGeneratorsOfMonoid],
+4,  # to beat the library method
+function(M)
+
+  if UserPreference("semigroups", "ViewObj") <> "semigroups-pkg" then
+    TryNextMethod();
+  fi;
+
+  Print(PrintString(M));
+  return;
+end);
+
 InstallMethod(ViewString, "for an f.p. monoid with known generators",
 [IsFpMonoid and HasGeneratorsOfMonoid],
 function(M)
