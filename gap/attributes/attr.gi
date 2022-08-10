@@ -1104,3 +1104,42 @@ function(S, x)
   result := EvaluateWord(GeneratorsOfSemigroup(S), p[2]);
   return result ^ SmallestIdempotentPower(result);
 end);
+
+InstallMethod(MinimalFaithfulTransformationDegree, "for a right zero semigroup",
+[IsRightZeroSemigroup], 
+function(S)
+  local max, deg;
+
+  max := 0;
+  deg := 0;
+  while max < Size(S) do
+    deg := deg + 1;
+    if (deg mod 3) = 0 then
+      max := 3 ^ (deg / 3);
+    elif (deg mod 3) = 1 then
+      max := 4 * 3 ^ ((deg - 4) / 3);
+    else
+      max := 2 * 3 ^ ((deg - 2) / 3);
+    fi;
+  od;
+  return deg;
+end);
+
+InstallMethod(MinimalFaithfulTransformationDegree, "for a left zero semigroup",
+[IsLeftZeroSemigroup], 
+function(S)
+  local max, deg, N, R, r;
+  max := 0;
+  deg := 0;
+  while max < Size(S) do
+    deg := deg + 1;
+    for r in [1 .. deg - 1] do
+      N := r ^ (deg - r);
+      if N > max then
+        max := N;
+        R := r;
+      fi;
+    od;
+  od;
+  return deg;
+end);

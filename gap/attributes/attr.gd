@@ -74,3 +74,6 @@ DeclareAttribute("NambooripadPartialOrder", IsSemigroup);
 
 DeclareOperation("LeftIdentity", [IsSemigroup, IsMultiplicativeElement]);
 DeclareOperation("RightIdentity", [IsSemigroup, IsMultiplicativeElement]);
+
+DeclareAttribute("MinimalFaithfulTransformationDegree", IsSemigroup);
+DeclareAttribute("MinimalFaithfulTransformationRepresentation", IsSemigroup);
