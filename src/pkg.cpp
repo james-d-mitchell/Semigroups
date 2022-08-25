@@ -392,27 +392,25 @@ Obj NumberOfCongruences(Obj self, Obj list) {
     gens.push_back(foo(ELM_PLIST(list, i)));
   }
 
-  std::unordered_map<Duf<uint32_t>, std::vector<uint32_t>, Hash<Duf<uint32_t>>>
+  std::unordered_map<Duf<uint32_t>, std::set<uint32_t>, Hash<Duf<uint32_t>>>
       res;
   res.reserve(400);
 
-  size_t        n = gens.front().size();
   Duf<uint32_t> one(gens.front().size());
   Duf<uint32_t> tmp(gens.front().size());
 
   std::vector<Duf<uint32_t>> todo, newtodo;
   todo.push_back(one);
 
-  res.emplace(one, std::vector<uint32_t>({0}));
+  res.emplace(one, std::set<uint32_t>({0}));
   // first value in vector indicates the index of one (or more generally the
   // element)
   size_t lg = 0;
   while (!todo.empty()) {
     newtodo.clear();
     lg++;
+    size_t prev = res.size();
     for (size_t i = 0; i < todo.size(); ++i) {
-      size_t todo_i_index = res.find(todo[i])->second.front();
-
       for (auto const& g : gens) {
         tmp = todo[i];
         tmp.join(g);
@@ -420,11 +418,10 @@ Obj NumberOfCongruences(Obj self, Obj list) {
         auto it = res.find(tmp);
         if (it == res.end()) {
           newtodo.push_back(tmp);
-          std::vector<uint32_t> edges(
-              {uint32_t(res.size()), uint32_t(todo_i_index)});
-          res.emplace(tmp, std::move(edges));
+          res.emplace(tmp,
+                      std::set<uint32_t>({static_cast<uint32_t>(res.size())}));
         } else {
-          it->second.push_back(todo_i_index);
+          it->second.insert(prev + i);
           // This records in-edges
         }
       }
@@ -440,21 +437,7 @@ Obj NumberOfCongruences(Obj self, Obj list) {
               << ", # bucks = " << res.bucket_count() << std::endl;
   }
   std::cout << "res =  " << res.size() << std::endl;
-
-  Obj result = NEW_PLIST(T_PLIST, res.size());
-  SET_LEN_PLIST(result, res.size());
-
-  for (auto const& pair : res) {
-    Obj      next  = NEW_PLIST(T_PLIST_CYC, 0);
-    uint32_t index = pair.second.front() + 1;
-
-    for (size_t i = 1; i < pair.second.size(); ++i) {
-      AssPlist(next, i, INTOBJ_INT(pair.second[i] + 1));
-    }
-    SET_ELM_PLIST(result, index, next);
-    CHANGED_BAG(result);
-  }
-  return result;
+  return INTOBJ_INT(res.size());
 }
 
 // Imported types and functions from the library, defined below
