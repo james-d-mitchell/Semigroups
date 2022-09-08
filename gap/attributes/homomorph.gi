@@ -361,7 +361,7 @@ function(hom, x)
   fi;
   # Use MinimalFactorization rather than Factorization because
   # MinimalFactorization is guaranteed to return a list of positive integers,
-  # but Factorization is not (i.e. if S is an inverse acting semigroup.
+  # but Factorization is not (i.e. if S is an inverse acting semigroup).
   # Also since we require an IsomorphismFpSemigroup, there's no additional
   # cost to using MinimalFactorization instead of Factorization.
   return EvaluateWord(MappingGeneratorsImages(hom)[2],

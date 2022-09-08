@@ -508,6 +508,42 @@ function(G)
                                           x -> (x ^ inv2) ^ inv1);
 end);
 
+# TODO(now): add a method for IsFreeMonoid 
+InstallMethod(IsomorphismFpSemigroup, "for a free semigroup",
+[IsFreeSemigroup],
+function(S)
+  local T;
+  T := S / [];
+  return SemigroupIsomorphismByImagesNC(S,
+                                        T,
+                                        GeneratorsOfSemigroup(S),
+                                        GeneratorsOfSemigroup(T));
+end);
+
+InstallMethod(IsomorphismFpSemigroup, "for a free monoid",
+[IsFreeMonoid],
+function(S)
+  return IsomorphismFpSemigroup(S / []);
+end);
+
+InstallMethod(IsomorphismFpSemigroup, "for an fp semigroup",
+[IsFpSemigroup],
+function(S)
+  return SemigroupIsomorphismByImagesNC(S, 
+                                        S, 
+                                        GeneratorsOfSemigroup(S), 
+                                        GeneratorsOfSemigroup(S));
+end);
+
+InstallMethod(IsomorphismFpMonoid, "for an fp monoid",
+[IsFpMonoid],
+function(S)
+  return SemigroupIsomorphismByImagesNC(S, 
+                                        S, 
+                                        GeneratorsOfMonoid(S), 
+                                        GeneratorsOfMonoid(S));
+end);
+
 # The next method is copied directly from the GAP library the only change is
 # the return value which uses SemigroupIsomorphismByFunctionNC here but
 # MagmaIsomorphismByFunctionsNC in the GAP library; comments are also removed
@@ -1012,6 +1048,9 @@ InstallMethod(Factorization, "for a free semigroup and word",
 [IsFreeSemigroup, IsWord],
 {S, x} -> SEMIGROUPS.ExtRepObjToWord(ExtRepOfObj(x)));
 
+InstallMethod(MinimalFactorization, "for a free semigroup and word",
+[IsFreeSemigroup, IsWord], Factorization);
+
 # Returns a factorization of the semigroup generators of S, not the monoid
 # generators !!!
 InstallMethod(Factorization, "for a free monoid and word",
@@ -1023,6 +1062,9 @@ function(S, x)
     return SEMIGROUPS.ExtRepObjToWord(ExtRepOfObj(x)) + 1;
   fi;
 end);
+
+InstallMethod(MinimalFactorization, "for a free monoid and word",
+[IsFreeMonoid, IsWord], Factorization);
 
 InstallMethod(Length, "for an fp semigroup", [IsFpSemigroup],
 function(S)
