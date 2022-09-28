@@ -422,10 +422,10 @@ libsemigroups::ActionDigraph<uint32_t> LATTICE_OF_CONGRUENCES(Obj list) {
     // be the reverse of the lattice) not sure
     latt.add_nodes(newtodo.size());
     std::swap(todo, newtodo);
-    // std::cout << lg << ", todo = " << todo.size() << ", res = " << res.size()
-    //          << ", # bucks = " << res.bucket_count() << std::endl;
+    std::cout << lg << ", todo = " << todo.size() << ", res = " << res.size()
+              << ", # bucks = " << res.bucket_count() << std::endl;
   }
-  // std::cout << "res =  " << res.size() << std::endl;
+  std::cout << "res =  " << res.size() << std::endl;
   return latt;
   // TODO:
   // 1) This returns the RightCayleyDigraph of the lattice generated as a

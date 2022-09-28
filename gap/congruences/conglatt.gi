@@ -25,7 +25,7 @@
 QuickLattice := function(S)
   local P, L, D;
 
-  P := PrincipalCongruencesOfSemigroup(S);
+  P := PrincipalRightCongruencesOfSemigroup(S);
   L := List(P, EquivalenceRelationCanonicalLookup) - 1;
   D := DigraphNC(libsemigroups.LATTICE_OF_CONGRUENCES(L));
   return D;
@@ -304,8 +304,14 @@ function(gen_congs, WrappedXCongruence)
   gens := List(CongruencesOfPoset(gen_congs), WrappedXCongruence);
   U := Range(gens[1]![1]);
 
-  S := Semigroup(List(CongruencesOfPoset(gen_congs), WrappedXCongruence));
-  poset := DigraphReflexiveTransitiveClosure(PartialOrderOfDClasses(S));
+  if ValueOption("Simple") <> fail then
+    S     := List(CongruencesOfPoset(gen_congs),
+                  EquivalenceRelationCanonicalLookup) - 1;
+    poset := DigraphNC(libsemigroups.LATTICE_OF_CONGRUENCES(S));
+  else
+    S := Semigroup(List(CongruencesOfPoset(gen_congs), WrappedXCongruence));
+    poset := PartialOrderOfDClasses(S);
+  fi;
   Info(InfoSemigroups, 1, StringFormatted("Found {} congruences in total!",
        Size(S)));
   all_congs := List(DClasses(S), x -> Representative(x)![1]);
