@@ -1316,3 +1316,30 @@ true]]></Example>
   </Description>
 </ManSection>
 <#/GAPDoc>
+
+<#GAPDoc Label="SmallerDegreeTransformationRepresentation">
+<ManSection>
+<Attr Name="SmallerDegreeTransformationRepresentation" Arg="S"/>
+  <Returns>An isomorphism.</Returns>
+  <Description>
+    This function attempts to find a small degree transformation representation
+    of the semigroup <A>S</A>. The implementation attempts to find a right
+    congruence of <A>S</A> that <A>S</A> acts on (the equivalence classes of)
+    faithfully. <P/>
+
+    If <A>S</A> is not a finitely presentated semigroup, then the returned
+    isomorphism is the composition of an isomorphism to a finitely presented
+    semigroup and an isomorphism from that finitely presented semigroup to a
+    transformation semigroup. <P/>
+
+    The runtime of this function depends on the presentation for <A>S</A>
+    that is either given explicitly or computed by the &SEMIGROUPS; package. 
+
+
+
+  </Description>
+</ManSection>
+<#/GAPDoc>
+
+
+<Attr Name="NambooripadPartialOrder" Arg="S"/>
