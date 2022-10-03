@@ -1333,7 +1333,12 @@ true]]></Example>
     transformation semigroup. <P/>
 
     The runtime of this function depends on the presentation for <A>S</A>
-    that is either given explicitly or computed by the &SEMIGROUPS; package. 
+    that is either given explicitly or computed by the &SEMIGROUPS; package,
+    but it is difficult to predict what properties of the presentation lead to
+    a shorter runtime. This is unlikely to terminate in a reasonable amount of
+    time for semigroups with more than approx. <C>10000</C> elements, but might
+    also not terminate quickly for smaller semigroups depending on which 
+    presentation.
 
 
 
