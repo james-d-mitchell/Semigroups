@@ -1327,7 +1327,7 @@ true]]></Example>
     congruence of <A>S</A> that <A>S</A> acts on (the equivalence classes of)
     faithfully. <P/>
 
-    If <A>S</A> is not a finitely presentated semigroup, then the returned
+    If <A>S</A> is not a finitely presented semigroup, then the returned
     isomorphism is the composition of an isomorphism to a finitely presented
     semigroup and an isomorphism from that finitely presented semigroup to a
     transformation semigroup. <P/>
@@ -1337,14 +1337,21 @@ true]]></Example>
     but it is difficult to predict what properties of the presentation lead to
     a shorter runtime. This is unlikely to terminate in a reasonable amount of
     time for semigroups with more than approx. <C>10000</C> elements, but might
-    also not terminate quickly for smaller semigroups depending on which 
-    presentation.
+    also not terminate quickly for smaller semigroups depending on the 
+    presentation used.
 
-
-
+    <Example><![CDATA[
+gap> S := BrauerMonoid(3);
+<regular bipartition *-monoid of degree 3 with 3 generators>
+gap> IsomorphismTransformationSemigroup(S);
+<regular bipartition *-monoid of size 15, degree 3 with 3 generators> 
+-> <transformation monoid of size 15, degree 15 with 3 generators>
+gap> SmallerDegreeTransformationRepresentation(S);
+CompositionMapping( 
+<fp semigroup with 4 generators and 20 relations of length 81> -> 
+<transformation monoid of degree 7 with 3 generators>, 
+<regular bipartition *-monoid of size 15, degree 3 with 3 generators> 
+-> <fp semigroup with 4 generators and 20 relations of length 81> )]]></Example>
   </Description>
 </ManSection>
 <#/GAPDoc>
-
-
-<Attr Name="NambooripadPartialOrder" Arg="S"/>

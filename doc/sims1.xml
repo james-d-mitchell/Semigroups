@@ -1,0 +1,57 @@
+#############################################################################
+##
+##  sims1.xml
+##  Copyright (C) 2022                                   James D. Mitchell
+##
+##  Licensing information can be found in the README file of this package.
+##
+#############################################################################
+##
+
+<#GAPDoc Label="NumberOfRightCongruences">
+  <ManSection>
+    <Oper Name = "NumberOfRightCongruences" 
+          Arg = "S, n, extra" 
+          Label="for a semigroup, positive integer, and list or collection"/>
+    <Oper Name = "NumberOfLeftCongruences" 
+          Arg = "S, n, extra" 
+          Label="for a semigroup, positive integer, and list or collection"/>
+    <Oper Name = "NumberOfRightCongruences" 
+          Arg = "S, n" 
+          Label="for a semigroup, and a positive integer"/>
+    <Oper Name = "NumberOfLeftCongruences" 
+          Arg = "S, n" 
+          Label="for a semigroup, and a positive integer"/>
+    <Attr Name = "NumberOfRightCongruences" 
+          Arg = "S" 
+          Label="for a semigroup"/>
+    <Oper Name = "NumberOfLeftCongruences" 
+          Arg = "S" 
+          Label="for a semigroup"/>
+    <Returns>A non-negative integer.</Returns>
+    <Description>
+      <C>NumberOfRightCongruences</C> returns the number of right congruences
+      of the semigroup <A>S</A> with at most <A>n</A> classes that contain the 
+      pairs in <A>extra</A>; <C>NumberOfLeftCongruences</C> is defined dually
+      for left congruences rather than right congruences. <P/>
+
+      If the optional third argument <A>extra</A> is not present, then
+      <C>NumberOfRightCongruences</C> returns the number of right congruences
+      of <A>S</A> with at most <A>n</A> classes. <P/>
+
+      If the optional second argument <A>n</A> is not present, then 
+      <C>NumberOfRightCongruences</C> returns the number of right congruences
+      of <A>S</A>. <P/>
+  
+      Note that the 2 and 3 argument variants of this function can be applied
+      to infinite semigroups, but the 1 argument variant cannot. <P/>
+
+      If the lattice of right or left congruences of <A>S</A> is known, then
+      that is used by <C>NumberOfRightCongruences</C>.  If this lattice is not
+      known, then Sim's low index congruence algorithm is used. 
+      <Example><![CDATA[
+      TODO
+]]></Example>
+    </Description>
+  </ManSection>
+<#/GAPDoc>

@@ -15,6 +15,8 @@ function(S, n, extra, kind)
 
   Assert(1, kind in ["left", "right"]);
 
+  #TODO(Sims1) some checks on extra!
+
   P := libsemigroups.Presentation.make();
   for r in RulesOfSemigroup(S) do
     libsemigroups.presentation_add_rule(P, r[1] - 1, r[2] - 1);
@@ -130,7 +132,10 @@ function(S)
   if HasIsomorphismTransformationSemigroup(S) then
     map := IsomorphismTransformationSemigroup(S);
     max := DegreeOfTransformationSemigroup(Range(map)) - 1;
+  else
+    max := Size(S);
   fi;
+
   libsemigroups.RepOrc.max_nodes(ro, max);
   libsemigroups.RepOrc.target_size(ro, Size(S));
   if Size(S) > 64 then
