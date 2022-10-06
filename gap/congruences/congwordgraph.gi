@@ -10,6 +10,30 @@
 ## This file contains implementation for left, right, and two-sided
 ## congruences that are defined in terms of a IsWordGraph.
 
+BindGlobal("_MonoidFactorization", function(M, x)
+  local word, pos, i;
+
+  word := MinimalFactorization(M, x);
+  if not IsMonoid(M) then
+    return word;
+  fi;
+  pos := Position(GeneratorsOfSemigroup(M), One(M));
+  # words are in terms of GeneratorsOfSemigroup(S) but we want it in terms of
+  # GeneratorsOfMonoid(S), so we have to normalise
+  i := 1;
+  while i <= Length(word) do
+    if word[i] = pos then
+      Remove(word, i);
+    else
+      if word[i] > pos then
+        word[i] := word[i] - 1;
+      fi;
+      i := i + 1;
+    fi;
+  od;
+  return word;
+end);
+
 if not IsBoundGlobal("DigraphFollowPath") then
   BindGlobal("DigraphFollowPath", function(D, start, path)
     local out, current_node, current_edge;
@@ -101,15 +125,25 @@ InstallMethod(EquivalenceRelationPartitionWithSingletons,
 "for a right congruence by word graph",
 [IsCongruenceByWordGraph and IsRightSemigroupCongruence],
 function(C)
-  local D, S, words, result, index, i;
-  D := WordGraph(C);
-  S := EnumeratorCanonical(Source(C));
-  words := List(S, x -> MinimalFactorization(Source(C), x));
-  result := List([1 .. DigraphNrVertices(D)], x -> []);
+  local S, words, offset, en, D, result, index, i;
+
+  S := Source(C);
+  if IsMonoid(S) then
+    offset := 0;
+  else
+    offset := 1;
+  fi;
+  D  := WordGraph(C);
+  result := List([1 .. DigraphNrVertices(D) - offset], x -> []);
+
+  words := List(S, x -> _MonoidFactorization(S, x));
+  en := EnumeratorCanonical(S);
+
   for i in [1 .. Length(words)] do
     index := DigraphFollowPath(D, 1, words[i]);
-    Add(result[index], S[i]);
+    Add(result[index - offset], en[i]);
   od;
+
   return result;
 end);
 
@@ -117,15 +151,25 @@ InstallMethod(EquivalenceRelationPartitionWithSingletons,
 "for a left congruence by word graph",
 [IsCongruenceByWordGraph and IsLeftSemigroupCongruence],
 function(C)
-  local D, S, words, result, index, i;
-  D := WordGraph(C);
-  S := EnumeratorCanonical(Source(C));
-  words := List(S, x -> Reversed(MinimalFactorization(Source(C), x)));
-  result := List([1 .. DigraphNrVertices(D)], x -> []);
+  local S, words, offset, en, D, result, index, i;
+
+  S := Source(C);
+  if IsMonoid(S) then
+    offset := 0;
+  else
+    offset := 1;
+  fi;
+  D  := WordGraph(C);
+  result := List([1 .. DigraphNrVertices(D) - offset], x -> []);
+
+  words := List(S, x -> Reversed(_MonoidFactorization(S, x)));
+  en := EnumeratorCanonical(S);
+
   for i in [1 .. Length(words)] do
     index := DigraphFollowPath(D, 1, words[i]);
-    Add(result[index], S[i]);
+    Add(result[index - offset], en[i]);
   od;
+
   return result;
 end);
 
@@ -137,8 +181,8 @@ InstallMethod(CongruenceTestMembershipNC,
 function(C, lhop, rhop)
   local D;
   D := WordGraph(C);
-  lhop := MinimalFactorization(Source(C), lhop);
-  rhop := MinimalFactorization(Source(C), rhop);
+  lhop := _MonoidFactorization(Source(C), lhop);
+  rhop := _MonoidFactorization(Source(C), rhop);
   return DigraphFollowPath(D, 1, lhop) = DigraphFollowPath(D, 1, rhop);
 end);
 
@@ -150,8 +194,8 @@ InstallMethod(CongruenceTestMembershipNC,
 function(C, lhop, rhop)
   local D;
   D := WordGraph(C);
-  lhop := Reversed(MinimalFactorization(Source(C), lhop));
-  rhop := Reversed(MinimalFactorization(Source(C), rhop));
+  lhop := Reversed(_MonoidFactorization(Source(C), lhop));
+  rhop := Reversed(_MonoidFactorization(Source(C), rhop));
   return DigraphFollowPath(D, 1, lhop) = DigraphFollowPath(D, 1, rhop);
 end);
 
@@ -160,11 +204,17 @@ InstallMethod(ImagesElm,
 [IsCongruenceByWordGraph and IsRightSemigroupCongruence,
  IsMultiplicativeElement],
 function(C, x)
-  local part, D;
+  local part, D, offset;
+
   part := EquivalenceRelationPartitionWithSingletons(C);
   D := WordGraph(C);
-  x := MinimalFactorization(Source(C), x);
-  return part[DigraphFollowPath(D, 1, x)];
+  x := _MonoidFactorization(Source(C), x);
+  if IsMonoid(Source(C)) then
+    offset := 0;
+  else
+    offset := 1;
+  fi;
+  return part[DigraphFollowPath(D, 1, x) - offset];
 end);
 
 InstallMethod(ImagesElm,
@@ -172,15 +222,29 @@ InstallMethod(ImagesElm,
 [IsCongruenceByWordGraph and IsLeftSemigroupCongruence,
  IsMultiplicativeElement],
 function(C, x)
-  local part, D;
+  local part, D, offset;
+
   part := EquivalenceRelationPartitionWithSingletons(C);
   D := WordGraph(C);
-  x := Reversed(MinimalFactorization(Source(C), x));
-  return part[DigraphFollowPath(D, 1, x)];
+  x := Reversed(_MonoidFactorization(Source(C), x));
+  if IsMonoid(Source(C)) then
+    offset := 0;
+  else
+    offset := 1;
+  fi;
+  return part[DigraphFollowPath(D, 1, x) - offset];
 end);
 
 # Non-mandatory methods where we can do better than the default methods
 
 InstallMethod(NrEquivalenceClasses, "for a congruence by word graph",
 [IsCongruenceByWordGraph],
-C -> DigraphNrVertices(WordGraph(C)));
+function(C)
+  local offset;
+  if IsMonoid(Source(C)) then
+    offset := 0;
+  else
+    offset := 1;
+  fi;
+  return DigraphNrVertices(WordGraph(C)) - offset;
+end);

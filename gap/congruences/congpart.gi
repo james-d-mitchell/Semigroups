@@ -285,6 +285,14 @@ function(C)
             LeftSemigroupCongruenceByGeneratingPairs, C);
 end);
 
+InstallMethod(GeneratingPairsOfMagmaCongruence,
+"for a congruence that can compute partition",
+[CanComputeEquivalenceRelationPartition and IsMagmaCongruence],
+function(C)
+  return _GeneratingPairsOfLeftRight2SidedCongDefault(
+            SemigroupCongruenceByGeneratingPairs, C);
+end);
+
 ########################################################################
 # Comparison operators
 ########################################################################
