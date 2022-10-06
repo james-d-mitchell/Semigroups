@@ -16,6 +16,6 @@ DeclareCategory("IsCongruenceByWordGraph",
                 and IsAttributeStoringRep
                 and IsFinite);
 
-DeclareOperation("RightCongruenceByWordGraph", [IsSemigroup, IsWordGraph]);
-DeclareOperation("LeftCongruenceByWordGraph", [IsSemigroup, IsWordGraph]);
+DeclareOperation("RightCongruenceByWordGraphNC", [IsSemigroup, IsWordGraph]);
+DeclareOperation("LeftCongruenceByWordGraphNC", [IsSemigroup, IsWordGraph]);
 DeclareAttribute("WordGraph", IsCongruenceByWordGraph);

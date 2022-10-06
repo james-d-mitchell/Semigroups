@@ -11,9 +11,6 @@
 # This file contains declarations for the interface with
 # libsemigroups::Sims1 and related.
 
-DeclareOperation("LibsemigroupsSims1",
-                 [IsSemigroup, IsPosInt, IsListOrCollection, IsString]);
-
 DeclareCategory("IsWordGraph", IsImmutableDigraph);
 
 DeclareOperation("NumberOfRightCongruences",

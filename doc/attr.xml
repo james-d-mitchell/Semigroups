@@ -1320,7 +1320,7 @@ true]]></Example>
 <#GAPDoc Label="SmallerDegreeTransformationRepresentation">
 <ManSection>
 <Attr Name="SmallerDegreeTransformationRepresentation" Arg="S"/>
-  <Returns>An isomorphism.</Returns>
+  <Returns>An isomorphism to a transformation semigroup.</Returns>
   <Description>
     This function attempts to find a small degree transformation representation
     of the semigroup <A>S</A>. The implementation attempts to find a right
@@ -1351,7 +1351,63 @@ CompositionMapping(
 <fp semigroup with 4 generators and 20 relations of length 81> -> 
 <transformation monoid of degree 7 with 3 generators>, 
 <regular bipartition *-monoid of size 15, degree 3 with 3 generators> 
--> <fp semigroup with 4 generators and 20 relations of length 81> )]]></Example>
+-> <fp semigroup with 4 generators and 20 relations of length 81> )
+gap> S := JonesMonoid(5);
+<regular bipartition *-monoid of degree 5 with 4 generators>
+gap> Size(S);
+42
+gap> SmallerDegreeTransformationRepresentation(S);
+CompositionMapping( 
+<fp semigroup with 5 generators and 28 relations of length 120> -> 
+<transformation monoid of degree 10 with 4 generators>, 
+<regular bipartition *-monoid of size 42, degree 5 with 4 generators> 
+-> <fp semigroup with 5 generators and 28 relations of length 120> )
+]]></Example>
+  </Description>
+</ManSection>
+<#/GAPDoc>
+
+<#GAPDoc Label="MinimalFaithfulTransformationDegree">
+<ManSection>
+<Attr Name="MinimalFaithfulTransformationDegree" Arg="S"/>
+  <Returns>A positive integer.</Returns>
+  <Description>
+    This function returns the minimal degree of a faithful transformation
+    representation of the semigroup <A>S</A>. This is currently only
+    implemented for a very small number of types of semigroups. <P/>
+
+    <!-- See also <Ref Attr="MinimalFaithfulTransformationRepresentation"/>. -->
+
+    <Example><![CDATA[
+gap> S := RightZeroSemigroup(10);
+<transformation semigroup of degree 7 with 10 generators>
+gap> MinimalFaithfulTransformationDegree(S);
+7
+]]></Example>
+  </Description>
+</ManSection>
+<#/GAPDoc>
+
+# The following documentation is included but there are actually no
+# implementations for this as of yet, and so we don't link this into the
+# documentation. 
+
+<#GAPDoc Label="MinimalFaithfulTransformationRepresentation">
+<ManSection>
+<Attr Name="MinimalFaithfulTransformationRepresentation" Arg="S"/>
+  <Returns>An isomorphism to a transformation semigroup.</Returns>
+  <Description>
+    This function returns an isomorphism to a transformation semigroup of
+    minimal degree that is isomorphic to <A>S</A>. This is currently only
+    implemented for a very small number of types of semigroups. <P/>
+
+    See also <Ref Attr="MinimalFaithfulTransformationRepresentation"/>.
+
+    <Example><![CDATA[
+gap> S := RightZeroSemigroup(10);
+gap> MinimalFaithfulTransformationRepresentation(S);
+7
+]]></Example>
   </Description>
 </ManSection>
 <#/GAPDoc>

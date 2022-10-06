@@ -99,6 +99,7 @@
     <#Include Label = "IsSemigroupIsomorphismByFunction">
     <#Include Label = "AsSemigroupIsomorphismByFunction">
     <#Include Label = "SmallerDegreeTransformationRepresentation">
+    <#Include Label = "MinimalFaithfulTransformationDegree">
 
   </Section>
 

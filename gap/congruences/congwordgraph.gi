@@ -39,7 +39,8 @@ InstallImmediateMethod(CanUseLibsemigroupsCongruence,
                        0,
                        ReturnFalse);
 
-InstallMethod(RightCongruenceByWordGraph, "for CanUseFroidurePin and word graph",
+InstallMethod(RightCongruenceByWordGraphNC,
+"for CanUseFroidurePin and word graph",
 [CanUseFroidurePin, IsWordGraph],
 function(S, D)
   local fam, cong;
@@ -55,7 +56,8 @@ function(S, D)
   return cong;
 end);
 
-InstallMethod(LeftCongruenceByWordGraph, "for CanUseFroidurePin and word graph",
+InstallMethod(LeftCongruenceByWordGraphNC,
+"for CanUseFroidurePin and word graph",
 [CanUseFroidurePin, IsWordGraph],
 function(S, D)
   local fam, cong;
