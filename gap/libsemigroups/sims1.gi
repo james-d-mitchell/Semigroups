@@ -173,9 +173,12 @@ function(S)
   fi;
 
   P := libsemigroups.Presentation.make();
-  for r in RulesOfSemigroup(S) do # TODO(Sims1) replace with RelationsOfFPSemmigroup
+  for r in RelationsOfFpSemigroup(S) do
+    r := List(r, x -> SEMIGROUPS.ExtRepObjToWord(ExtRepOfObj(x)));
     libsemigroups.presentation_add_rule(P, r[1] - 1, r[2] - 1);
   od;
+
+
   libsemigroups.Presentation.alphabet_from_rules(P);
   libsemigroups.Presentation.contains_empty_word(P, true);
   libsemigroups.Presentation.validate(P);
