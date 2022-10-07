@@ -428,8 +428,8 @@ libsemigroups::ActionDigraph<uint32_t> LATTICE_OF_CONGRUENCES(Obj list) {
     latt.add_nodes(newtodo.size());
     std::swap(todo, newtodo);
     if (libsemigroups::report::should_report()) {
-      std::cout << lg << ", todo = " << todo.size() << ", res = " << res.size()
-                << ", # bucks = " << res.bucket_count() << std::endl;
+      std::cout << "#I  Found " << res.size() << " congruences so far, "
+                << todo.size() << " congruences todo" << std::endl;
     }
   }
   if (libsemigroups::report::should_report()) {
