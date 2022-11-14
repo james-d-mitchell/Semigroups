@@ -1184,6 +1184,9 @@ function(gens, inputstring)
                     return gens[i];
                 fi;
             od;
+            if char = '1' then
+              return One(gens);
+            fi;
             ErrorNoReturn("expected a free semigroup generator",
                           " but found ", [char]);
         end;
