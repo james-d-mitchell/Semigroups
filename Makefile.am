@@ -7,11 +7,11 @@
 ACLOCAL_AMFLAGS = -I m4
 
 if WITH_INCLUDED_LIBSEMIGROUPS
-  SUBDIRS = libsemigroups
-  # the following triggers "make install" on libsemigroups
-  # note that making it a concrete file prevents this target
-  # to be needlessly re-run if libsemigroups/ is not changed.
-  BUILT_SOURCES = bin/include/libsemigroups/libsemigroups.hpp
+SUBDIRS = libsemigroups
+# the following triggers "make install" on libsemigroups
+# note that making it a concrete file prevents this target
+# to be needlessly re-run if libsemigroups/ is not changed.
+BUILT_SOURCES = bin/include/libsemigroups/libsemigroups.hpp
 endif
 
 AM_CPPFLAGS = @LIBSEMIGROUPS_CFLAGS@
@@ -37,7 +37,7 @@ semigroups_la_SOURCES += src/pkg.cpp
 semigroups_la_SOURCES += src/to_gap.cpp
 semigroups_la_SOURCES += gapbind14/src/gapbind14.cpp
 
-semigroups_la_CXXFLAGS = $(GAP_CFLAGS)   @LIBSEMIGROUPS_CFLAGS@ -std=gnu++14 -O3
+semigroups_la_CXXFLAGS = $(GAP_CFLAGS)   @LIBSEMIGROUPS_CFLAGS@ -std=gnu++17 -O3
 semigroups_la_CPPFLAGS = $(GAP_CPPFLAGS) @LIBSEMIGROUPS_CFLAGS@
 semigroups_la_CPPFLAGS += -I$(top_srcdir)/gapbind14/include
 
