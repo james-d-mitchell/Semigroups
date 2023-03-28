@@ -716,7 +716,7 @@ IsIdempotentPureCongruence := function(C)
   
   S := Range(C);
   for e in Idempotents(S) do
-    if ForAny(EquivalenceClassOfElementNC(C, e), x -> x ^ 2 <> x) then
+    if ForAny(EquivalenceClassOfElementNC(C, e), x -> not IsIdempotent(x)) then
       return false;
     fi;
   od;
@@ -727,16 +727,16 @@ InstallMethod(IsEDisjunctiveInverseSemigroup,
 "for an inverse semigroup", 
 [IsInverseSemigroup and IsGeneratorsOfInverseSemigroup], 
 function(S)
-  local ES, C, i, j;
+  local IS, restriction, congs, i, j;
 
-  ES := Idempotents(S);
-  for i in [1 .. Length(ES) - 1] do
-    for j in [i + 1 .. Length(ES)] do
-      C := SemigroupCongruence(S, [ES[i], ES[j]]);
-      if IsIdempotentPureCongruence(C) then
-        return false;
-      fi;
+  IS := Idempotents(S);
+  restriction := [];
+  for i in [1 .. Length(IS) - 1] do
+    for j in [i + 1 .. Length(IS)] do
+      Add(restriction, [IS[i], IS[j]]);
     od;
   od;
-  return true;
+  congs := PrincipalCongruencesOfSemigroup(S, restriction);
+
+  return not ForAny(congs, IsIdempotentPureCongruence);
 end);

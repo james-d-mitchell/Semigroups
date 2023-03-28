@@ -447,6 +447,7 @@ function(S)
   # return IteratorOfCombinations(AsList(S), 2);
 end);
 
+
 # Use the method just above
 InstallMethod(GeneratingPairsOfPrincipalLeftCongruences,
 "for a semigroup", [IsSemigroup], GeneratingPairsOfPrincipalCongruences);
@@ -480,6 +481,21 @@ function(S)
   pairs := Set(pairs, x -> AsSortedList([x ^ map1, x ^ map2]));
   return Filtered(pairs, x -> x[1] in S and x[2] in S);
 end);
+
+# InstallMethod(GeneratingPairsOfPrincipalCongruences,
+# "for a semigroup and is list or collection",
+# [IsActingSemigroup, IsList],
+# function(S, restriction)
+#   if not (IsFinite(S) and CanUseFroidurePin(S)) then
+#     ErrorNoReturn("the argument (a semigroup) must be finite and have ",
+#                   "CanUseFroidurePin");
+#   elif not IsMonoid(S) and not IsMonoidAsSemigroup(S) then
+#     M := Monoid(S, rec(acting := true));
+#   else
+#     M := S;
+#   fi;
+#   # TODO
+# end);
 
 InstallMethod(GeneratingPairsOfPrincipalRightCongruences,
 "for an acting semigroup",
