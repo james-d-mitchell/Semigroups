@@ -720,3 +720,102 @@ function(S)
   # Minimal ideal contains an idempotent!
   return PartialPermNC(result, result);
 end);
+
+InstallMethod(CentralizerOfIdempotents,
+"for an acting inverse semigroup of partial perms",
+[IsPartialPermSemigroup and IsInverseSemigroup and IsActingSemigroup],
+function(S)
+  local n, dom, meet_lookups, create_lookup, create_partition, o, atoms, result, idem, CSE, contained_atoms, m, G, p, H, i, j;
+
+  n := DegreeOfPartialPermSemigroup(S);
+  dom := [1 .. n];
+
+  meet_lookups := function(x, y)
+    local result, next, map, i;
+
+    result := ShallowCopy(dom);
+    next := 1;
+    map := HashMap();
+    for i in dom do
+      if not [x[i], y[i]] in map then
+        map[[x[i], y[i]]] := next;
+        next := next + 1;
+      fi;
+      result[i] := map[[x[i], y[i]]];
+    od;
+    return result;
+  end;
+
+  create_lookup := function(pt)
+    local result;
+    if IsEmpty(pt) then
+      return ListWithIdenticalEntries(n, 1);
+    fi;
+    result := ShallowCopy(dom);
+    result{pt} := ListWithIdenticalEntries(Size(pt), pt[1]);
+    pt := Difference(dom, pt);
+    if not IsEmpty(pt) then
+      result{pt} := ListWithIdenticalEntries(Size(pt), pt[1]);
+    fi;
+    return result;
+  end;
+
+  create_partition := function(lookup)
+    local result, map, next, i;
+
+    result := [];
+    map := HashMap();
+    next := 1;
+    for i in [1 .. Length(lookup)] do
+      if not lookup[i] in map then
+        map[lookup[i]] := next;
+        next := next + 1;
+      fi;
+      if not IsBound(result[map[lookup[i]]]) then
+        result[map[lookup[i]]] := [];
+      fi;
+      Add(result[map[lookup[i]]], i);
+    od;
+    return result;
+  end;
+
+  o := Enumerate(LambdaOrb(S));
+  atoms := create_lookup(o[2]);
+  for i in [3 .. Length(o)] do
+    atoms := meet_lookups(atoms, create_lookup(o[i]));
+  od;
+
+  atoms := create_partition(atoms);
+
+  result := [];
+  idem := Idempotents(S);
+  CSE := IdempotentGeneratedSubsemigroup(S);
+
+  for i in [2 .. Length(o)] do
+    contained_atoms := Filtered(atoms, x -> IsSubset(o[i], x));
+    m := OrbSCCLookup(o)[i];
+    G := LambdaOrbSchutzGp(o, m);
+    if IsEmpty(o[i]) then
+      if not IsTrivial(G) then
+        CSE := ClosureInverseSemigroup(CSE,
+               List(GeneratorsOfGroup(G), x -> idem[i - 1] * x));
+      fi;
+    else
+      p := MappingPermListList(o[OrbSCC(o)[m][1]], o[i]);
+      G := G ^ p;
+      H := Stabilizer(G, contained_atoms[1], OnSets);
+      for j in [2 .. Length(contained_atoms)] do
+        if IsTrivial(H) then
+          break;
+        fi;
+        H := Intersection(H, Stabilizer(G, contained_atoms[j], OnSets));
+      od;
+      if not IsTrivial(H) then
+        CSE := ClosureInverseSemigroup(CSE,
+               List(GeneratorsOfGroup(H), x -> idem[i - 1] * x));
+      fi;
+    fi;
+  od;
+
+  return CSE;
+end);
