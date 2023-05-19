@@ -41,3 +41,6 @@ DeclareAttribute("MaximumIdempotentSeparatingCongruence",
 
 DeclareProperty("IsIdempotentPureCongruence",
                 IsInverseSemigroupCongruenceByKernelTrace);
+
+DeclareOperation("IsNormalCongruence",
+                 [IsInverseSemigroup, IsSemigroupCongruence]);

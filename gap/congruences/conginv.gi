@@ -553,7 +553,7 @@ function(S)
   ker := IdempotentGeneratedSubsemigroup(S);
   leq := NaturalLeqInverseSemigroup(S);
   for n in ker do
-    for x in S do
+    for x in S do # TODO improve this!
       if leq(n, x) and not x in ker then
         ker := ClosureInverseSemigroup(ker, x);
       fi;
@@ -611,3 +611,24 @@ function(C)
   return Size(KernelOfSemigroupCongruence(C)) = NrIdempotents(Range(C));
 end);
 
+InstallMethod(IsNormalCongruence,
+"for an inverse semigroup and congruence",
+[IsInverseSemigroup, IsSemigroupCongruence],
+function(S, C)
+  local A, T, P, p, a;
+
+  if not IsInverseSemigroup(Source(C)) or not IsSubsemigroup(S, Source(C)) then
+    ErrorNoReturn();
+  fi;
+
+  A := GeneratorsOfSemigroup(S);
+  P := GeneratingPairsOfSemigroupCongruence(C);
+  for p in P do
+    for a in A do
+      if not CongruenceTestMembershipNC(C, a ^ -1 * p[1] * a, a ^ -1 * p[2] * a) then
+        return false;
+      fi;
+    od;
+  od;
+  return true;
+end);
