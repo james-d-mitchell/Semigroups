@@ -603,3 +603,11 @@ function(C)
   od;
   return pairs;
 end);
+
+InstallMethod(IsIdempotentPureCongruence,
+"for inverse semigroup congruence by kernel and trace",
+[IsInverseSemigroupCongruenceByKernelTrace],
+function(C)
+  return Size(KernelOfSemigroupCongruence(C)) = NrIdempotents(Range(C));
+end);
+

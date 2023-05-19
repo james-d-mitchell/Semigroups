@@ -39,3 +39,5 @@ DeclareAttribute("MinimumGroupCongruence",
 DeclareAttribute("MaximumIdempotentSeparatingCongruence",
                  IsInverseSemigroup and IsGeneratorsOfInverseSemigroup);
 
+DeclareProperty("IsIdempotentPureCongruence",
+                IsInverseSemigroupCongruenceByKernelTrace);
