@@ -50,6 +50,8 @@ fi;
 DeclareSynonymAttr("IsRectangularGroup",
                    IsOrthodoxSemigroup and IsSimpleSemigroup);
 
+DeclareProperty("IsFundamentalInverseSemigroup", IsSemigroup);
+
 InstallTrueMethod(IsGeneratorsOfInverseSemigroup,
                   IsInverseSemigroup and IsPartialPermSemigroup);
 InstallTrueMethod(IsGeneratorsOfInverseSemigroup,

@@ -17,16 +17,13 @@
 # R v L (???), IsNilpotentSemigroup, inverses, local submonoid, right ideal,
 # left ideal, kernel!?
 
-# IsLeftCancellative,
-# IsRightCancellative, IsRightGroup, IsLeftGroup, IsUnitarySemigroup,
-# IsRightUnitarySemigp, IsLeftUnitarySemigp, IsCongruenceFree,
-# PrimitiveIdempotents, IdempotentOrder,
-# IsLeftNormalBand, IsRightNormalBand, IsNormalBand, IsEUnitarySemigroup
-# IsRectangularGroup, IsBandOfGroups, IsFreeBand, IsFreeSemilattice,
-# IsFreeNormalBand, , IsFundamentalInverseSemigp,
-# IsFullSubsemigroup (of an inverse semigroup), IsFactorizableInverseMonoid,
-# IsFInverseSemigroup, IsSemigroupWithCentralIdempotents, IsLeftUnipotent,
-# IsRightUnipotent, IsSemigroupWithClosedIdempotents, .
+# IsLeftCancellative, IsRightCancellative, IsRightGroup, IsLeftGroup,
+# IsUnitarySemigroup, IsRightUnitarySemigp, IsLeftUnitarySemigp,
+# IsCongruenceFree, PrimitiveIdempotents, IdempotentOrder, IsLeftNormalBand,
+# IsRightNormalBand, IsNormalBand, IsRectangularGroup, IsBandOfGroups,
+# IsFreeBand, IsFreeSemilattice, IsFreeNormalBand, IsFullSubsemigroup (of an
+# inverse semigroup), IsFInverseSemigroup,
+# IsSemigroupWithCentralIdempotents, IsLeftUnipotent, IsRightUnipotent,
 
 # same method for ideals, works for finite and infinite
 
@@ -1664,4 +1661,24 @@ function(S)
                                       GeneratorsOfSemigroup(T),
                                       List(GeneratorsOfSemigroup(T),
                                            x -> x ^ map)) <> fail;
+end);
+
+InstallMethod(IsFundamentalInverseSemigroup,
+"for a finite semigroup",
+[IsSemigroup and IsFinite],
+function(S)
+  if not IsInverseSemigroup(S) then
+    return false;
+  fi;
+  if not IsPartialPermSemigroup(S) then
+    # Could be smaller degree?
+    S := AsSemigroup(IsPartialPermSemigroup, S);
+  fi;
+  # An inverse semigroup is fundamental if and only if the maximum idempotent
+  # separating congruence is the diagonal. Expressing the max. idem. separating
+  # congruence as a (Kernel, Trace), where the Kernel = E(S) and Trace =
+  # Delta_E(S). The Kernel of the max. idem. separating congruence is the
+  # centralizer of the idempotents in S (see Theorem 5.3.6 in Howie), and so we
+  # check the following.
+  return Size(CentralizerOfIdempotents(S)) = NrIdempotents(S);
 end);
