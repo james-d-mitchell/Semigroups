@@ -567,6 +567,19 @@ function(S)
   return InverseSemigroupCongruenceByKernelTraceNC(S, ker, traceBlocks);
 end);
 
+InstallMethod(MaximumIdempotentSeparatingCongruence,
+"for an acting partial perm semigroup",
+[IsPartialPermSemigroup and IsActingSemigroup and IsInverseSemigroup],
+function(S)
+  local ker, traceBlocks;
+
+  ker := CentralizerOfIdempotents(S);
+  # Trace should be the trivial congruence
+  traceBlocks := List(Idempotents(S), x -> [x]);
+
+  return InverseSemigroupCongruenceByKernelTraceNC(S, ker, traceBlocks);
+end);
+
 # TODO(later) this is a completely generic version implementation, surely we
 # can do better than this!
 

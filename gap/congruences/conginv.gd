@@ -36,3 +36,6 @@ DeclareCategory("IsInverseSemigroupCongruenceClassByKernelTrace",
 # Special congruences
 DeclareAttribute("MinimumGroupCongruence",
                  IsInverseSemigroup and IsGeneratorsOfInverseSemigroup);
+DeclareAttribute("MaximumIdempotentSeparatingCongruence",
+                 IsInverseSemigroup and IsGeneratorsOfInverseSemigroup);
+
