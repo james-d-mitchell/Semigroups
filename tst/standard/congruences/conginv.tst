@@ -10,7 +10,7 @@
 
 #@local S, T, ccong, classx, classy, classz, cong, cong1, cong2
 #@local cong_by_ker_trace_threshold, g, min, pair, pair1, pair2, pairs, q
-#@local ttrace, utrace, x, y, z
+#@local ttrace, utrace, x, y, z, I
 gap> START_TEST("Semigroups package: standard/congruences/conginv.tst");
 gap> LoadPackage("semigroups", false);;
 
@@ -33,11 +33,11 @@ gap> ccong := SemigroupCongruenceByGeneratingPairs(S,
 >  [[PartialPerm([4], [4]), PartialPerm([2], [1])]]);
 <2-sided semigroup congruence over <inverse partial perm semigroup 
  of size 206, rank 5 with 4 generators> with 1 generating pairs>
-gap> KernelOfSemigroupCongruence(ccong) = cong!.kernel;
+gap> KernelOfSemigroupCongruence(ccong) = KernelOfSemigroupCongruence(cong);
 true
 gap> ccong := SemigroupCongruenceByGeneratingPairs(S,
 >  [[PartialPerm([4], [4]), PartialPerm([2], [1])]]);;
-gap> TraceOfSemigroupCongruence(ccong) = cong!.traceBlocks;
+gap> TraceOfSemigroupCongruence(ccong) = TraceOfSemigroupCongruence(cong);
 true
 
 # Try some methods
@@ -54,7 +54,7 @@ false
 # Get the Kernel and Trace out
 gap> Size(KernelOfSemigroupCongruence(cong));
 41
-gap> AsSortedList(List(TraceOfSemigroupCongruence(cong), AsSortedList));
+gap> Set(EquivalenceClasses(TraceOfSemigroupCongruence(cong)), AsSortedList);
 [ [ <empty partial perm>, <identity partial perm on [ 1 ]>, 
       <identity partial perm on [ 2 ]>, <identity partial perm on [ 3 ]>, 
       <identity partial perm on [ 4 ]>, <identity partial perm on [ 5 ]> ], 
@@ -130,8 +130,10 @@ gap> S := InverseSemigroup([PartialPerm([2, 4], [5, 6]),
 >                           PartialPerm([1, 2], [3, 4])]);;
 gap> T := InverseSemigroup([PartialPerm([2, 4], [5, 7]),
 >                           PartialPerm([1, 2], [8, 6])]);;
-gap> utrace := [Idempotents(S)];;
-gap> ttrace := List(Idempotents(S), e -> [e]);;
+gap> I := IdempotentGeneratedSubsemigroup(S);
+<inverse partial perm semigroup of rank 6 with 6 generators>
+gap> utrace := UniversalSemigroupCongruence(I);;
+gap> ttrace := TrivialCongruence(I);;
 gap> cong := InverseSemigroupCongruenceByKernelTrace(S, T, utrace);
 Error, the 2nd argument is not an inverse subsemigroup of the 1st argument (an\
  inverse semigroup)
@@ -155,7 +157,9 @@ Error, the 1st argument is not an inverse semigroup with inverse op
 gap> S := InverseSemigroup([PartialPerm([1, 2], [5, 2]),
 >                           PartialPerm([1, 3], [4, 3])]);;
 gap> T := IdempotentGeneratedSubsemigroup(S);;
-gap> ttrace := List(Idempotents(S), e -> [e]);;
+gap> I := IdempotentGeneratedSubsemigroup(S);
+<inverse partial perm semigroup of rank 5 with 6 generators>
+gap> ttrace := TrivialCongruence(I);;
 gap> cong := InverseSemigroupCongruenceByKernelTrace(S, T, ttrace);;
 gap> ImagesElm(cong, (1, 5, 2));
 Error, the 2nd argument (a mult. elt. with inverse) does not belong to the ran\
