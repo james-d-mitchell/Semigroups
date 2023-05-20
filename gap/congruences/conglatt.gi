@@ -345,7 +345,7 @@ function(C)
   return JoinSemilatticeOfCongruences(CongruencesOfPoset(C));
 end);
 
-InstallMethod(JoinSemilatticeOfCongruences, "for a congruence poset",
+InstallMethod(JoinSemilatticeOfCongruences, "for a list or collection",
 [IsListOrCollection],
 function(gen_congs)
   local S, D, all_congs, trivial;
