@@ -8,9 +8,10 @@
 #############################################################################
 ##
 
-#@local S, T, ccong, classx, classy, classz, cong, cong1, cong2
+#@local I, N, S, T, ccong, classx, classy, classz, cong, cong1, cong2
 #@local cong_by_ker_trace_threshold, g, min, pair, pair1, pair2, pairs, q
-#@local ttrace, utrace, x, y, z, I
+#@local ttrace, utrace, x, y, z
+
 gap> START_TEST("Semigroups package: standard/congruences/conginv.tst");
 gap> LoadPackage("semigroups", false);;
 
@@ -290,6 +291,38 @@ gap> cong := SemigroupCongruence(S, pairs);
  with 2 generators> with congruence pair (12,3)>
 gap> EquivalenceRelationCanonicalLookup(cong);
 [ 1, 2, 3, 4, 4, 4, 5, 4, 4, 4, 4, 4, 4, 4 ]
+
+# NormalCongruencesIdempotentSemilattice
+gap> S := InverseSemigroup(PartialPerm([1, 2, 3, 5], [2, 4, 3, 5]),
+> PartialPerm([1, 3], [3, 2]));
+<inverse partial perm semigroup of rank 5 with 2 generators>
+gap> N := NormalCongruencesIdempotentSemilattice(S);
+[ <semigroup congruence over <inverse partial perm semigroup of size 14, 
+     rank 5 with 10 generators> with congruence pair (14,14)>, 
+  <semigroup congruence over <inverse partial perm semigroup of size 14, 
+     rank 5 with 10 generators> with congruence pair (14,1)>, 
+  <semigroup congruence over <inverse partial perm semigroup of size 14, 
+     rank 5 with 10 generators> with congruence pair (14,2)>, 
+  <semigroup congruence over <inverse partial perm semigroup of size 14, 
+     rank 5 with 10 generators> with congruence pair (14,3)>, 
+  <semigroup congruence over <inverse partial perm semigroup of size 14, 
+     rank 5 with 10 generators> with congruence pair (14,4)>, 
+  <semigroup congruence over <inverse partial perm semigroup of size 14, 
+     rank 5 with 10 generators> with congruence pair (14,6)>, 
+  <semigroup congruence over <inverse partial perm semigroup of size 14, 
+     rank 5 with 10 generators> with congruence pair (14,7)>, 
+  <semigroup congruence over <inverse partial perm semigroup of size 14, 
+     rank 5 with 10 generators> with congruence pair (14,9)>, 
+  <semigroup congruence over <inverse partial perm semigroup of size 14, 
+     rank 5 with 10 generators> with congruence pair (14,10)>, 
+  <semigroup congruence over <inverse partial perm semigroup of size 14, 
+     rank 5 with 10 generators> with congruence pair (14,10)>, 
+  <semigroup congruence over <inverse partial perm semigroup of size 14, 
+     rank 5 with 10 generators> with congruence pair (14,13)>, 
+  <semigroup congruence over <inverse partial perm semigroup of size 14, 
+     rank 5 with 10 generators> with congruence pair (14,6)> ]
+gap> ForAll(N, x -> IsNormalCongruence(S, x));
+true
 
 # 
 gap> SEMIGROUPS.StopTest();

@@ -530,3 +530,21 @@ function(S, C)
   od;
   return true;
 end);
+
+InstallMethod(PrincipalNormalCongruencesIdempotentSemilattice,
+"for an inverse semigroup", [IsInverseSemigroup],
+function(S)
+  local T, princ;
+  T := IdempotentGeneratedSubsemigroup(S);
+  princ := PrincipalCongruencesOfSemigroup(S, Combinations(AsList(T), 2));
+  return List(princ, TraceOfSemigroupCongruence);
+end);
+
+InstallMethod(NormalCongruencesIdempotentSemilattice,
+"for an inverse semigroup", [IsInverseSemigroup],
+function(S)
+  local princ;
+  princ := ShallowCopy(PrincipalNormalCongruencesIdempotentSemilattice(S));
+  Add(princ, TrivialCongruence(IdempotentGeneratedSubsemigroup(S)));
+  return CongruencesOfPoset(JoinSemilatticeOfCongruences(princ));
+end);

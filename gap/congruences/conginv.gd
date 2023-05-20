@@ -44,3 +44,7 @@ DeclareProperty("IsIdempotentPureCongruence",
 
 DeclareOperation("IsNormalCongruence",
                  [IsInverseSemigroup, IsSemigroupCongruence]);
+
+# Normal congruence of semilattice of idempotents
+DeclareAttribute("NormalCongruencesIdempotentSemilattice", IsInverseSemigroup);
+DeclareAttribute("PrincipalNormalCongruencesIdempotentSemilattice", IsInverseSemigroup);
