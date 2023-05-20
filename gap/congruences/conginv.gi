@@ -20,9 +20,6 @@ InstallImmediateMethod(CanUseLibsemigroupsCongruence,
                        0,
                        ReturnFalse);
 
-# TODO(later) use a congruence on the semilattice of idempotents for the trace,
-# instead of traceBlocks and traceLookup.
-
 InstallGlobalFunction(InverseSemigroupCongruenceByKernelTrace,
 function(S, kernel, trace)
   local a, x, traceClass, f, l, e;
@@ -198,6 +195,46 @@ function(C)
   od;
   return elmlists;
 end);
+
+# The next method is slower than using the standard non-inverse semigroup
+# methods
+# InstallMethod(NrEquivalenceClasses,
+# "for inverse semigroup congruence by kernel and trace",
+# [IsInverseSemigroupCongruenceByKernelTrace],
+# function(C)
+#   local S, kernel, trace, blockelmlists, pos, count, block, e, a;
+# 
+#   if HasEquivalenceRelationPartitionWithSingletons(C) then
+#     return Size(EquivalenceRelationPartitionWithSingletons(C));
+#   fi;
+# 
+#   S := Range(C);
+#   kernel := KernelOfSemigroupCongruence(C);
+#   trace := TraceOfSemigroupCongruence(C);
+#   count := 0;
+# 
+#   # Consider each trace-class in turn
+#   for block in EquivalenceRelationPartitionWithSingletons(trace) do
+#     # Consider all the congruence classes corresponding to this trace-class
+#     blockelmlists := [];   # List of lists of elms in class
+#     for e in block do
+#       for a in LClass(S, e) do
+#         # Find the congruence class that this element lies in
+#         pos := PositionProperty(blockelmlists,
+#                                 class -> a * class[1] ^ -1 in kernel);
+#         if pos = fail then
+#           # New class
+#           Add(blockelmlists, [a]);
+#         else
+#           # Add to the old class
+#           Add(blockelmlists[pos], a);
+#         fi;
+#       od;
+#     od;
+#     count := count + Size(blockelmlists);
+#   od;
+#   return count;
+# end);
 
 InstallMethod(CongruenceTestMembershipNC,
 "for inverse semigroup congruence by kernel and trace and two mult. elts",
