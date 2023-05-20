@@ -485,16 +485,16 @@ InstallMethod(GeneratingPairsOfMagmaCongruence,
 function(C)
   local CC, pairs, class, i, j;
 
-  CC := SemigroupCongruenceByGeneratingPairs(Source(C), []);
+  pairs := [];
+  CC := SemigroupCongruenceByGeneratingPairs(Source(C), pairs);
   for class in EquivalenceRelationPartition(C) do
-    for i in [1 .. Length(class) - 1] do
-      for j in [i + 1 .. Length(class)] do
-        if not [class[i], class[j]] in CC then
-          pairs := GeneratingPairsOfSemigroupCongruence(CC);
-          pairs := Concatenation(pairs, [[class[i], class[j]]]);
-          CC := SemigroupCongruenceByGeneratingPairs(Source(C), pairs);
-        fi;
-      od;
+    for i in [2 .. Length(class)] do
+      if not CongruenceTestMembershipNC(CC, class[i], class[1]) then
+        pairs := GeneratingPairsOfSemigroupCongruence(CC);
+        pairs := Concatenation(pairs, [[class[i], class[1]]]);
+        CC := SemigroupCongruenceByGeneratingPairs(Source(C), pairs);
+        # TODO break when CC = C
+      fi;
     od;
   od;
   return pairs;
