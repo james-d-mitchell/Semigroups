@@ -196,45 +196,40 @@ function(C)
   return elmlists;
 end);
 
-# The next method is slower than using the standard non-inverse semigroup
-# methods
-# InstallMethod(NrEquivalenceClasses,
-# "for inverse semigroup congruence by kernel and trace",
-# [IsInverseSemigroupCongruenceByKernelTrace],
-# function(C)
-#   local S, kernel, trace, blockelmlists, pos, count, block, e, a;
-# 
-#   if HasEquivalenceRelationPartitionWithSingletons(C) then
-#     return Size(EquivalenceRelationPartitionWithSingletons(C));
-#   fi;
-# 
-#   S := Range(C);
-#   kernel := KernelOfSemigroupCongruence(C);
-#   trace := TraceOfSemigroupCongruence(C);
-#   count := 0;
-# 
-#   # Consider each trace-class in turn
-#   for block in EquivalenceRelationPartitionWithSingletons(trace) do
-#     # Consider all the congruence classes corresponding to this trace-class
-#     blockelmlists := [];   # List of lists of elms in class
-#     for e in block do
-#       for a in LClass(S, e) do
-#         # Find the congruence class that this element lies in
-#         pos := PositionProperty(blockelmlists,
-#                                 class -> a * class[1] ^ -1 in kernel);
-#         if pos = fail then
-#           # New class
-#           Add(blockelmlists, [a]);
-#         else
-#           # Add to the old class
-#           Add(blockelmlists[pos], a);
-#         fi;
-#       od;
-#     od;
-#     count := count + Size(blockelmlists);
-#   od;
-#   return count;
-# end);
+InstallMethod(NrEquivalenceClasses,
+"for inverse semigroup congruence by kernel and trace",
+[IsInverseSemigroupCongruenceByKernelTrace],
+function(C)
+  local K, T, o, D, parts, node_parts, Q, scc, result, x, HS, HK, part, comp;
+
+  if HasEquivalenceRelationPartitionWithSingletons(C) then
+    return Size(EquivalenceRelationPartitionWithSingletons(C));
+  fi;
+
+  K := KernelOfSemigroupCongruence(C);
+  T := TraceOfSemigroupCongruence(C);
+  o := LambdaOrb(Source(C));
+
+  D := DigraphNC(OrbitGraph(LambdaOrb(Source(C))));
+  parts := EquivalenceRelationPartitionWithSingletons(T);
+  node_parts := [[1]];
+  for part in parts do
+    Add(node_parts, List(part, x -> Position(o, ImageSetOfPartialPerm(x))));
+  od;
+
+  Q := QuotientDigraph(D, node_parts);
+  scc := DigraphStronglyConnectedComponents(Q).comps;
+
+  result := -1;
+  for comp in scc do
+    x := MeetOfPartialPerms(parts[comp[1]]);
+    HS := HClass(Source(C), x);
+    HK := HClass(K, x);
+    result := result + Size(comp) ^ 2 * (Size(HS) / Size(HK));
+  od;
+
+  return result;
+end);
 
 InstallMethod(CongruenceTestMembershipNC,
 "for inverse semigroup congruence by kernel and trace and two mult. elts",
@@ -581,7 +576,10 @@ InstallMethod(NormalCongruencesIdempotentSemilattice,
 "for an inverse semigroup", [IsInverseSemigroup],
 function(S)
   local princ;
+  # Every normal congruence C on the semilattice of idempotents is the
+  # restriction of a congruence on S, and if not the trivial congruence, t
   princ := ShallowCopy(PrincipalNormalCongruencesIdempotentSemilattice(S));
+  
   Add(princ, TrivialCongruence(IdempotentGeneratedSubsemigroup(S)));
   return CongruencesOfPoset(JoinSemilatticeOfCongruences(princ));
 end);
