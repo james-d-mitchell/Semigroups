@@ -132,7 +132,6 @@ gap> S := InverseSemigroup([PartialPerm([2, 4], [5, 6]),
 gap> T := InverseSemigroup([PartialPerm([2, 4], [5, 7]),
 >                           PartialPerm([1, 2], [8, 6])]);;
 gap> I := IdempotentGeneratedSubsemigroup(S);
-<inverse partial perm semigroup of rank 6 with 6 generators>
 gap> utrace := UniversalSemigroupCongruence(I);;
 gap> ttrace := TrivialCongruence(I);;
 gap> cong := InverseSemigroupCongruenceByKernelTrace(S, T, utrace);
@@ -295,7 +294,6 @@ gap> EquivalenceRelationCanonicalLookup(cong);
 # NormalCongruencesIdempotentSemilattice
 gap> S := InverseSemigroup(PartialPerm([1, 2, 3, 5], [2, 4, 3, 5]),
 > PartialPerm([1, 3], [3, 2]));
-<inverse partial perm semigroup of rank 5 with 2 generators>
 gap> N := NormalCongruencesIdempotentSemilattice(S);
 [ <semigroup congruence over <inverse partial perm semigroup of size 14, 
      rank 5 with 10 generators> with congruence pair (14,14)>, 

@@ -102,7 +102,7 @@ InstallMethod(ViewObj,
 "for inverse semigroup congruence by kernel and trace",
 [IsInverseSemigroupCongruenceByKernelTrace],
 function(C)
-  Print("<semigroup congruence over ");
+  Print("<2-sided congruence over ");
   ViewObj(Range(C));
   Print(" with congruence pair (",
         Size(KernelOfSemigroupCongruence(C)), ",",
@@ -114,11 +114,11 @@ InstallMethod(\=,
 [IsInverseSemigroupCongruenceByKernelTrace,
  IsInverseSemigroupCongruenceByKernelTrace],
 function(lhop, rhop)
-  return(Range(lhop) = Range(rhop)
-         and KernelOfSemigroupCongruence(lhop)
-           = KernelOfSemigroupCongruence(rhop)
-         and TraceOfSemigroupCongruence(lhop)
-           = TraceOfSemigroupCongruence(rhop));
+  return (Range(lhop) = Range(rhop)
+          and KernelOfSemigroupCongruence(lhop)
+            = KernelOfSemigroupCongruence(rhop)
+          and TraceOfSemigroupCongruence(lhop)
+            = TraceOfSemigroupCongruence(rhop));
 end);
 
 InstallMethod(IsSubrelation,
@@ -204,23 +204,31 @@ function(C)
 
   if HasEquivalenceRelationPartitionWithSingletons(C) then
     return Size(EquivalenceRelationPartitionWithSingletons(C));
+  elif IsSemilattice(Source(C)) then
+    # This is required because IsSemilattice => not IsActingSemigroup 
+    # and so LambdaOrb errors below.
+    return NrEquivalenceClasses(TraceOfSemigroupCongruence(C));
   fi;
 
   K := KernelOfSemigroupCongruence(C);
   T := TraceOfSemigroupCongruence(C);
   o := LambdaOrb(Source(C));
 
-  D := DigraphNC(OrbitGraph(LambdaOrb(Source(C))));
+  D := StructuralCopy(OrbitGraph(LambdaOrb(Source(C)))) - 1;
+  Remove(D, 1);
+  D := DigraphNC(D);
+
   parts := EquivalenceRelationPartitionWithSingletons(T);
-  node_parts := [[1]];
+  node_parts := [];
   for part in parts do
-    Add(node_parts, List(part, x -> Position(o, ImageSetOfPartialPerm(x))));
+    Add(node_parts, 
+        List(part, x -> Position(o, ImageSetOfPartialPerm(x)) - 1));
   od;
 
   Q := QuotientDigraph(D, node_parts);
   scc := DigraphStronglyConnectedComponents(Q).comps;
 
-  result := -1;
+  result := 0;
   for comp in scc do
     x := MeetOfPartialPerms(parts[comp[1]]);
     HS := HClass(Source(C), x);
@@ -289,6 +297,20 @@ function(C)
   fi;
   copy := AsInverseSemigroupCongruenceByKernelTrace(C);
   return KernelOfSemigroupCongruence(copy);
+end);
+
+InstallMethod(AsInverseSemigroupCongruenceByKernelTrace,
+"for semigroup congruence with generating pairs",
+[IsUniversalSemigroupCongruence],
+function(C)
+  local S, trace;
+  S := Range(C);
+  if not (IsInverseSemigroup(S) and IsGeneratorsOfInverseSemigroup(S)) then
+    ErrorNoReturn("the range of the argument (a congruence) must be an ",
+                  "inverse semigroup with inverse op");
+  fi;
+  trace := UniversalSemigroupCongruence(IdempotentGeneratedSubsemigroup(S));
+  return InverseSemigroupCongruenceByKernelTraceNC(S, S, trace); 
 end);
 
 InstallMethod(AsInverseSemigroupCongruenceByKernelTrace,
@@ -398,8 +420,10 @@ SEMIGROUPS.KernelTraceClosure := function(S, kernel, trace, genpairs)
         return x in T;
       end;
       for x in GeneratorsOfSemigroup(K) do
-        list := AsList(Enumerate(Orb(GeneratorsOfSemigroup(S), x, POW, opts)));
-        T := ClosureInverseSemigroup(T, list);
+        if not IsIdempotent(x) then
+          coll := AsSet(Enumerate(Orb(GeneratorsOfSemigroup(S), x, POW, opts)));
+          T := ClosureInverseSemigroup(T, coll);
+        fi;
       od;
     od;
     return K;
@@ -453,6 +477,9 @@ SEMIGROUPS.KernelTraceClosure := function(S, kernel, trace, genpairs)
            # C1 condition
            if a * e in enum then
              AddSet(kernel_gens_to_add, a);
+             if Size(kernel_gens_to_add) > 128 then
+               return;
+             fi;
              break;
            fi;
          od;
@@ -546,7 +573,7 @@ function(S, C)
   local A, P, p, a;
 
   if not IsInverseSemigroup(Source(C)) or not IsSubsemigroup(S, Source(C)) then
-    ErrorNoReturn();
+    ErrorNoReturn("TODO");
   fi;
 
   A := GeneratorsOfSemigroup(S);
@@ -567,6 +594,10 @@ InstallMethod(PrincipalNormalCongruencesIdempotentSemilattice,
 "for an inverse semigroup", [IsInverseSemigroup],
 function(S)
   local T, princ;
+  # Every normal congruence C on the semilattice of idempotents is the
+  # trace of a congruence on S, and if not the trivial congruence, then
+  # there exist a pair of idempotents related in C. Hence the below captures
+  # all of the principal normal congruences.
   T := IdempotentGeneratedSubsemigroup(S);
   princ := PrincipalCongruencesOfSemigroup(S, Combinations(AsList(T), 2));
   return List(princ, TraceOfSemigroupCongruence);
@@ -576,10 +607,8 @@ InstallMethod(NormalCongruencesIdempotentSemilattice,
 "for an inverse semigroup", [IsInverseSemigroup],
 function(S)
   local princ;
-  # Every normal congruence C on the semilattice of idempotents is the
-  # restriction of a congruence on S, and if not the trivial congruence, t
   princ := ShallowCopy(PrincipalNormalCongruencesIdempotentSemilattice(S));
-  
   Add(princ, TrivialCongruence(IdempotentGeneratedSubsemigroup(S)));
+  # The join of normal congruences is normal.
   return CongruencesOfPoset(JoinSemilatticeOfCongruences(princ));
 end);
