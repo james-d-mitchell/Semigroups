@@ -1613,9 +1613,6 @@ function(S, T)
     and NrIdempotents(S) = NrIdempotents(T);
 end);
 
-# The filter IsActingSemigroup is added here because otherwise we don't know
-# that G and N in the loop in the method below act on the same set.
-
 InstallMethod(IsNormalInverseSubsemigroup,
 "for an inverse acting semigroup and subsemigroup",
 [IsInverseSemigroup, IsInverseSemigroup],
