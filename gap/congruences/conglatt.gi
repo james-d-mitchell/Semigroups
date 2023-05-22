@@ -426,6 +426,9 @@ function(D)
     od;
     q := q + 1;
   od;
+  if Position(result, result[1], 1) <> fail then
+    Remove(result, 1);
+  fi;
   SetDigraphVertexLabels(D, result);
   return result;
 end);
@@ -654,7 +657,7 @@ function(S)
   # Have to use "ByGeneratingPairs" to ensure that the number of generating
   # pairs of a principal congruence is one. O/w when using, i.e.
   # InverseSemigroupCongruenceByKernelTrace, the number of generating pairs can
-  # be greater than 1. 
+  # be greater than 1.
   LeftCong := LeftSemigroupCongruenceByGeneratingPairs;
   return SEMIGROUPS.PrincipalXCongruencesNC(S, pairs, LeftCong);
 end);
@@ -662,19 +665,21 @@ end);
 InstallMethod(PrincipalRightCongruencesOfSemigroup, "for a semigroup",
 [IsSemigroup],
 function(S)
-  local pairs, RightCong;
+  local pairs;
   pairs := GeneratingPairsOfPrincipalRightCongruences(S);
-  RightCong := RightSemigroupCongruenceByGeneratingPairs;
-  return SEMIGROUPS.PrincipalXCongruencesNC(S, pairs, RightCong);
+  return SEMIGROUPS.PrincipalXCongruencesNC(S,
+                                            pairs,
+                                            RightSemigroupCongruence);
 end);
 
 InstallMethod(PrincipalCongruencesOfSemigroup, "for a semigroup",
 [IsSemigroup],
 function(S)
-  local pairs, Cong;
+  local pairs;
   pairs := GeneratingPairsOfPrincipalCongruences(S);
-  Cong := SemigroupCongruence;
-  return SEMIGROUPS.PrincipalXCongruencesNC(S, pairs, Cong);
+  return SEMIGROUPS.PrincipalXCongruencesNC(S,
+                                            pairs,
+                                            SemigroupCongruence);
 end);
 
 InstallMethod(PrincipalLeftCongruencesOfSemigroup,
@@ -682,7 +687,7 @@ InstallMethod(PrincipalLeftCongruencesOfSemigroup,
 [IsSemigroup, IsListOrCollection],
 function(S, pairs)
   _CheckCongruenceLatticeArgs(S, pairs);
-  return SEMIGROUPS.PrincipalXCongruencesNC(S,
+  return SEMIGROUPS.PrincipalCongruencesNC(S,
                                             pairs,
                                             LeftSemigroupCongruence);
 end);
