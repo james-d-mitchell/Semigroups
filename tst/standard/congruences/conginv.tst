@@ -28,8 +28,8 @@ gap> S := InverseSemigroup([PartialPerm([1, 2, 3], [2, 5, 3]),
 >  PartialPerm([1, 2, 3], [3, 4, 2])]);;
 gap> cong := SemigroupCongruence(S,
 >  [PartialPerm([4], [4]), PartialPerm([2], [1])]);
-<semigroup congruence over <inverse partial perm semigroup of size 206, 
- rank 5 with 4 generators> with congruence pair (41,16)>
+<2-sided semigroup congruence over <inverse partial perm semigroup 
+ of size 206, rank 5 with 4 generators> with congruence pair (41,16)>
 gap> ccong := SemigroupCongruenceByGeneratingPairs(S,
 >  [[PartialPerm([4], [4]), PartialPerm([2], [1])]]);
 <2-sided semigroup congruence over <inverse partial perm semigroup 
@@ -132,6 +132,7 @@ gap> S := InverseSemigroup([PartialPerm([2, 4], [5, 6]),
 gap> T := InverseSemigroup([PartialPerm([2, 4], [5, 7]),
 >                           PartialPerm([1, 2], [8, 6])]);;
 gap> I := IdempotentGeneratedSubsemigroup(S);
+<inverse partial perm semigroup of rank 6 with 6 generators>
 gap> utrace := UniversalSemigroupCongruence(I);;
 gap> ttrace := TrivialCongruence(I);;
 gap> cong := InverseSemigroupCongruenceByKernelTrace(S, T, utrace);
@@ -218,13 +219,13 @@ gap> S := InverseSemigroup([PartialPerm([1, 2, 3], [1, 3, 4]),
 gap> cong := SemigroupCongruence(S,
 >       [PartialPerm([1], [1]), PartialPerm([], [])],
 >       [PartialPerm([5], [3]), PartialPerm([], [])]);
-<semigroup congruence over <inverse partial perm semigroup of size 258, 
- rank 5 with 3 generators> with congruence pair (44,19)>
+<2-sided semigroup congruence over <inverse partial perm semigroup 
+ of size 258, rank 5 with 3 generators> with congruence pair (44,19)>
 gap> cong := SemigroupCongruence(S,
 >        [PartialPerm([1, 3, 5], [1, 3, 5]),
 >         PartialPerm([1, 2, 4], [3, 1, 2])]);
-<semigroup congruence over <inverse partial perm semigroup of size 258, 
- rank 5 with 3 generators> with congruence pair (256,3)>
+<2-sided semigroup congruence over <inverse partial perm semigroup 
+ of size 258, rank 5 with 3 generators> with congruence pair (256,3)>
 
 # MinimumGroupCongruence
 gap> S := InverseSemigroup([PartialPerm([1, 2, 5, 6], [5, 2, 1, 4]),
@@ -249,8 +250,8 @@ gap> pair := [PartialPerm([1, 2], [3, 1]), PartialPerm([], [])];;
 gap> cong := SemigroupCongruence(S, pair);;
 gap> min := MinimumGroupCongruence(S);;
 gap> JoinSemigroupCongruences(cong, min);
-<semigroup congruence over <inverse partial perm monoid of size 15, rank 3 
- with 1 generator> with congruence pair (15,1)>
+<2-sided semigroup congruence over <inverse partial perm monoid of size 15, 
+ rank 3 with 1 generator> with congruence pair (15,1)>
 gap> IsSubrelation(last, cong);
 true
 
@@ -262,8 +263,8 @@ gap> pair2 := [PartialPerm([], []), PartialPerm([1, 2], [1, 2])];;
 gap> cong1 := SemigroupCongruence(S, pair1);;
 gap> cong2 := SemigroupCongruence(S, pair2);;
 gap> MeetSemigroupCongruences(cong1, cong2);
-<semigroup congruence over <inverse partial perm semigroup of size 14, rank 3 
- with 2 generators> with congruence pair (12,3)>
+<2-sided semigroup congruence over <inverse partial perm semigroup 
+ of size 14, rank 3 with 2 generators> with congruence pair (12,3)>
 
 # Bad input: different semigroups
 gap> S := InverseSemigroup([PartialPerm([1, 2], [2, 1]),
@@ -286,39 +287,61 @@ gap> S := InverseSemigroup([PartialPerm([1, 2], [1, 2]),
 >                           PartialPerm([1, 2], [2, 3])]);;
 gap> pairs := [PartialPerm([], []), PartialPerm([1], [1])];;
 gap> cong := SemigroupCongruence(S, pairs);
-<semigroup congruence over <inverse partial perm semigroup of size 14, rank 3 
- with 2 generators> with congruence pair (12,3)>
+<2-sided semigroup congruence over <inverse partial perm semigroup 
+ of size 14, rank 3 with 2 generators> with congruence pair (12,3)>
 gap> EquivalenceRelationCanonicalLookup(cong);
 [ 1, 2, 3, 4, 4, 4, 5, 4, 4, 4, 4, 4, 4, 4 ]
 
 # NormalCongruencesIdempotentSemilattice
 gap> S := InverseSemigroup(PartialPerm([1, 2, 3, 5], [2, 4, 3, 5]),
 > PartialPerm([1, 3], [3, 2]));
+<inverse partial perm semigroup of rank 5 with 2 generators>
+gap> PrincipalNormalCongruencesIdempotentSemilattice(S);
+[ <universal semigroup congruence over <inverse partial perm semigroup 
+     of size 14, rank 5 with 10 generators>>, 
+  <2-sided semigroup congruence over <inverse partial perm semigroup 
+     of size 14, rank 5 with 10 generators> with 3 generating pairs>, 
+  <2-sided semigroup congruence over <inverse partial perm semigroup 
+     of size 14, rank 5 with 10 generators> with 6 generating pairs>, 
+  <2-sided semigroup congruence over <inverse partial perm semigroup 
+     of size 14, rank 5 with 10 generators> with 6 generating pairs>, 
+  <2-sided semigroup congruence over <inverse partial perm semigroup 
+     of size 14, rank 5 with 10 generators> with 4 generating pairs>, 
+  <2-sided semigroup congruence over <inverse partial perm semigroup 
+     of size 14, rank 5 with 10 generators> with 3 generating pairs>, 
+  <2-sided semigroup congruence over <inverse partial perm semigroup 
+     of size 14, rank 5 with 10 generators> with 4 generating pairs>, 
+  <2-sided semigroup congruence over <inverse partial perm semigroup 
+     of size 14, rank 5 with 10 generators> with 4 generating pairs>, 
+  <2-sided semigroup congruence over <inverse partial perm semigroup 
+     of size 14, rank 5 with 10 generators> with 3 generating pairs>, 
+  <2-sided semigroup congruence over <inverse partial perm semigroup 
+     of size 14, rank 5 with 10 generators> with 1 generating pairs> ]
 gap> N := NormalCongruencesIdempotentSemilattice(S);
-[ <semigroup congruence over <inverse partial perm semigroup of size 14, 
-     rank 5 with 10 generators> with congruence pair (14,14)>, 
-  <semigroup congruence over <inverse partial perm semigroup of size 14, 
-     rank 5 with 10 generators> with congruence pair (14,1)>, 
-  <semigroup congruence over <inverse partial perm semigroup of size 14, 
-     rank 5 with 10 generators> with congruence pair (14,2)>, 
-  <semigroup congruence over <inverse partial perm semigroup of size 14, 
-     rank 5 with 10 generators> with congruence pair (14,3)>, 
-  <semigroup congruence over <inverse partial perm semigroup of size 14, 
-     rank 5 with 10 generators> with congruence pair (14,4)>, 
-  <semigroup congruence over <inverse partial perm semigroup of size 14, 
-     rank 5 with 10 generators> with congruence pair (14,6)>, 
-  <semigroup congruence over <inverse partial perm semigroup of size 14, 
-     rank 5 with 10 generators> with congruence pair (14,7)>, 
-  <semigroup congruence over <inverse partial perm semigroup of size 14, 
-     rank 5 with 10 generators> with congruence pair (14,9)>, 
-  <semigroup congruence over <inverse partial perm semigroup of size 14, 
-     rank 5 with 10 generators> with congruence pair (14,10)>, 
-  <semigroup congruence over <inverse partial perm semigroup of size 14, 
-     rank 5 with 10 generators> with congruence pair (14,10)>, 
-  <semigroup congruence over <inverse partial perm semigroup of size 14, 
-     rank 5 with 10 generators> with congruence pair (14,13)>, 
-  <semigroup congruence over <inverse partial perm semigroup of size 14, 
-     rank 5 with 10 generators> with congruence pair (14,6)> ]
+[ <2-sided semigroup congruence over <inverse partial perm semigroup 
+     of size 14, rank 5 with 10 generators> with congruence pair (14,14)>, 
+  <universal semigroup congruence over <inverse partial perm semigroup 
+     of size 14, rank 5 with 10 generators>>, 
+  <2-sided semigroup congruence over <inverse partial perm semigroup 
+     of size 14, rank 5 with 10 generators> with congruence pair (14,2)>, 
+  <2-sided semigroup congruence over <inverse partial perm semigroup 
+     of size 14, rank 5 with 10 generators> with congruence pair (14,3)>, 
+  <2-sided semigroup congruence over <inverse partial perm semigroup 
+     of size 14, rank 5 with 10 generators> with congruence pair (14,4)>, 
+  <2-sided semigroup congruence over <inverse partial perm semigroup 
+     of size 14, rank 5 with 10 generators> with congruence pair (14,6)>, 
+  <2-sided semigroup congruence over <inverse partial perm semigroup 
+     of size 14, rank 5 with 10 generators> with congruence pair (14,7)>, 
+  <2-sided semigroup congruence over <inverse partial perm semigroup 
+     of size 14, rank 5 with 10 generators> with congruence pair (14,9)>, 
+  <2-sided semigroup congruence over <inverse partial perm semigroup 
+     of size 14, rank 5 with 10 generators> with congruence pair (14,10)>, 
+  <2-sided semigroup congruence over <inverse partial perm semigroup 
+     of size 14, rank 5 with 10 generators> with congruence pair (14,10)>, 
+  <2-sided semigroup congruence over <inverse partial perm semigroup 
+     of size 14, rank 5 with 10 generators> with congruence pair (14,13)>, 
+  <2-sided semigroup congruence over <inverse partial perm semigroup 
+     of size 14, rank 5 with 10 generators> with congruence pair (14,6)> ]
 gap> ForAll(N, x -> IsNormalCongruence(S, x));
 true
 

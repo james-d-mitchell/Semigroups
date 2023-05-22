@@ -102,7 +102,7 @@ InstallMethod(ViewObj,
 "for inverse semigroup congruence by kernel and trace",
 [IsInverseSemigroupCongruenceByKernelTrace],
 function(C)
-  Print("<2-sided congruence over ");
+  Print("<2-sided semigroup congruence over ");
   ViewObj(Range(C));
   Print(" with congruence pair (",
         Size(KernelOfSemigroupCongruence(C)), ",",
@@ -205,7 +205,7 @@ function(C)
   if HasEquivalenceRelationPartitionWithSingletons(C) then
     return Size(EquivalenceRelationPartitionWithSingletons(C));
   elif IsSemilattice(Source(C)) then
-    # This is required because IsSemilattice => not IsActingSemigroup 
+    # This is required because IsSemilattice => not IsActingSemigroup
     # and so LambdaOrb errors below.
     return NrEquivalenceClasses(TraceOfSemigroupCongruence(C));
   fi;
@@ -221,7 +221,7 @@ function(C)
   parts := EquivalenceRelationPartitionWithSingletons(T);
   node_parts := [];
   for part in parts do
-    Add(node_parts, 
+    Add(node_parts,
         List(part, x -> Position(o, ImageSetOfPartialPerm(x)) - 1));
   od;
 
@@ -310,26 +310,26 @@ function(C)
                   "inverse semigroup with inverse op");
   fi;
   trace := UniversalSemigroupCongruence(IdempotentGeneratedSubsemigroup(S));
-  return InverseSemigroupCongruenceByKernelTraceNC(S, S, trace); 
+  return InverseSemigroupCongruenceByKernelTraceNC(S, S, trace);
 end);
 
 InstallMethod(AsInverseSemigroupCongruenceByKernelTrace,
 "for semigroup congruence with generating pairs",
 [IsSemigroupCongruence and HasGeneratingPairsOfMagmaCongruence],
 function(C)
-  local S, T, trace;
+  local S, T, trace, pairs, result;
 
   S := Source(C);
   if not (IsInverseSemigroup(S) and IsGeneratorsOfInverseSemigroup(S)) then
     ErrorNoReturn("the range of the argument (a congruence) must be an ",
                   "inverse semigroup with inverse op");
   fi;
-  T := IdempotentGeneratedSubsemigroup(S);
-  trace := SemigroupCongruenceByGeneratingPairs(T, []);
-  return SEMIGROUPS.KernelTraceClosure(S,
-                                       T,
-                                       trace,
-                                       GeneratingPairsOfSemigroupCongruence(C));
+  T      := IdempotentGeneratedSubsemigroup(S);
+  trace  := SemigroupCongruenceByGeneratingPairs(T, []);
+  pairs  := GeneratingPairsOfSemigroupCongruence(C);
+  result := SEMIGROUPS.KernelTraceClosure(S, T, trace, pairs);
+  SetGeneratingPairsOfMagmaCongruence(result, pairs);
+  return result;
 end);
 
 InstallMethod(JoinSemigroupCongruences,
