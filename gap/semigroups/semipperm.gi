@@ -725,7 +725,8 @@ InstallMethod(CentralizerOfIdempotents,
 "for an acting inverse semigroup of partial perms",
 [IsPartialPermSemigroup and IsInverseSemigroup and IsActingSemigroup],
 function(S)
-  local n, dom, meet_lookups, create_lookup, create_partition, o, atoms, result, idem, CSE, contained_atoms, m, G, p, H, i, j;
+  local n, dom, meet_lookups, create_lookup, create_partition, o, atoms,
+  result, idem, CSE, contained_atoms, m, G, p, H, i, j;
 
   n := DegreeOfPartialPermSemigroup(S);
   dom := [1 .. n];
