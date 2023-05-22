@@ -77,6 +77,12 @@ DeclareOperation("ClosureInverseMonoid",
 DeclareOperation("ClosureInverseSemigroupOrMonoidNC",
                  [IsFunction, IsSemigroup, IsList and IsFinite, IsRecord]);
 
+DeclareOperation("NormalClosureInverseSemigroup",
+                [IsInverseSemigroup, IsInverseSemigroup, IsListOrCollection]);
+
+DeclareOperation("NormalClosureInverseSemigroupNC",
+                [IsInverseSemigroup, IsInverseSemigroup, IsListOrCollection]);
+
 # We use IsListOrCollection here because some collections of semigroup
 # generators (such as elements/congruence classes in a quotient semigroup) do
 # not satisfy IsMultiplicativeElementCollection (although the classes

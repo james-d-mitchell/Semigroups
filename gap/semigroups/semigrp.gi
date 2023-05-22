@@ -769,6 +769,50 @@ function(Constructor, S, coll, opts)
   return S;
 end);
 
+InstallMethod(NormalClosureInverseSemigroup,
+"for an inverse semigroup, inverse subsemigroup, and list or coll.",
+[IsInverseSemigroup, IsInverseSemigroup, IsListOrCollection],
+function(S, N, coll)
+
+  if not IsInverseSubsemigroup(S, N) then
+    ErrorNoReturn("the 2nd argument (an inverse semigroup) is not an ",
+                  "inverse subsemigroup of the 1st argument (an ",
+                  "inverse semigroup)");
+  elif ForAny(coll, x -> not x in S) then
+    ErrorNoReturn("the 3rd argument (a list or coll) contains items that do",
+                  " not belong to the 1st argument (an inverse semigroup)");
+  fi;
+  return NormalClosureInverseSemigroupNC(S, N, coll);
+end);
+
+InstallMethod(NormalClosureInverseSemigroupNC,
+"for an inverse semigroup, inverse subsemigroup, and list or coll.",
+[IsInverseSemigroup, IsInverseSemigroup, IsListOrCollection],
+function(S, N, coll)
+  local n, opts, x;
+  n := Size(N);
+
+  if not IsEmpty(coll) then
+    N := ClosureInverseSemigroup(N, coll);
+  fi;
+
+  opts := rec();
+  opts.onlygrades     := {x, data} -> x = false;
+  opts.onlygradesdata := fail;
+  opts.gradingfunc    := {o, x} -> x in N;
+
+  while Size(N) <> n do
+    n := Size(N);
+    for x in GeneratorsOfSemigroup(N) do
+      if not IsIdempotent(x) then
+        coll := AsSet(Enumerate(Orb(GeneratorsOfSemigroup(S), x, POW, opts)));
+        N := ClosureInverseSemigroup(N, coll);
+      fi;
+    od;
+  od;
+  return N;
+end);
+
 #############################################################################
 ## 7. Subsemigroups
 #############################################################################

@@ -1629,6 +1629,8 @@ function(S, T)
       fi;
     od;
   od;
+  # TODO FIXME replace the old method here, the above is necessary but not
+  # sufficient
   return true;
 end);
 

@@ -99,9 +99,10 @@ InstallMethod(ViewObj,
 function(C)
   Print("<2-sided semigroup congruence over ");
   ViewObj(Range(C));
-  Print(" with congruence pair (",
-        Size(KernelOfSemigroupCongruence(C)), ",",
-        NrEquivalenceClasses(TraceOfSemigroupCongruence(C)), ")>");
+  PrintFormatted(" with congruence pair ({},{})>",
+                 Size(KernelOfSemigroupCongruence(C)),
+                 NrEquivalenceClasses(TraceOfSemigroupCongruence(C)));
+  return;
 end);
 
 InstallMethod(\=,
@@ -132,6 +133,7 @@ function(lhop, rhop)
                            TraceOfSemigroupCongruence(rhop));
 end);
 
+# TODO replace
 InstallMethod(ImagesElm,
 "for inverse semigroup congruence by kernel and trace and mult. elt.",
 [IsInverseSemigroupCongruenceByKernelTrace,
@@ -156,6 +158,8 @@ function(C, a)
   od;
   return images;
 end);
+
+# TODO replace
 
 InstallMethod(EquivalenceRelationPartitionWithSingletons,
 "for inverse semigroup congruence by kernel and trace",
@@ -381,8 +385,7 @@ function(lhop, rhop)
 end);
 
 SEMIGROUPS.KernelTraceClosure := function(S, kernel, trace, genpairs)
-  local kernel_gens_to_add, trace_pairs_to_add,
-  NormalClosureInverseSemigroup, x, enumerate_trace, pair,
+  local kernel_gens_to_add, trace_pairs_to_add, x, enumerate_trace, pair,
   enforce_conditions, y;
 
   # This function takes an inverse semigroup S, a subsemigroup ker, an
@@ -397,42 +400,9 @@ SEMIGROUPS.KernelTraceClosure := function(S, kernel, trace, genpairs)
   trace_pairs_to_add := List(genpairs, x -> [RightOne(x[1]), RightOne(x[2])]);
   AsListCanonical(S);  # makes the computation below somewhat faster
 
-  # TODO pull this out
-  NormalClosureInverseSemigroup := function(S, K, coll)
-    local n, opts, x;
-
-    if IsEmpty(coll) then
-      return K;
-    fi;
-
-    # This takes an inv smgp S, an inv subsemigroup K, and some elms coll,
-    # then creates the *normal closure* of K with coll inside S.
-    # It assumes K is already normal.
-    n := Size(K);
-    K := ClosureInverseSemigroup(K, coll);
-
-    opts := rec();
-    opts.onlygrades := function(x, data)
-      return x = false;
-    end;
-    opts.onlygradesdata := fail;
-    opts.gradingfunc := function(o, x)
-      return x in K;
-    end;
-
-    while Size(K) <> n do
-      n := Size(K);
-      for x in GeneratorsOfSemigroup(K) do
-        if not IsIdempotent(x) then
-          coll := AsSet(Enumerate(Orb(GeneratorsOfSemigroup(S), x, POW, opts)));
-          K := ClosureInverseSemigroup(K, coll);
-        fi;
-      od;
-    od;
-    return K;
-  end;
-
-  # TODO pull this out
+  # TODO HERE pull this out, after refactoring to call this something like
+  # "NormalCongruence" and actually passing the arguments instead of global
+  # variables.
   enumerate_trace := function()
     local pairs, pair, a, x, y;
     Assert(0, IsNormalCongruence(S, trace));
@@ -492,10 +462,9 @@ SEMIGROUPS.KernelTraceClosure := function(S, kernel, trace, genpairs)
   repeat
     enumerate_trace();
     # Take the normal closure inverse semigroup containing the new elements
-    kernel := NormalClosureInverseSemigroup(S,
-                                            kernel,
-                                            kernel_gens_to_add);
-    Enumerate(kernel);
+    kernel := NormalClosureInverseSemigroupNC(S,
+                                              kernel,
+                                              kernel_gens_to_add);
     kernel_gens_to_add := [];
     enforce_conditions();
   until IsEmpty(kernel_gens_to_add) and IsEmpty(trace_pairs_to_add);

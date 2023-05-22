@@ -28,8 +28,8 @@ gap> S := InverseSemigroup([PartialPerm([1, 3, 4, 5], [6, 7, 4, 1]),
 >   PartialPerm([1, 2, 3, 4, 5, 8], [4, 7, 6, 1, 3, 2]),
 >   PartialPerm([1, 2, 3, 6, 8], [5, 4, 3, 6, 1])]);;
 gap> cong := SemigroupCongruence(S, [S.1, S.2]);
-<semigroup congruence over <inverse partial perm semigroup of size 57584, 
- rank 8 with 8 generators> with congruence pair (57528,29)>
+<2-sided semigroup congruence over <inverse partial perm semigroup 
+ of size 57584, rank 8 with 8 generators> with congruence pair (57528,29)>
 gap> NrEquivalenceClasses(cong);
 85
 gap> IsReesCongruence(cong);
