@@ -79,6 +79,7 @@ SEMIGROUPS.PrincipalXCongruencesNC :=
     while i <= Length(congs_discrim[m])
          and congs_discrim[m][i] = newcongdiscrim do
       old_pair := GeneratingPairsOfLeftRightOrTwoSidedCongruence(congs[m][i]);
+      Assert(0, Length(old_pair) <= 1);
       if not IsEmpty(old_pair) then
         old_pair := old_pair[1];
         if CongruenceTestMembershipNC(congs[m][i], new_pair[1], new_pair[2])
@@ -648,11 +649,14 @@ S -> CongruencesOfPoset(CayleyDigraphOfCongruences(S)));
 InstallMethod(PrincipalLeftCongruencesOfSemigroup, "for a semigroup",
 [IsSemigroup],
 function(S)
-  local pairs;
+  local pairs, LeftCong;
   pairs := GeneratingPairsOfPrincipalLeftCongruences(S);
-  return SEMIGROUPS.PrincipalXCongruencesNC(S,
-                                            pairs,
-                                            LeftSemigroupCongruence);
+  # Have to use "ByGeneratingPairs" to ensure that the number of generating
+  # pairs of a principal congruence is one. O/w when using, i.e.
+  # InverseSemigroupCongruenceByKernelTrace, the number of generating pairs can
+  # be greater than 1. 
+  LeftCong := LeftSemigroupCongruenceByGeneratingPairs;
+  return SEMIGROUPS.PrincipalXCongruencesNC(S, pairs, LeftCong);
 end);
 
 InstallMethod(PrincipalRightCongruencesOfSemigroup, "for a semigroup",
@@ -660,19 +664,17 @@ InstallMethod(PrincipalRightCongruencesOfSemigroup, "for a semigroup",
 function(S)
   local pairs;
   pairs := GeneratingPairsOfPrincipalRightCongruences(S);
-  return SEMIGROUPS.PrincipalXCongruencesNC(S,
-                                            pairs,
-                                            RightSemigroupCongruence);
+  RightCong := RightSemigroupCongruenceByGeneratingPairs;
+  return SEMIGROUPS.PrincipalXCongruencesNC(S, pairs, RightCong);
 end);
 
 InstallMethod(PrincipalCongruencesOfSemigroup, "for a semigroup",
 [IsSemigroup],
 function(S)
-  local pairs;
+  local pairs, Cong;
   pairs := GeneratingPairsOfPrincipalCongruences(S);
-  return SEMIGROUPS.PrincipalXCongruencesNC(S,
-                                            pairs,
-                                            SemigroupCongruence);
+  Cong := SemigroupCongruenceByGeneratingPairs;
+  return SEMIGROUPS.PrincipalXCongruencesNC(S, pairs, Cong);
 end);
 
 InstallMethod(PrincipalLeftCongruencesOfSemigroup,

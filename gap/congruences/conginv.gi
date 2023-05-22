@@ -214,7 +214,7 @@ function(C)
   T := TraceOfSemigroupCongruence(C);
   o := LambdaOrb(Source(C));
 
-  D := StructuralCopy(OrbitGraph(LambdaOrb(Source(C)))) - 1;
+  D := StructuralCopy(OrbitGraph(o)) - 1;
   Remove(D, 1);
   D := DigraphNC(D);
 
