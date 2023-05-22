@@ -297,14 +297,14 @@ gap> S := InverseSemigroup(PartialPerm([1, 2, 3, 5], [2, 4, 3, 5]),
 > PartialPerm([1, 3], [3, 2]));
 <inverse partial perm semigroup of rank 5 with 2 generators>
 gap> PrincipalNormalCongruencesIdempotentSemilattice(S);
-[ <universal semigroup congruence over <inverse partial perm semigroup 
-     of size 14, rank 5 with 10 generators>>, 
+[ <2-sided semigroup congruence over <inverse partial perm semigroup 
+     of size 14, rank 5 with 10 generators> with 2 generating pairs>, 
   <2-sided semigroup congruence over <inverse partial perm semigroup 
      of size 14, rank 5 with 10 generators> with 3 generating pairs>, 
   <2-sided semigroup congruence over <inverse partial perm semigroup 
-     of size 14, rank 5 with 10 generators> with 6 generating pairs>, 
+     of size 14, rank 5 with 10 generators> with 5 generating pairs>, 
   <2-sided semigroup congruence over <inverse partial perm semigroup 
-     of size 14, rank 5 with 10 generators> with 6 generating pairs>, 
+     of size 14, rank 5 with 10 generators> with 4 generating pairs>, 
   <2-sided semigroup congruence over <inverse partial perm semigroup 
      of size 14, rank 5 with 10 generators> with 4 generating pairs>, 
   <2-sided semigroup congruence over <inverse partial perm semigroup 
@@ -320,8 +320,8 @@ gap> PrincipalNormalCongruencesIdempotentSemilattice(S);
 gap> N := NormalCongruencesIdempotentSemilattice(S);
 [ <2-sided semigroup congruence over <inverse partial perm semigroup 
      of size 14, rank 5 with 10 generators> with congruence pair (14,14)>, 
-  <universal semigroup congruence over <inverse partial perm semigroup 
-     of size 14, rank 5 with 10 generators>>, 
+  <2-sided semigroup congruence over <inverse partial perm semigroup 
+     of size 14, rank 5 with 10 generators> with congruence pair (14,1)>, 
   <2-sided semigroup congruence over <inverse partial perm semigroup 
      of size 14, rank 5 with 10 generators> with congruence pair (14,2)>, 
   <2-sided semigroup congruence over <inverse partial perm semigroup 

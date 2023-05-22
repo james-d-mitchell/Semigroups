@@ -396,7 +396,7 @@ SEMIGROUPS.KernelTraceClosure := function(S, kernel, trace, genpairs)
   kernel := InverseSubsemigroup(S, kernel);
   Enumerate(kernel);
   kernel_gens_to_add := Set(genpairs, x -> x[1] * x[2] ^ -1);
-  UniteSet(kernel_gens_to_add, GeneratorsOfInverseSemigroup(kernel));
+  # UniteSet(kernel_gens_to_add, GeneratorsOfInverseSemigroup(kernel));
 
   trace_pairs_to_add := List(genpairs, x -> [RightOne(x[1]), RightOne(x[2])]);
   AsListCanonical(S);  # makes the computation below somewhat faster
@@ -416,6 +416,7 @@ SEMIGROUPS.KernelTraceClosure := function(S, kernel, trace, genpairs)
 
     while K <> T do
       K := T;
+      # TODO move this out of the loop
       opts.gradingfunc := function(o, x)
         return x in T;
       end;
@@ -431,7 +432,9 @@ SEMIGROUPS.KernelTraceClosure := function(S, kernel, trace, genpairs)
 
   enumerate_trace := function()
     local pairs, pair, a;
-    for pair in Set(trace_pairs_to_add) do
+  Assert(0, IsNormalCongruence(S, trace));
+    trace_pairs_to_add := Set(trace_pairs_to_add);
+    for pair in trace_pairs_to_add do
       if not CongruenceTestMembershipNC(trace, pair[1], pair[2]) then
         pairs := ShallowCopy(GeneratingPairsOfSemigroupCongruence(trace));
         Add(pairs, pair);
@@ -441,12 +444,11 @@ SEMIGROUPS.KernelTraceClosure := function(S, kernel, trace, genpairs)
         if not CongruenceTestMembershipNC(trace,
                                           a ^ -1 * pair[1] * a,
                                           a ^ -1 * pair[2] * a) then
-          pairs := ShallowCopy(GeneratingPairsOfSemigroupCongruence(trace));
-          Add(pairs, [a ^ -1 * pair[1] * a, a ^ -1 * pair[2] * a]);
-          trace := SemigroupCongruenceByGeneratingPairs(Source(trace), pairs);
+          Add(trace_pairs_to_add, [a ^ -1 * pair[1] * a, a ^ -1 * pair[2] * a]);
         fi;
       od;
     od;
+  Assert(0, IsNormalCongruence(S, trace));
     trace_pairs_to_add := [];
   end;
 
@@ -503,6 +505,7 @@ SEMIGROUPS.KernelTraceClosure := function(S, kernel, trace, genpairs)
     compute_kernel();
     enforce_conditions();
   until IsEmpty(kernel_gens_to_add) and IsEmpty(trace_pairs_to_add);
+  Assert(0, IsNormalCongruence(S, trace));
 
   return InverseSemigroupCongruenceByKernelTraceNC(S, kernel, trace);
 end;

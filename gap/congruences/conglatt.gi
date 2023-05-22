@@ -662,7 +662,7 @@ end);
 InstallMethod(PrincipalRightCongruencesOfSemigroup, "for a semigroup",
 [IsSemigroup],
 function(S)
-  local pairs;
+  local pairs, RightCong;
   pairs := GeneratingPairsOfPrincipalRightCongruences(S);
   RightCong := RightSemigroupCongruenceByGeneratingPairs;
   return SEMIGROUPS.PrincipalXCongruencesNC(S, pairs, RightCong);
@@ -673,7 +673,7 @@ InstallMethod(PrincipalCongruencesOfSemigroup, "for a semigroup",
 function(S)
   local pairs, Cong;
   pairs := GeneratingPairsOfPrincipalCongruences(S);
-  Cong := SemigroupCongruenceByGeneratingPairs;
+  Cong := SemigroupCongruence;
   return SEMIGROUPS.PrincipalXCongruencesNC(S, pairs, Cong);
 end);
 

@@ -107,9 +107,7 @@ function(arg)
     elif IsInverseSemigroup(S) and IsGeneratorsOfInverseSemigroup(S) and
          Size(S) >= opts.cong_by_ker_trace_threshold then
       cong := SemigroupCongruenceByGeneratingPairs(S, pairs);
-      cong := AsInverseSemigroupCongruenceByKernelTrace(cong);
-      SetGeneratingPairsOfMagmaCongruence(cong, pairs);
-      return cong;
+      return AsInverseSemigroupCongruenceByKernelTrace(cong);
     else
       return SemigroupCongruenceByGeneratingPairs(S, pairs);
     fi;
