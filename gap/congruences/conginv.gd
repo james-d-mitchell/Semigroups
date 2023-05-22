@@ -47,4 +47,5 @@ DeclareOperation("IsNormalCongruence",
 
 # Normal congruence of semilattice of idempotents
 DeclareAttribute("NormalCongruencesIdempotentSemilattice", IsInverseSemigroup);
-DeclareAttribute("PrincipalNormalCongruencesIdempotentSemilattice", IsInverseSemigroup);
+DeclareAttribute("PrincipalNormalCongruencesIdempotentSemilattice",
+                 IsInverseSemigroup);

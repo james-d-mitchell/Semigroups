@@ -145,7 +145,8 @@ mpotents of the 1st argument (an inverse semigroup)
 gap> T := IdempotentGeneratedSubsemigroup(S);;
 gap> T := InverseSemigroup(T, PartialPerm([1, 2], [3, 4]));;
 gap> cong := InverseSemigroupCongruenceByKernelTrace(S, T, utrace);
-Error, the 2nd argument (an inverse semigroup) must be self-conjugate
+Error, the 2nd argument (an inverse semigroup) must be a normal inverse subsem\
+igroup of the 1st argument (an inverse semigroup)
 gap> T := IdempotentGeneratedSubsemigroup(S);;
 gap> cong := InverseSemigroupCongruenceByKernelTrace(S, T, utrace);
 Error, not a valid congruence pair (C1)
