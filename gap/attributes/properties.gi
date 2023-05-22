@@ -1618,27 +1618,19 @@ end);
 
 InstallMethod(IsNormalInverseSubsemigroup,
 "for an inverse acting semigroup and subsemigroup",
-[IsInverseSemigroup and IsActingSemigroup,
- IsInverseSemigroup and IsActingSemigroup],
+[IsInverseSemigroup, IsInverseSemigroup],
 function(S, T)
-  local DS, G, N, p, DT;
+  local x, y;
+   if not IsInverseSubsemigroup(S, T) then
+     return false;
+   fi;
 
-  if not IsSubsemigroup(S, T) then
-    return false;
-  fi;
-
-  for DT in DClasses(T) do
-    DS := DClass(S, Representative(DT));
-    G := Image(IsomorphismPermGroup(GroupHClass(DS)));
-    N := Image(IsomorphismPermGroup(GroupHClass(DT)));
-    if not IsSubset(MovedPoints(G), MovedPoints(N)) then
-      p := MappingPermListList(MovedPoints(N), MovedPoints(G));
-      N := N ^ p;
-    fi;
-    Assert(0, IsSubset(MovedPoints(G), MovedPoints(N)));
-    if not IsNormal(G, N) then
-      return false;
-    fi;
+  for x in GeneratorsOfSemigroup(S) do
+    for y in GeneratorsOfSemigroup(T) do
+      if not y ^ x  in T then
+        return false;
+      fi;
+    od;
   od;
   return true;
 end);
