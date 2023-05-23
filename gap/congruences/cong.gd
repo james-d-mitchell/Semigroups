@@ -135,6 +135,8 @@ DeclareOperation("MeetLeftSemigroupCongruences",
 DeclareOperation("MeetRightSemigroupCongruences",
                  [IsRightSemigroupCongruence, IsRightSemigroupCongruence]);
 
+DeclareOperation("JoinSemigroupCongruences", [IsListOrCollection]);
+
 # Comparison operators
 DeclareOperation("IsSubrelation",
                  [IsEquivalenceRelation, IsEquivalenceRelation]);

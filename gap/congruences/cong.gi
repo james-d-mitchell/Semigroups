@@ -104,8 +104,9 @@ function(arg)
            or HasSize(S) or IsReesZeroMatrixSemigroup(S))
           and IsZeroSimpleSemigroup(S)) then
       return SemigroupCongruenceByGeneratingPairs(S, pairs);
-    elif IsInverseSemigroup(S) and IsGeneratorsOfInverseSemigroup(S) and
-         Size(S) >= opts.cong_by_ker_trace_threshold then
+    elif IsInverseSemigroup(S) and IsGeneratorsOfInverseSemigroup(S)
+        and (not IsSemilattice(S))
+        and Size(S) >= opts.cong_by_ker_trace_threshold then
       cong := SemigroupCongruenceByGeneratingPairs(S, pairs);
       return AsInverseSemigroupCongruenceByKernelTrace(cong);
     else
@@ -202,6 +203,21 @@ end);
 InstallMethod(IsSuperrelation, "for semigroup congruences",
 [IsLeftRightOrTwoSidedCongruence, IsLeftRightOrTwoSidedCongruence],
 {lhop, rhop} -> IsSubrelation(rhop, lhop));
+
+InstallMethod(JoinSemigroupCongruences, "for a list or collection",
+[IsListOrCollection],
+function(list)
+  local result, i;
+
+  if Size(list) = 0 then
+    ErrorNoReturn("TODO");
+  fi;
+  result := list[1];
+  for i in [2 .. Length(list)] do
+    result := JoinSemigroupCongruences(result, list[i]);
+  od;
+  return result;
+end);
 
 ########################################################################
 # Congruence classes
