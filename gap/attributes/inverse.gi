@@ -716,16 +716,7 @@ InstallMethod(IsEDisjunctiveInverseSemigroup,
 "for an inverse semigroup",
 [IsInverseSemigroup and IsGeneratorsOfInverseSemigroup],
 function(S)
-  local IS, restriction, congs, i, j;
-
-  IS := Idempotents(S);
-  restriction := [];
-  for i in [1 .. Length(IS) - 1] do
-    for j in [i + 1 .. Length(IS)] do
-      Add(restriction, [IS[i], IS[j]]);
-    od;
-  od;
-  congs := PrincipalCongruencesOfSemigroup(S, restriction);
-
+  local congs;
+  congs := PrincipalIdempotentPureCongruences(S);
   return not ForAny(congs, IsIdempotentPureCongruence);
 end);

@@ -354,13 +354,19 @@ InstallMethod(AsInverseSemigroupCongruenceByKernelTrace,
 "for semigroup congruence with generating pairs",
 [IsSemigroupCongruence and HasGeneratingPairsOfMagmaCongruence],
 function(C)
-  local S, T, trace, pairs, result;
+  local S, kernel, trace, T, pairs, result;
 
   S := Source(C);
   if not (IsInverseSemigroup(S) and IsGeneratorsOfInverseSemigroup(S)) then
     ErrorNoReturn("the range of the argument (a congruence) must be an ",
                   "inverse semigroup with inverse op");
+  elif HasKernelOfSemigroupCongruence(C)
+      and HasTraceOfSemigroupCongruence(C) then
+    kernel := KernelOfSemigroupCongruence(C);
+    trace := TraceOfSemigroupCongruence(C);
+    return InverseSemigroupCongruenceByKernelTraceNC(S, kernel, trace);
   fi;
+  # TODO handle semilattices?
   T      := IdempotentGeneratedSubsemigroup(S);
   trace  := SemigroupCongruenceByGeneratingPairs(T, []);
   pairs  := GeneratingPairsOfSemigroupCongruence(C);
@@ -420,6 +426,8 @@ function(lhop, rhop)
 
   return InverseSemigroupCongruenceByKernelTrace(Source(lhop), kernel, trace);
 end);
+
+# TODO this only works for partial perms
 
 SEMIGROUPS.KernelTraceClosure := function(S, kernel, trace, genpairs)
   local kernel_gens_to_add, trace_pairs_to_add, x, enumerate_trace, pair,
@@ -568,6 +576,29 @@ InstallMethod(IsIdempotentPureCongruence,
 [IsInverseSemigroupCongruenceByKernelTrace],
 function(C)
   return Size(KernelOfSemigroupCongruence(C)) = NrIdempotents(Range(C));
+end);
+
+InstallMethod(IsIdempotentPureCongruence, "for a semigroup congruence",
+[IsSemigroupCongruence],
+function(C)
+  local e;
+
+  if not IsInverseSemigroup(C) then
+    ErrorNoReturn("TODO");
+  elif IsSemilattice(Source(C)) then
+    return true;
+  elif HasKernelOfSemigroupCongruence(C)
+      and HasTraceOfSemigroupCongruence(C) then
+    C := AsInverseSemigroupCongruenceByKernelTrace(C);
+    return IsIdempotentPureCongruence(C);
+  fi;
+
+  for e in Idempotents(Source(C)) do
+    if ForAny(EquivalenceClassOfElementNC(C, e), x -> not IsIdempotent(x)) then
+      return false;
+    fi;
+  od;
+  return true;
 end);
 
 InstallMethod(IsNormalCongruence,
