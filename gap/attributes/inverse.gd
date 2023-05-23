@@ -37,3 +37,4 @@ DeclareAttribute("VagnerPrestonRepresentation",
                  IsInverseSemigroup and IsGeneratorsOfInverseSemigroup);
 DeclareAttribute("NaturalLeqInverseSemigroup", IsSemigroup);
 DeclareAttribute("CentralizerOfIdempotents", IsInverseSemigroup);
+DeclareProperty("IsEDisjunctiveInverseSemigroup", IsInverseSemigroup);
