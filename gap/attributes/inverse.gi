@@ -711,7 +711,6 @@ function(S, elm)
   return [elm ^ -1];
 end);
 
-
 InstallMethod(IsEDisjunctiveInverseSemigroup,
 "for an inverse semigroup",
 [IsInverseSemigroup and IsGeneratorsOfInverseSemigroup],

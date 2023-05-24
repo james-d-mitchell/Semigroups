@@ -33,12 +33,14 @@ InstallImmediateMethod(CanUseLibsemigroupsCongruence,
                        IsLeftRightOrTwoSidedCongruence
                        and HasRange,
                        0,
-                       C -> CanUseFroidurePin(Range(C))
+                       C ->
+		 (not IsInverseSemigroupCongruenceByKernelTrace(C))
+		       and (CanUseFroidurePin(Range(C))
                        and HasGeneratorsOfSemigroup(Range(C))
                        or (HasIsFreeSemigroup(Range(C))
                            and IsFreeSemigroup(Range(C)))
                        or (HasIsFreeMonoid(Range(C))
-                           and IsFreeMonoid(Range(C))));
+                       and IsFreeMonoid(Range(C)))));
 
 InstallMethod(CanUseLibsemigroupsCongruence,
 "for a left, right, or 2-sided congruence that can compute partition",

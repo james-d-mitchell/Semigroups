@@ -18,10 +18,22 @@
 # TODO:
 # * handle semilattices
 
-InstallImmediateMethod(CanUseLibsemigroupsCongruence,
-                       IsInverseSemigroupCongruenceByKernelTrace,
-                       0,
-                       ReturnFalse);
+# FIXME this shouldn't be necessary, it's a direct copy of the method for
+# CanComputeEquivalenceRelationPartition, but is here so that the method has a
+# higher rank
+InstallMethod(EquivalenceClasses,
+"for an inverse semigroup congruence by kernel and trace",
+[IsInverseSemigroupCongruenceByKernelTrace],
+function(C)
+  local part, classes, i;
+  part := EquivalenceRelationPartitionWithSingletons(C);
+  classes := [];
+  for i in [1 .. Length(part)] do
+    classes[i] := EquivalenceClassOfElementNC(C, part[i][1]);
+    SetAsList(classes[i], part[i]);
+  od;
+  return classes;
+end);
 
 InstallGlobalFunction(InverseSemigroupCongruenceByKernelTrace,
 function(S, kernel, trace)
@@ -49,7 +61,7 @@ function(S, kernel, trace)
   if not IsSemigroupCongruence(trace) then
     ErrorNoReturn("the 3rd argument must be a 2-sided congruence");
   elif Source(trace) <> IdempotentGeneratedSubsemigroup(S) then
-    ErrorNoReturn("the 3rd argument must be a 2-sided congruence of the",
+    ErrorNoReturn("the 3rd argument must be a 2-sided congruence of the ",
                   "semilattice of idempotents of the 1st argument");
   elif not IsNormalCongruence(S, trace) then
     ErrorNoReturn("the 3rd argument must be a normal 2-sided congruence of ",
@@ -141,16 +153,16 @@ InstallMethod(ImagesElm,
 [IsInverseSemigroupCongruenceByKernelTrace,
  IsMultiplicativeElementWithInverse],
 function(C, a)
-  local S, o, i, j, m, aa, rep, l, e, g, im_g, K, T, Pi, Pj, lookup, result, G, N, x, h;
+  local S, T, data, o, i, j, m, aa, rep, l, g, gg, Pi, Pj, lookup, result, preim, lmult, rmult;
 
-  S := Range(C);
+  S := Source(C);
   if not a in S then
     ErrorNoReturn("the 2nd argument (a mult. elt. with inverse) does not ",
-                  "belong to the range of the 1st argument (a congruence)");
+                  "belong to the source of the 1st argument (a congruence)");
   fi;
 
-  K := KernelOfSemigroupCongruence(C);
-  T := TraceOfSemigroupCongruence(C);
+  T    := TraceOfSemigroupCongruence(C);
+  data := InverseSemigroupQuotientData(C);
 
   o  := LambdaOrb(S);
   i  := Position(o, LambdaFunc(S)(a));
@@ -162,18 +174,14 @@ function(C, a)
   l   := Position(o, RhoFunc(S)(rep));
   rep := LambdaOrbMult(LambdaOrb(S), m, l)[1] * rep;
 
-  e := MeetOfPartialPerms(ImagesElm(T, PartialPerm(o[i], o[i])));
   g := LambdaPerm(S)(rep, aa);
-  Error();
-  im_g := RightCoset(SchutzenbergerGroup(HClass(K, e)), g) ;
-
+  gg := g ^ data.all_homs[m];
 
   Pi := EquivalenceClassOfElementNC(T, PartialPerm(o[i], o[i]));
   Pi := List(Pi, x -> Position(o, ImageSetOfPartialPerm(x)));
 
   Pj := EquivalenceClassOfElementNC(T, PartialPerm(o[j], o[j]));
   Pj := List(Pj, x -> Position(o, ImageSetOfPartialPerm(x)));
-  # TODO isn't Pi = Pj always?
   lookup := OrbSCCLookup(o);
 
   result := [];
@@ -182,53 +190,81 @@ function(C, a)
     for j in Pj do
       if lookup[i] = lookup[j] then
         m := lookup[i];
-        rep := LambdaOrbRep(o, m);
-        N := SchutzenbergerGroup(HClassNC(K, rep));
-        Error();
-        x := LambdaPerm(S)(rep, rep * g);
-        for h in RightCoset(N, x) do
-          Add(result, LambdaOrbMult(o, m, j)[2] * rep * h * LambdaOrbMult(o, m, i)[1]);
-        od;
+        preim := PreImagesElm(data.all_homs[m], gg);
+        lmult := LambdaOrbMult(o, m, i)[2];
+        rmult := LambdaOrbMult(o, m, j)[1];
+        rep   := RightOne(LambdaOrbRep(o, m));
+        Append(result, List(preim, x -> lmult * rep * x * rmult));
       fi;
     od;
   od;
   return result;
 end);
 
-# TODO replace
+# TODO check if this is necessary
+InstallMethod(PreImagesElm,
+"for inverse semigroup congruence by kernel and trace and mult. elt.",
+[IsInverseSemigroupCongruenceByKernelTrace,
+ IsEquivalenceClass],
+function(C, a)
+  # TODO check that the equiv. class belongs to the correct semigroup
+  return ImagesElm(C, Representative(a));
+end);
+
 
 InstallMethod(EquivalenceRelationPartitionWithSingletons,
 "for inverse semigroup congruence by kernel and trace",
 [IsInverseSemigroupCongruenceByKernelTrace],
 function(C)
-  local S, elmlists, kernel, trace, blockelmlists, pos, traceBlock, id, elm;
+  local data, T, o, comps, result, comp, G, i, j, Pi, Pj, lookup, next, m, preim, lmult, rmult, rep, mm, ii, jj, gg;
 
-  S := Range(C);
-  elmlists := [];
-  kernel := KernelOfSemigroupCongruence(C);
-  trace := TraceOfSemigroupCongruence(C);
+  # FIXME this should be sufficient but isn't because taking the quotient is
+  # super slow, so the fixme is to not make taking the quotient slow, and to
+  # then remove the extra code below.
+  # return List(Source(C) / C, x -> PreImagesElm(C, x));
 
-  # Consider each trace-class in turn
-  for traceBlock in EquivalenceRelationPartitionWithSingletons(trace) do
-    # Consider all the congruence classes corresponding to this trace-class
-    blockelmlists := [];   # List of lists of elms in class
-    for id in traceBlock do
-      for elm in LClassNC(S, id) do
-        # Find the congruence class that this element lies in
-        pos := PositionProperty(blockelmlists,
-                                class -> elm * class[1] ^ -1 in kernel);
-        if pos = fail then
-          # New class
-          Add(blockelmlists, [elm]);
-        else
-          # Add to the old class
-          Add(blockelmlists[pos], elm);
-        fi;
+  data := InverseSemigroupQuotientData(C);
+  T := TraceOfSemigroupCongruence(C);
+  o := LambdaOrb(Source(C));
+  comps := DigraphStronglyConnectedComponents(data.graph).comps;
+  result := [];
+  for mm in [1 .. Length(comps)] do
+    comp := comps[mm];
+    if comp = [1] then
+      continue;
+    fi;
+    G := Range(data.rep_homs[mm]); # TODO maybe ImagesSourc?
+    for ii in comp do
+      i := Position(data.graph_hom, ii, 1);
+      for jj in comp do
+        j := Position(data.graph_hom, jj, 1);
+        for gg in G do
+          Pi := EquivalenceClassOfElementNC(T, PartialPerm(o[i], o[i]));
+          Pi := List(Pi, x -> Position(o, ImageSetOfPartialPerm(x)));
+
+          Pj := EquivalenceClassOfElementNC(T, PartialPerm(o[j], o[j]));
+          Pj := List(Pj, x -> Position(o, ImageSetOfPartialPerm(x)));
+          lookup := OrbSCCLookup(o);
+          next := [];
+
+          for i in Pi do
+            for j in Pj do
+              if lookup[i] = lookup[j] then
+                m := lookup[i];
+                preim := PreImagesElm(data.all_homs[m], gg);
+                lmult := LambdaOrbMult(o, m, i)[2];
+                rmult := LambdaOrbMult(o, m, j)[1];
+                rep   := RightOne(LambdaOrbRep(o, m));
+                Append(next, List(preim, x -> lmult * rep * x * rmult));
+              fi;
+            od;
+          od;
+          Add(result, next);
+        od;
       od;
     od;
-    Append(elmlists, blockelmlists);
   od;
-  return elmlists;
+  return result;
 end);
 
 # TODO only works for partial perm semigroups
@@ -439,7 +475,6 @@ SEMIGROUPS.KernelTraceClosure := function(S, kernel, trace, genpairs)
   # "trace" in its trace, and containing all the given pairs
 
   kernel := InverseSubsemigroup(S, kernel);
-  Enumerate(kernel);
   kernel_gens_to_add := Set(genpairs, x -> x[1] / x[2]);
 
   trace_pairs_to_add := List(genpairs, x -> [RightOne(x[1]), RightOne(x[2])]);
@@ -684,4 +719,97 @@ function(S)
     return TrivialCongruence(S);
   fi;
   return JoinSemigroupCongruences(princ);
+end);
+
+QuotientWordGraphNC := function(D, lookup)
+  local result, nbs, n, s, t, v, e;
+
+  result := [];
+  nbs := OutNeighbours(D);
+  n := Length(nbs[1]);
+  Assert(1, ForAll(nbs, x -> Length(x) = n));
+  for v in DigraphVertices(D) do
+    for e in [1 .. n] do
+      s := lookup[v];
+      t := lookup[nbs[v][e]];
+      if not IsBound(result[s]) then
+        result[s] := [];
+      fi;
+      if not IsBound(result[s][e]) then
+        result[s][e] := t;
+      elif result[s][e] <> t then
+        Error("The partition is not invariant!");
+      fi;
+    od;
+  od;
+  return DigraphNC(result);
+end;
+
+
+InstallMethod(InverseSemigroupQuotientData,
+"for an inverse semigroup congruence by kernel + trace",
+[IsInverseSemigroupCongruenceByKernelTrace],
+function(C)
+  local result, K, T, o, D, parts, hom, i, node_part, quotient_scc, m, x, G, N, map, scc, gens, y, p, scc_x, dom, imgs, ghom, part, comp;
+
+  result := rec();
+  K := KernelOfSemigroupCongruence(C);
+  T := TraceOfSemigroupCongruence(C);
+  o := LambdaOrb(Source(C));
+
+  D := StructuralCopy(OrbitGraph(o));
+  D := DigraphNC(D);
+  parts := EquivalenceRelationPartitionWithSingletons(T);
+
+  hom := [1];
+  i := 1;
+  for part in parts do
+    i := i + 1;
+    node_part := List(part, x -> Position(o, ImageSetOfPartialPerm(x)));
+    # hom is not the same as lookup
+    hom{node_part} := ListWithIdenticalEntries(Size(part), i);
+  od;
+
+  result.graph  := QuotientWordGraphNC(D, hom);
+  result.graph_hom := hom;
+  result.rep_homs := [];
+  result.all_homs  := [];
+  result.reps := [];
+
+  quotient_scc := DigraphStronglyConnectedComponents(result.graph);
+
+  for comp in quotient_scc.comps do
+    m := quotient_scc.id[comp[1]];
+    x := MeetOfPartialPerms(parts[m]);
+    result.reps[m] := x;
+    G := SchutzenbergerGroup(HClass(Source(C), x));
+    N := SchutzenbergerGroup(HClass(K, x));
+    map := NaturalHomomorphismByNormalSubgroup(G, N);
+    result.rep_homs[m] := map;
+  od;
+
+  scc := OrbSCC(o);
+  gens := GeneratorsOfSemigroup(Source(C));
+  for m in [2 .. Length(scc)] do
+    # Compute homomorphism from G to the corresponding result.groups
+    x := hom[scc[m][1]];
+    y := quotient_scc.comps[quotient_scc.id[x]][1];
+    # Find the path from x to the first component of the scc in the quotient
+    # graph (y)
+    p := EvaluateWord(gens, DigraphPath(result.graph, x, y)[2]);
+    G := LambdaOrbSchutzGp(o, m);
+    scc_x := quotient_scc.id[x];
+    dom := o[scc[m][1]];
+    map := result.rep_homs[scc_x];
+    imgs := List(GeneratorsOfGroup(G),
+                  g -> AsPermutation((PartialPerm(dom, OnTuples(dom, g)) ^ (p ^ -1))
+                       * result.reps[scc_x]) ^ map);
+    ghom := GroupHomomorphismByImages(G,
+                                      Range(map),
+                                      GeneratorsOfGroup(G),
+                                      imgs);
+    result.all_homs[m] := ghom;
+  od;
+
+  return result;
 end);

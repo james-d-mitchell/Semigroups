@@ -54,3 +54,9 @@ DeclareAttribute("PrincipalIdempotentPureCongruences",
 DeclareAttribute("IdempotentPureCongruences", IsInverseSemigroup);
 
 DeclareAttribute("SyntacticCongruence", IsInverseSemigroup);
+
+DeclareAttribute("InverseSemigroupQuotientData",
+                 IsInverseSemigroupCongruenceByKernelTrace);
+
+
+
