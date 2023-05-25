@@ -190,11 +190,13 @@ function(C, a)
     for j in Pj do
       if lookup[i] = lookup[j] then
         m := lookup[i];
-        preim := PreImagesElm(data.all_homs[m], gg);
-        lmult := LambdaOrbMult(o, m, i)[2];
-        rmult := LambdaOrbMult(o, m, j)[1];
-        rep   := RightOne(LambdaOrbRep(o, m));
-        Append(result, List(preim, x -> lmult * rep * x * rmult));
+        if gg in ImagesSource(data.all_homs[m]) then
+          preim := PreImagesElm(data.all_homs[m], gg);
+          lmult := LambdaOrbMult(o, m, j)[2];
+          rmult := LambdaOrbMult(o, m, i)[1];
+          rep   := RightOne(LambdaOrbRep(o, m));
+          Append(result, List(preim, x -> lmult * rep * x * rmult));
+        fi;
       fi;
     od;
   od;
@@ -251,11 +253,13 @@ function(C)
             for j in Pj do
               if lookup[i] = lookup[j] then
                 m := lookup[i];
-                preim := PreImagesElm(data.all_homs[m], gg);
-                lmult := LambdaOrbMult(o, m, i)[2];
-                rmult := LambdaOrbMult(o, m, j)[1];
-                rep   := RightOne(LambdaOrbRep(o, m));
-                Append(next, List(preim, x -> lmult * rep * x * rmult));
+                if gg in ImagesSource(data.all_homs[m]) then
+                  preim := PreImagesElm(data.all_homs[m], gg);
+                  lmult := LambdaOrbMult(o, m, i)[2];
+                  rmult := LambdaOrbMult(o, m, j)[1];
+                  rep   := RightOne(LambdaOrbRep(o, m));
+                  Append(next, List(preim, x -> lmult * rep * x * rmult));
+                fi;
               fi;
             od;
           od;
@@ -750,7 +754,7 @@ InstallMethod(InverseSemigroupQuotientData,
 "for an inverse semigroup congruence by kernel + trace",
 [IsInverseSemigroupCongruenceByKernelTrace],
 function(C)
-  local result, K, T, o, D, parts, hom, i, node_part, quotient_scc, m, x, G, N, map, scc, gens, y, p, scc_x, dom, imgs, ghom, part, comp;
+  local result, K, T, o, D, parts, hom, i, node_part, quotient_scc, scc, lookup, mm, x, l, m, G, N, map, gens, y, p, dom, imgs, ghom, part, comp;
 
   result := rec();
   K := KernelOfSemigroupCongruence(C);
@@ -775,35 +779,44 @@ function(C)
   result.rep_homs := [];
   result.all_homs  := [];
   result.reps := [];
+  result.reps_pos := [];
 
   quotient_scc := DigraphStronglyConnectedComponents(result.graph);
+  scc := OrbSCC(o);
+  lookup := OrbSCCLookup(o);
 
   for comp in quotient_scc.comps do
-    m := quotient_scc.id[comp[1]];
-    x := MeetOfPartialPerms(parts[m]);
-    result.reps[m] := x;
+    if comp = [1] then continue; fi;
+    x := MeetOfPartialPerms(parts[comp[1] - 1]);
+    l := Position(o, ImageSetOfPartialPerm(x));
+    m := lookup[l];
+    x := LambdaOrbMult(o, m, l)[1] * x * LambdaOrbMult(o, m, l)[2];
+
+    mm := quotient_scc.id[comp[1]];
+    result.reps[mm]     := x;
+    result.reps_pos[mm] := hom[scc[m][1]];
+    Assert(1, quotient_scc.id[hom[scc[m][1]]] = mm);
     G := SchutzenbergerGroup(HClass(Source(C), x));
     N := SchutzenbergerGroup(HClass(K, x));
     map := NaturalHomomorphismByNormalSubgroup(G, N);
-    result.rep_homs[m] := map;
+    result.rep_homs[mm] := map;
   od;
 
-  scc := OrbSCC(o);
   gens := GeneratorsOfSemigroup(Source(C));
   for m in [2 .. Length(scc)] do
     # Compute homomorphism from G to the corresponding result.groups
     x := hom[scc[m][1]];
-    y := quotient_scc.comps[quotient_scc.id[x]][1];
+    mm := quotient_scc.id[x];
+    y := result.reps_pos[mm];
     # Find the path from x to the first component of the scc in the quotient
     # graph (y)
     p := EvaluateWord(gens, DigraphPath(result.graph, x, y)[2]);
     G := LambdaOrbSchutzGp(o, m);
-    scc_x := quotient_scc.id[x];
     dom := o[scc[m][1]];
-    map := result.rep_homs[scc_x];
+    map := result.rep_homs[mm];
     imgs := List(GeneratorsOfGroup(G),
                   g -> AsPermutation((PartialPerm(dom, OnTuples(dom, g)) ^ (p ^ -1))
-                       * result.reps[scc_x]) ^ map);
+                       * result.reps[mm]) ^ map);
     ghom := GroupHomomorphismByImages(G,
                                       Range(map),
                                       GeneratorsOfGroup(G),
