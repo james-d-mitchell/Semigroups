@@ -186,6 +186,7 @@ function(C, a)
 
   result := [];
 
+#  PartialPerm( [ 1, 2, 3, 4, 7 ], [ 3, 2, 1, 4, 6 ] )
   for i in Pi do
     for j in Pj do
       if lookup[i] = lookup[j] then
