@@ -1,5 +1,9 @@
 
 
+#! @Chapter Representation theory
+
+#! Blah blah
+
 DeclareAttribute("MonoidCartanMatrix", IsMonoid);
 DeclareAttribute("TransversalIdempotents", IsSemigroup);
 DeclareAttribute("SConjugacyClassReps", IsSemigroup);
@@ -13,12 +17,13 @@ DeclareOperation("LClassBicharacter",
 DeclareOperation("RClassBicharacter",
                  [IsSemigroup, IsMultiplicativeElement, IsList]);
 
+
 DeclareOperation("RClassRadical",
                  [IsSemigroup, IsMultiplicativeElement, IsList]);
 DeclareOperation("RClassRadicalBicharacter",
                  [IsSemigroup, IsMultiplicativeElement]);
                  
-ConcatenatedRClassRadicalBicharacters 
-DiagonalOfCharacterTables 
-MonoidCharacterTable 
+# ConcatenatedRClassRadicalBicharacters 
+# DiagonalOfCharacterTables 
+# MonoidCharacterTable 
 
