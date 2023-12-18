@@ -178,7 +178,7 @@ function(x)
   return Objectify(WrappedRightCongruenceType, [x]);
 end);
 
-BindGlobal("WrappedTwoSidedCongruence",
+InstallGlobalFunction(WrappedTwoSidedCongruence,
 function(x)
   return Objectify(WrappedTwoSidedCongruenceType, [x]);
 end);
@@ -235,7 +235,7 @@ InstallMethod(One, "for wrapped 2-sided semigroup congruence",
 [IsWrappedTwoSidedCongruence],
 x -> WrappedTwoSidedCongruence(TrivialCongruence(Source(x![1]))));
 
-BindGlobal("_ClosureLattice",
+InstallGlobalFunction(_ClosureLattice,
 function(S, gen_congs, WrappedXCongruence)
   local gens, poset, all_congs, old_value, U;
 
