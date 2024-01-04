@@ -55,12 +55,9 @@ function(C)
   Print(">");
 end);
 
-InstallMethod(\=,
-"for two universal semigroup congruences",
+InstallMethod(\=, "for two universal semigroup congruences",
 [IsUniversalSemigroupCongruence, IsUniversalSemigroupCongruence],
-function(lhop, rhop)
-  return Range(lhop) = Range(rhop);
-end);
+{lhop, rhop} -> Range(lhop) = Range(rhop));
 
 InstallMethod(\=,
 "for universal congruence and RZMS congruence by linked triple",
@@ -76,23 +73,18 @@ InstallMethod(\=,
 "for universal congruence and semigroup congruence with generating pairs",
 [IsUniversalSemigroupCongruence,
  IsSemigroupCongruence and HasGeneratingPairsOfMagmaCongruence],
-function(U, C)
-  return Range(U) = Range(C) and NrEquivalenceClasses(C) = 1;
-end);
+{U, C} -> Range(U) = Range(C) and NrEquivalenceClasses(C) = 1);
 
 InstallMethod(\=,
 "for universal congruence and semigroup congruence with generating pairs",
 [IsSemigroupCongruence and HasGeneratingPairsOfMagmaCongruence,
  IsUniversalSemigroupCongruence],
-function(C, U)
-  return U = C;
-end);
+ {C, U} -> U = C);
 
 InstallMethod(CongruenceTestMembershipNC,
 "for universal semigroup congruence and two multiplicative elements",
 [IsUniversalSemigroupCongruence,
- IsMultiplicativeElement, IsMultiplicativeElement],
-ReturnTrue);
+ IsMultiplicativeElement, IsMultiplicativeElement], ReturnTrue);
 
 InstallMethod(IsSubrelation,
 "for a universal semigroup congruence and a semigroup congruence",
@@ -175,12 +167,9 @@ function(U, C)
   return C;
 end);
 
-InstallMethod(EquivalenceClasses,
-"for universal semigroup congruence",
+InstallMethod(EquivalenceClasses, "for universal semigroup congruence",
 [IsUniversalSemigroupCongruence],
-function(C)
-  return [EquivalenceClassOfElement(C, Representative(Range(C)))];
-end);
+C -> [EquivalenceClassOfElement(C, Representative(Range(C)))]);
 
 InstallMethod(EquivalenceClassOfElementNC,
 "for universal semigroup congruence and associative element",
@@ -201,11 +190,9 @@ function(C, x)
 end);
 
 InstallMethod(\in,
-"for associative element and universal semigroup congruence class",
+"for mult. element and universal semigroup congruence class",
 [IsMultiplicativeElement, IsUniversalSemigroupCongruenceClass],
-function(x, class)
-  return x in Parent(class);
-end);
+{x, class} -> x in Parent(class));
 
 # TODO(later) more \* methods for universal and non-universal congruences??
 InstallMethod(\*,
@@ -227,9 +214,7 @@ C -> Size(Range(EquivalenceClassRelation(C))));
 InstallMethod(\=,
 "for two universal semigroup congruence classes",
 [IsUniversalSemigroupCongruenceClass, IsUniversalSemigroupCongruenceClass],
-function(lhop, rhop)
-  return EquivalenceClassRelation(lhop) = EquivalenceClassRelation(rhop);
-end);
+{lhop, rhop} -> EquivalenceClassRelation(lhop) = EquivalenceClassRelation(rhop));
 
 InstallMethod(GeneratingPairsOfMagmaCongruence,
 "for universal semigroup congruence",

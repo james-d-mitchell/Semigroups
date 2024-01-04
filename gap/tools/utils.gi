@@ -40,7 +40,7 @@ end);
 
 SEMIGROUPS.TestRec := rec();
 
-SEMIGROUPS.TestRec.reportDiff := function(inp, expout, found, fnam, line, time)
+SEMIGROUPS.TestRec.reportDiff := function(inp, expout, found, fnam, line, _)
   Print("######## > Diff in:\n");
   if IsStream(fnam)  then
     Print("test stream, line ", line, "\n");

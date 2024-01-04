@@ -938,16 +938,10 @@ function(R1, R2, triple)
 end);
 
 InstallMethod(ELM_LIST, "for objects in `IsRMSIsoByTriple'",
-[IsRMSIsoByTriple, IsPosInt],
-function(x, i)
-  return x!.triple[i];
-end);
+[IsRMSIsoByTriple, IsPosInt], {x, i} -> x!.triple[i]);
 
 InstallMethod(ELM_LIST, "for objects in `IsRZMSIsoByTriple'",
-[IsRZMSIsoByTriple, IsPosInt],
-function(x, i)
-  return x!.triple[i];
-end);
+[IsRZMSIsoByTriple, IsPosInt], {x, i} -> x!.triple[i]);
 
 InstallMethod(\=, "for objects in `IsRMSIsoByTriple'",
 [IsRMSIsoByTriple, IsRMSIsoByTriple],
@@ -1023,15 +1017,11 @@ end);
 
 InstallMethod(ImagesElm, "for an RMS element under a mapping by a triple",
 FamSourceEqFamElm, [IsRMSIsoByTriple, IsReesMatrixSemigroupElement],
-function(triple, x)
-  return [ImagesRepresentative(triple, x)];
-end);
+{triple, x} -> [ImagesRepresentative(triple, x)]);
 
 InstallMethod(ImagesElm, "for an RZMS element under a mapping by a triple",
 FamSourceEqFamElm, [IsRZMSIsoByTriple, IsReesZeroMatrixSemigroupElement],
-function(triple, x)
-  return [ImagesRepresentative(triple, x)];
-end);
+{triple, x} -> [ImagesRepresentative(triple, x)]);
 
 InstallMethod(ImagesRepresentative,
 "for an RMS element under a mapping by a triple",
@@ -1096,29 +1086,21 @@ end);
 
 InstallMethod(IsOne, "for objects in `IsRMSIsoByTriple'",
 [IsRMSIsoByTriple],
-function(map)
-  return IsOne(map[1]) and IsOne(map[2]) and ForAll(map[3], IsOne);
-end);
+map -> IsOne(map[1]) and IsOne(map[2]) and ForAll(map[3], IsOne));
 
 InstallMethod(IsOne, "for objects in `IsRZMSIsoByTriple'",
 [IsEndoGeneralMapping and IsRZMSIsoByTriple],
-function(map)
-  return IsOne(map[1]) and IsOne(map[2]) and ForAll(map[3], IsOne);
-end);
+map -> IsOne(map[1]) and IsOne(map[2]) and ForAll(map[3], IsOne));
 
 InstallMethod(PreImagesRepresentative,
 "for an RMS element under a mapping by a triple",
 FamRangeEqFamElm, [IsRMSIsoByTriple, IsReesMatrixSemigroupElement],
-function(map, x)
-  return ImagesRepresentative(InverseGeneralMapping(map), x);
-end);
+{map, x} -> ImagesRepresentative(InverseGeneralMapping(map), x));
 
 InstallMethod(PreImagesRepresentative,
 "for an RZMS element under a mapping by a triple",
 FamRangeEqFamElm, [IsRZMSIsoByTriple, IsReesZeroMatrixSemigroupElement],
-function(map, x)
-  return ImagesRepresentative(InverseGeneralMapping(map), x);
-end);
+{map, x} -> ImagesRepresentative(InverseGeneralMapping(map), x));
 
 InstallMethod(PrintObj, "for an object in `IsRMSIsoByTriple'",
 [IsRMSIsoByTriple],
@@ -1159,16 +1141,10 @@ end);
 # end);
 
 InstallMethod(ViewObj, "for an object in `IsRMSIsoByTriple'",
-[IsRMSIsoByTriple],
-function(map)
-  Print("(", map[1], ", ", map[2], ", ", map[3], ")");
-end);
+[IsRMSIsoByTriple], map -> Print("(", map[1], ", ", map[2], ", ", map[3], ")"));
 
 InstallMethod(ViewObj, "for object in `IsRZMSIsoByTriple'",
-[IsRZMSIsoByTriple],
-function(map)
-  Print("(", map[1], ", ", map[2], ", ", map[3], ")");
-end);
+[IsRZMSIsoByTriple], map -> Print("(", map[1], ", ", map[2], ", ", map[3], ")"));
 
 # InstallMethod(ViewString, "for an object in `IsRMSIsoByTriple'",
 # [IsRMSIsoByTriple],

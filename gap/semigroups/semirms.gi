@@ -18,7 +18,7 @@
 
 InstallMethod(SEMIGROUPS_ProcessRandomArgsCons,
 [IsReesMatrixSemigroup, IsList],
-function(filt, params)
+function(_, params)
   local order, i;
   if Length(params) < 1 then  # rows I
     params[1] := Random(1, 100);
@@ -46,20 +46,16 @@ end);
 
 InstallMethod(SEMIGROUPS_ProcessRandomArgsCons,
 [IsReesZeroMatrixSemigroup, IsList],
-function(filt, params)
-  return SEMIGROUPS_ProcessRandomArgsCons(IsReesMatrixSemigroup, params);
-end);
+{_, params} -> SEMIGROUPS_ProcessRandomArgsCons(IsReesMatrixSemigroup, params));
 
 InstallMethod(SEMIGROUPS_ProcessRandomArgsCons,
 [IsReesZeroMatrixSemigroup and IsRegularSemigroup, IsList],
-function(filt, params)
-  return SEMIGROUPS_ProcessRandomArgsCons(IsReesMatrixSemigroup, params);
-end);
+{_, params} -> SEMIGROUPS_ProcessRandomArgsCons(IsReesMatrixSemigroup, params));
 
 InstallMethod(RandomSemigroupCons,
 "for IsReesZeroMatrixSemigroup and list",
 [IsReesZeroMatrixSemigroup, IsList],
-function(filt, params)
+function(_, params)
   local I, G, J, mat, i, j;
 
   I := [1 .. params[1]];
@@ -80,10 +76,9 @@ function(filt, params)
   return ReesZeroMatrixSemigroup(G, mat);
 end);
 
-InstallMethod(RandomSemigroupCons,
-"for IsReesMatrixSemigroup and list",
+InstallMethod(RandomSemigroupCons, "for IsReesMatrixSemigroup and list",
 [IsReesMatrixSemigroup, IsList],
-function(filt, params)
+function(_, params)
   local I, G, J, mat, i, j;
 
   I := [1 .. params[1]];
@@ -106,7 +101,7 @@ end);
 InstallMethod(RandomSemigroupCons,
 "for IsReesZeroMatrixSemigroup and IsRegularSemigroup and list",
 [IsReesZeroMatrixSemigroup and IsRegularSemigroup, IsList],
-function(filt, params)
+function(_, params)
   local I, G, J, mat, i, j;
 
   I := [1 .. params[1]];
@@ -156,16 +151,12 @@ InstallMethod(AsMonoid, "for a Rees 0-matrix semigroup",
 InstallMethod(IsomorphismSemigroup,
 "for IsReesMatrixSemigroup and a semigroup",
 [IsReesMatrixSemigroup, IsSemigroup],
-function(filt, S)
-  return IsomorphismReesMatrixSemigroup(S);
-end);
+{_, S} -> IsomorphismReesMatrixSemigroup(S));
 
 InstallMethod(IsomorphismSemigroup,
 "for IsReesZeroMatrixSemigroup and a semigroup",
 [IsReesZeroMatrixSemigroup, IsSemigroup],
-function(filt, S)
-  return IsomorphismReesZeroMatrixSemigroup(S);
-end);
+{_, S} -> IsomorphismReesZeroMatrixSemigroup(S));
 
 InstallMethod(IsomorphismReesMatrixSemigroup, "for a semigroup",
 [IsSemigroup],
@@ -935,17 +926,12 @@ end);
 InstallMethod(Size, "for a Rees matrix semigroup",
 [IsReesMatrixSemigroup and HasUnderlyingSemigroup and HasRows and
  HasColumns],
-function(R)
-  return Length(Rows(R)) * Size(UnderlyingSemigroup(R)) * Length(Columns(R));
-end);
+R -> Length(Rows(R)) * Size(UnderlyingSemigroup(R)) * Length(Columns(R)));
 
 InstallMethod(Size, "for a Rees 0-matrix semigroup",
 [IsReesZeroMatrixSemigroup and HasUnderlyingSemigroup and HasRows and
  HasColumns],
-function(R)
-  return Length(Rows(R)) * Size(UnderlyingSemigroup(R)) * Length(Columns(R))
-         + 1;
-end);
+R -> Length(Rows(R)) * Size(UnderlyingSemigroup(R)) * Length(Columns(R)) + 1);
 
 #############################################################################
 # Pickler

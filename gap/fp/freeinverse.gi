@@ -332,9 +332,7 @@ end);
 InstallMethod(\<, "for elements of a free inverse semigroup",
 IsIdenticalObj,
 [IsFreeInverseSemigroupElement, IsFreeInverseSemigroupElement],
-function(tree1, tree2)
-  return CanonicalForm(tree1) < CanonicalForm(tree2);
-end);
+{tree1, tree2} -> CanonicalForm(tree1) < CanonicalForm(tree2));
 
 InstallMethod(ChooseHashFunction, "for a free inverse semigroup element",
 [IsFreeInverseSemigroupElement, IsInt],

@@ -97,11 +97,8 @@ end);
 # in the collection does not satisfy IsGeneratorsOfInverseSemigroup, and so it
 # cannot be inverted.
 
-InstallMethod(InverseMonoidByGenerators,
-[IsPBRCollection],
-function(coll)
-  ErrorNoReturn("not yet implemented");
-end);
+InstallMethod(InverseMonoidByGenerators, "for a PBR coll", [IsPBRCollection],
+_ -> ErrorNoReturn("not yet implemented"));
 
 # See the comment above, this is not really correct.
 
@@ -145,10 +142,7 @@ function(coll)
 end);
 
 InstallMethod(IsBipartitionPBR, "for a pbr",
-[IsPBR],
-function(x)
-  return IsEquivalenceBooleanMat(AsBooleanMat(x));
-end);
+[IsPBR], x -> IsEquivalenceBooleanMat(AsBooleanMat(x)));
 
 InstallMethod(IsTransformationPBR, "for a pbr",
 [IsPBR],
@@ -171,44 +165,25 @@ function(x)
   return true;
 end);
 
-InstallMethod(IsBlockBijectionPBR, "for a pbr",
-[IsPBR],
-function(x)
-  return IsBipartitionPBR(x) and IsBlockBijection(AsBipartition(x));
-end);
+InstallMethod(IsBlockBijectionPBR, "for a pbr", [IsPBR],
+x -> IsBipartitionPBR(x) and IsBlockBijection(AsBipartition(x)));
 
-InstallMethod(IsPartialPermPBR, "for a pbr",
-[IsPBR],
-function(x)
-  return IsBipartitionPBR(x) and IsPartialPermBipartition(AsBipartition(x));
-end);
+InstallMethod(IsPartialPermPBR, "for a pbr", [IsPBR],
+x -> IsBipartitionPBR(x) and IsPartialPermBipartition(AsBipartition(x)));
 
-InstallMethod(IsPermPBR, "for a pbr",
-[IsPBR],
-function(x)
-  return IsBipartitionPBR(x) and IsPermBipartition(AsBipartition(x));
-end);
+InstallMethod(IsPermPBR, "for a pbr", [IsPBR],
+x -> IsBipartitionPBR(x) and IsPermBipartition(AsBipartition(x)));
 
-InstallMethod(IsDualTransformationPBR, "for a pbr",
-[IsPBR],
-function(x)
-  return IsBipartitionPBR(x) and IsDualTransBipartition(AsBipartition(x));
-end);
+InstallMethod(IsDualTransformationPBR, "for a pbr", [IsPBR],
+x -> IsBipartitionPBR(x) and IsDualTransBipartition(AsBipartition(x)));
 
-InstallMethod(NumberPBR, "for a pbr",
-[IsPBR],
-function(x)
-  return NumberBooleanMat(AsBooleanMat(x));
-end);
+InstallMethod(NumberPBR, "for a pbr", [IsPBR],
+x -> NumberBooleanMat(AsBooleanMat(x)));
 
-InstallMethod(PBRNumber, "for pos int and pos int",
-[IsPosInt, IsPosInt],
-function(nr, deg)
-  return AsPBR(BooleanMatNumber(nr, 2 * deg));
-end);
+InstallMethod(PBRNumber, "for pos int and pos int", [IsPosInt, IsPosInt],
+{nr, deg} -> AsPBR(BooleanMatNumber(nr, 2 * deg)));
 
-InstallMethod(IsEmptyPBR, "for a partition binary relation",
-[IsPBR],
+InstallMethod(IsEmptyPBR, "for a partition binary relation", [IsPBR],
 function(x)
   local n, i;
 
@@ -221,8 +196,7 @@ function(x)
   return true;
 end);
 
-InstallMethod(IsIdentityPBR, "for a partition binary relation",
-[IsPBR],
+InstallMethod(IsIdentityPBR, "for a partition binary relation", [IsPBR],
 function(x)
   local n, i;
 
@@ -273,11 +247,8 @@ function(x, deg)
   return PBR(left, right);
 end);
 
-InstallMethod(AsPBR, "for a partial perm",
-[IsPartialPerm],
-function(x)
-  return AsPBR(x, Maximum(DegreeOfPartialPerm(x), CoDegreeOfPartialPerm(x)));
-end);
+InstallMethod(AsPBR, "for a partial perm", [IsPartialPerm],
+x -> AsPBR(x, Maximum(DegreeOfPartialPerm(x), CoDegreeOfPartialPerm(x))));
 
 InstallMethod(AsPBR, "for a transformation and pos int",
 [IsTransformation, IsPosInt],
@@ -295,11 +266,8 @@ function(x, deg)
   return PBR(left, right);
 end);
 
-InstallMethod(AsPBR, "for a transformation",
-[IsTransformation],
-function(x)
-  return AsPBR(x, DegreeOfTransformation(x));
-end);
+InstallMethod(AsPBR, "for a transformation", [IsTransformation],
+x -> AsPBR(x, DegreeOfTransformation(x)));
 
 InstallMethod(AsPBR, "for a multiplicative element",
 [IsMultiplicativeElement], x -> AsPBR(AsBipartition(x)));
@@ -307,9 +275,7 @@ InstallMethod(AsPBR, "for a multiplicative element",
 InstallMethod(AsPBR,
 "for a multiplicative element and pos int",
 [IsMultiplicativeElement, IsPosInt],
-function(x, n)
-  return AsPBR(AsBipartition(x, n));
-end);
+{x, n} -> AsPBR(AsBipartition(x, n)));
 
 # TODO(later) The following doesn't define a monoid embedding of P_n into
 # PBR_n. What is a monoid embedding from P_n to PBR_n?

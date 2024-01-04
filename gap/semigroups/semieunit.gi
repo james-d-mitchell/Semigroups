@@ -118,22 +118,21 @@ end);
 InstallMethod(McAlisterTripleSemigroup,
 "for a perm group, digraph, and digraph",
 [IsPermGroup, IsDigraph, IsDigraph],
-function(G, X, Y)
-  return McAlisterTripleSemigroup(G, X, Y, OnPoints);
-end);
+{G, X, Y} -> McAlisterTripleSemigroup(G, X, Y, OnPoints));
 
 InstallMethod(McAlisterTripleSemigroup,
 "for a perm group, digraph, homogeneous list, and action",
 [IsGroup, IsDigraph, IsHomogeneousList, IsFunction],
-function(G, X, sub_ver, act)
-  return McAlisterTripleSemigroup(G, X, InducedSubdigraph(X, sub_ver), act);
-end);
+{G, X, sub_ver, act}
+-> McAlisterTripleSemigroup(G, X, InducedSubdigraph(X, sub_ver), act));
 
 InstallMethod(McAlisterTripleSemigroup,
 "for a perm group, digraph, and homogeneous list",
 [IsPermGroup, IsDigraph, IsHomogeneousList],
 function(G, X, sub_ver)
-  return McAlisterTripleSemigroup(G, X, InducedSubdigraph(X, sub_ver),
+  return McAlisterTripleSemigroup(G,
+                                  X,
+                                  InducedSubdigraph(X, sub_ver),
                                   OnPoints);
 end);
 
@@ -142,10 +141,7 @@ end);
 #############################################################################
 
 InstallMethod(OneImmutable, "for a McAlister triple semigroup element",
-[IsMcAlisterTripleSemigroupElement],
-function(x)
-  return OneImmutable(MTSEParent(x));
-end);
+[IsMcAlisterTripleSemigroupElement], x -> OneImmutable(MTSEParent(x)));
 
 InstallMethod(OneImmutable,
 "for a McAlister triple semigroup element collection",
@@ -332,65 +328,48 @@ end);
 InstallMethod(McAlisterTripleSemigroupGroup,
 "for a McAlister triple subsemigroup",
 [IsMcAlisterTripleSubsemigroup],
-function(S)
-  return McAlisterTripleSemigroupGroup(MTSEParent(Representative(S)));
-end);
+S -> McAlisterTripleSemigroupGroup(MTSEParent(Representative(S))));
 
 InstallMethod(McAlisterTripleSemigroupPartialOrder,
+
 "for a McAlister triple subsemigroup",
 [IsMcAlisterTripleSubsemigroup],
-function(S)
-  return McAlisterTripleSemigroupPartialOrder(MTSEParent(Representative(S)));
-end);
+S -> McAlisterTripleSemigroupPartialOrder(MTSEParent(Representative(S))));
 
 InstallMethod(McAlisterTripleSemigroupSemilattice,
 "for a McAlister triple subsemigroup",
 [IsMcAlisterTripleSubsemigroup],
-function(S)
-  return McAlisterTripleSemigroupSemilattice(MTSEParent(Representative(S)));
-end);
+S -> McAlisterTripleSemigroupSemilattice(MTSEParent(Representative(S))));
 
 InstallMethod(McAlisterTripleSemigroupAction,
 "for a McAlister triple subsemigroup",
 [IsMcAlisterTripleSubsemigroup],
-function(S)
-  return McAlisterTripleSemigroupAction(MTSEParent(Representative(S)));
-end);
+S -> McAlisterTripleSemigroupAction(MTSEParent(Representative(S))));
 
 InstallMethod(McAlisterTripleSemigroupActionHomomorphism,
 "for a McAlister triple subsemigroup",
 [IsMcAlisterTripleSubsemigroup],
-function(S)
-  return MTSActionHomomorphism(MTSEParent(Representative(S)));
-end);
+S -> MTSActionHomomorphism(MTSEParent(Representative(S))));
 
 InstallMethod(McAlisterTripleSemigroupUnderlyingAction,
 "for a McAlister triple subsemigroup",
 [IsMcAlisterTripleSubsemigroup],
-function(S)
-  return MTSUnderlyingAction(MTSEParent(Representative(S)));
-end);
+S -> MTSUnderlyingAction(MTSEParent(Representative(S))));
 
 InstallMethod(McAlisterTripleSemigroupComponents,
 "for a McAlister triple subsemigroup",
 [IsMcAlisterTripleSubsemigroup],
-function(S)
-  return MTSComponents(MTSEParent(Representative(S)));
-end);
+S -> MTSComponents(MTSEParent(Representative(S))));
 
 InstallMethod(McAlisterTripleSemigroupQuotientDigraph,
 "for a McAlister triple subsemigroup",
 [IsMcAlisterTripleSubsemigroup],
-function(S)
-  return MTSQuotientDigraph(MTSEParent(Representative(S)));
-end);
+S -> MTSQuotientDigraph(MTSEParent(Representative(S))));
 
 InstallMethod(McAlisterTripleSemigroupSemilatticeVertexLabelInverseMap,
 "for a McAlister triple subsemigroup",
 [IsMcAlisterTripleSubsemigroup],
-function(S)
-  return MTSSemilatticeVertexLabelInverseMap(MTSEParent(Representative(S)));
-end);
+S -> MTSSemilatticeVertexLabelInverseMap(MTSEParent(Representative(S))));
 
 SEMIGROUPS.MTSSmallGen := function(S)
   local G, Sl, X_Y, Y_X, comps, RepAct, _Stab, act, gens, po, top, sl, above, c,
@@ -563,7 +542,7 @@ end;
 InstallMethod(IsomorphismSemigroup,
 "for IsMcAlisterTripleSemigroup and a semigroup",
 [IsMcAlisterTripleSemigroup, IsSemigroup],
-function(filt, S)
+function(_, S)
   local Es, iso_pg, G, H, map, xx, M, iso, yy, ids, cong, grp, hom, map_G, Dcl,
   n, cosets, x, xiny, yinx, D, s, R, e, Ge, h, y_pos, x_pos, act, ah, edgy,
   act2, i, isom;
@@ -659,9 +638,7 @@ end);
 
 InstallMethod(IsWholeFamily, "for a McAlister triple semigroup",
 [IsMcAlisterTripleSemigroupElementCollection],
-function(C)
-  return Size(Elements(C)[1]![3]) = Size(C);
-end);
+C -> Size(Elements(C)[1]![3]) = Size(C));
 
 #############################################################################
 # Methods for McAlister triple elements
@@ -697,10 +674,7 @@ end);
 
 InstallMethod(McAlisterTripleSemigroupElementParent,
 "for a McAlister triple semigroup element rep",
-[IsMcAlisterTripleSemigroupElementRep],
-function(x)
-  return x![3];
-end);
+[IsMcAlisterTripleSemigroupElementRep], x -> x![3]);
 
 InstallMethod(String, "for a McAlister triple semigroup element rep",
 [IsMcAlisterTripleSemigroupElementRep],
@@ -713,19 +687,12 @@ end);
 
 InstallMethod(ViewString, "for a McAlister triple semigroup element rep",
 [IsMcAlisterTripleSemigroupElementRep],
-function(x)
-  return Concatenation("(", ViewString(x[1]), ", ", ViewString(x[2]), ")");
-end);
+x -> Concatenation("(", ViewString(x[1]), ", ", ViewString(x[2]), ")"));
 
 InstallMethod(\=, "for two McAlister triple semigroup element reps",
 IsIdenticalObj,
 [IsMcAlisterTripleSemigroupElementRep, IsMcAlisterTripleSemigroupElementRep],
-function(x, y)
-  if x![1] = y![1] and x![2] = y![2] and x![3] = y![3] then
-    return true;
-  fi;
-  return false;
-end);
+{x, y} -> x![1] = y![1] and x![2] = y![2] and x![3] = y![3]);
 
 InstallMethod(\*, "for two McAlister triple semigroup element reps",
 [IsMcAlisterTripleSemigroupElementRep, IsMcAlisterTripleSemigroupElementRep],
@@ -745,9 +712,7 @@ end);
 
 InstallMethod(\<, "for two McAlister triple semigroup element reps",
 [IsMcAlisterTripleSemigroupElementRep, IsMcAlisterTripleSemigroupElementRep],
-function(x, y)
-  return x[1] < y[1] or (x[1] = y[1] and x[2] < y[2]);
-end);
+{x, y} -> x[1] < y[1] or (x[1] = y[1] and x[2] < y[2]));
 
 InstallMethod(InverseOp, "for a McAlister triple semigroup element rep",
 [IsMcAlisterTripleSemigroupElementRep],
@@ -757,10 +722,8 @@ function(x)
 end);
 
 InstallMethod(\^, "for a McAlister triple semigroup element and a negative int",
-              [IsMcAlisterTripleSemigroupElement, IsNegInt],
-function(x, i)
-  return InverseOp(x ^ - i);
-end);
+[IsMcAlisterTripleSemigroupElement, IsNegInt],
+{x, i} -> InverseOp(x ^ - i));
 
 InstallMethod(LeftOne, "for a McAlister triple semigroup element rep",
 [IsMcAlisterTripleSemigroupElementRep],
@@ -801,8 +764,7 @@ end;
 # congruence classes of the minimum group congruence. Thus we can simply
 # check that precisely one of the sources of the digraph of the natural
 # partial order is in each connected component.
-InstallMethod(IsFInverseMonoid, "for a semigroup",
-[IsSemigroup],
+InstallMethod(IsFInverseMonoid, "for a semigroup", [IsSemigroup],
 function(S)
   local comp, po;
   if not IsInverseMonoid(S) then
@@ -818,25 +780,19 @@ function(S)
 end);
 
 InstallMethod(IsFInverseMonoid, "for a McAlister triple semigroup",
-[IsMcAlisterTripleSemigroup],
-function(S)
-  return IsMonoid(S) and IsFInverseSemigroup(S);
-end);
+[IsMcAlisterTripleSemigroup], S -> IsMonoid(S) and IsFInverseSemigroup(S));
 
 # A McAlister triple semigroup is F-inverse precisely when X, the partial
 # order, is a join-semilattice.
 InstallMethod(IsFInverseSemigroup, "for a McAlister triple semigroup",
 [IsMcAlisterTripleSemigroup],
-function(S)
-  return IsJoinSemilatticeDigraph(McAlisterTripleSemigroupPartialOrder(S));
-end);
+S -> IsJoinSemilatticeDigraph(McAlisterTripleSemigroupPartialOrder(S)));
 
 # For an inverse semigroup S we denote \sigma_{e,f}  = \sigma \cap eSf x eSf.
 # An E-unitary inverse semigroup is said to be an F-inverse semigroup if
 # for each pair of idempotents (e,f): each \sigma_{e,f} class has a maximal
 # element. It is simpler to find an isomorphism and use the above method.
-InstallMethod(IsFInverseSemigroup, "for a semigroup",
-[IsSemigroup],
+InstallMethod(IsFInverseSemigroup, "for a semigroup", [IsSemigroup],
 function(S)
   if not IsEUnitaryInverseSemigroup(S) then
     return false;

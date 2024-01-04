@@ -144,40 +144,29 @@ function(S)
   return SEMIGROUPS.DualSemigroupElementNC(S, Representative(DualSemigroup(S)));
 end);
 
-InstallMethod(Size, "for a dual semigroup",
-[IsDualSemigroupRep],
+InstallMethod(Size, "for a dual semigroup", [IsDualSemigroupRep],
 10,  # add rank to beat enumeration methods
-function(S)
-  return Size(DualSemigroup(S));
-end);
+S -> Size(DualSemigroup(S)));
 
 InstallMethod(AsList, "for a dual semigroup",
 [IsDualSemigroupRep],
 10,  # add rank to beat enumeration methods
-function(S)
-  return List(DualSemigroup(S), s -> SEMIGROUPS.DualSemigroupElementNC(S, s));
-end);
+S -> List(DualSemigroup(S), s -> SEMIGROUPS.DualSemigroupElementNC(S, s)));
 
 InstallMethod(\*, "for dual semigroup elements",
 IsIdenticalObj,
 [IsDualSemigroupElement, IsDualSemigroupElement],
-function(x, y)
-  return Objectify(FamilyObj(x)!.type, [y![1] * x![1]]);
-end);
+{x, y} -> Objectify(FamilyObj(x)!.type, [y![1] * x![1]]));
 
 InstallMethod(\=, "for dual semigroup elements",
 IsIdenticalObj,
 [IsDualSemigroupElement, IsDualSemigroupElement],
-function(x, y)
-  return x![1] = y![1];
-end);
+{x, y} -> x![1] = y![1]);
 
 InstallMethod(\<, "for dual semigroup elements",
 IsIdenticalObj,
 [IsDualSemigroupElement, IsDualSemigroupElement],
-function(x, y)
-  return x![1] < y![1];
-end);
+{x, y} -> x![1] < y![1]);
 
 InstallMethod(ViewObj, "for dual semigroup elements",
 [IsDualSemigroupElement], PrintObj);

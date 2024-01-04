@@ -13,10 +13,7 @@
 # InstallMethod(FreeBandOfFreeBandElement,
 
 InstallMethod(ContentOfFreeBandElement, "for a free band element",
-[IsFreeBandElement],
-function(w)
-  return ListBlist([1 .. Length(w!.cont)], w!.cont);
-end);
+[IsFreeBandElement], w -> ListBlist([1 .. Length(w!.cont)], w!.cont));
 
 InstallMethod(ContentOfFreeBandElementCollection,
 "for a free band element collection",
@@ -368,10 +365,10 @@ end);
 # in a Free Idempotent Semigroup⋆'
 
 InstallMethod(EqualInFreeBand, "for two lists of positive integers",
-[IsHomogeneousList, IsHomogeneousList],
-function(w1_in, w2_in)
-  return true; # libsemigroups.freeband_equal_to(w1_in, w2_in);
-end);
+[IsHomogeneousList, IsHomogeneousList], ReturnTrue);
+# function(w1_in, w2_in)
+#  return true;  # libsemigroups.freeband_equal_to(w1_in, w2_in);
+# end);
 
 # TODO(later) Is there a more efficient way to compare elements? JJ
 
@@ -500,7 +497,7 @@ end);
 
 InstallMethod(ChooseHashFunction, "for a free band element and int",
 [IsFreeBandElement, IsInt],
-function(x, hashlen)
+function(_, hashlen)
   return rec(func := SEMIGROUPS.HashFunctionForFreeBandElements,
              data := hashlen);
 end);

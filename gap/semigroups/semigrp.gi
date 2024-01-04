@@ -145,12 +145,9 @@ InstallMethod(MagmaByGenerators,
 "for a finite associative element collection",
 [IsAssociativeElementCollection and IsFinite], SemigroupByGenerators);
 
-InstallMethod(SemigroupByGenerators,
-"for a finite list or collection",
+InstallMethod(SemigroupByGenerators, "for a finite list or collection",
 [IsListOrCollection and IsFinite],
-function(coll)
-  return SemigroupByGenerators(coll, SEMIGROUPS.DefaultOptionsRec);
-end);
+coll -> SemigroupByGenerators(coll, SEMIGROUPS.DefaultOptionsRec));
 
 InstallMethod(SemigroupByGenerators,
 "for a finite list or collection and record",
@@ -200,12 +197,9 @@ function(gens, opts)
   return S;
 end);
 
-InstallMethod(MonoidByGenerators,
-"for a finite list or collection",
+InstallMethod(MonoidByGenerators, "for a finite list or collection",
 [IsListOrCollection and IsFinite],
-function(gens)
-  return MonoidByGenerators(gens, SEMIGROUPS.DefaultOptionsRec);
-end);
+gens -> MonoidByGenerators(gens, SEMIGROUPS.DefaultOptionsRec));
 
 InstallMethod(MonoidByGenerators,
 "for a finite list or collection and record",
@@ -266,12 +260,9 @@ function(gens, opts)
   return S;
 end);
 
-InstallMethod(InverseSemigroupByGenerators,
-"for a finite collection",
+InstallMethod(InverseSemigroupByGenerators, "for a finite collection",
 [IsCollection and IsFinite],
-function(gens)
-  return InverseSemigroupByGenerators(gens, SEMIGROUPS.DefaultOptionsRec);
-end);
+gens -> InverseSemigroupByGenerators(gens, SEMIGROUPS.DefaultOptionsRec));
 
 InstallMethod(InverseSemigroupByGenerators,
 "for a finite multiplicative element collection and record",
@@ -313,12 +304,9 @@ function(gens, opts)
   return S;
 end);
 
-InstallMethod(InverseMonoidByGenerators,
-"for a finite collection",
+InstallMethod(InverseMonoidByGenerators, "for a finite collection",
 [IsCollection and IsFinite],
-function(gens)
-  return InverseMonoidByGenerators(gens, SEMIGROUPS.DefaultOptionsRec);
-end);
+gens -> InverseMonoidByGenerators(gens, SEMIGROUPS.DefaultOptionsRec));
 
 InstallMethod(InverseMonoidByGenerators,
 "for a finite multiplicative element collection and record",
@@ -396,42 +384,30 @@ end);
 InstallMethod(ClosureSemigroup,
 "for a semigroup and finite list or collection",
 [IsSemigroup, IsListOrCollection and IsFinite],
-function(S, coll)
-  return ClosureSemigroup(S, coll, SEMIGROUPS.OptionsRec(S));
-end);
+{S, coll} -> ClosureSemigroup(S, coll, SEMIGROUPS.OptionsRec(S)));
 
 InstallMethod(ClosureMonoid,
 "for a monoid and finite mult. element with one collection",
 [IsMonoid, IsMultiplicativeElementWithOneCollection and IsFinite],
-function(S, coll)
-  return ClosureMonoid(S, coll, SEMIGROUPS.OptionsRec(S));
-end);
+{S, coll} -> ClosureMonoid(S, coll, SEMIGROUPS.OptionsRec(S)));
 
 InstallMethod(ClosureSemigroup, "for a semigroup and multiplicative element",
 [IsSemigroup, IsMultiplicativeElement],
-function(S, x)
-  return ClosureSemigroup(S, [x], SEMIGROUPS.OptionsRec(S));
-end);
+{S, x} -> ClosureSemigroup(S, [x], SEMIGROUPS.OptionsRec(S)));
 
 InstallMethod(ClosureMonoid, "for a monoid and mult. element with one",
 [IsMonoid, IsMultiplicativeElementWithOne],
-function(S, x)
-  return ClosureMonoid(S, [x], SEMIGROUPS.OptionsRec(S));
-end);
+{S, x} -> ClosureMonoid(S, [x], SEMIGROUPS.OptionsRec(S)));
 
 InstallMethod(ClosureSemigroup,
 "for a semigroup, multiplicative element, and record",
 [IsSemigroup, IsMultiplicativeElement, IsRecord],
-function(S, x, opts)
-  return ClosureSemigroup(S, [x], opts);
-end);
+{S, x, opts} -> ClosureSemigroup(S, [x], opts));
 
 InstallMethod(ClosureMonoid,
 "for a monoid, mult. element with one, and record",
 [IsMonoid, IsMultiplicativeElementWithOne, IsRecord],
-function(S, x, opts)
-  return ClosureMonoid(S, [x], opts);
-end);
+{S, x, opts} -> ClosureMonoid(S, [x], opts));
 
 InstallMethod(ClosureSemigroup,
 "for a semigroup, finite list or collection, and record",
@@ -556,51 +532,39 @@ InstallMethod(ClosureInverseSemigroup,
 "for an inverse semigroup with inverse op and finite mult. element coll",
 [IsInverseSemigroup and IsGeneratorsOfInverseSemigroup,
  IsMultiplicativeElementCollection and IsFinite],
-function(S, coll)
-  return ClosureInverseSemigroup(S, coll, SEMIGROUPS.OptionsRec(S));
-end);
+{S, coll} -> ClosureInverseSemigroup(S, coll, SEMIGROUPS.OptionsRec(S)));
 
 InstallMethod(ClosureInverseMonoid,
 "for an inverse monoid with inverse op and finite mult. element with one coll",
 [IsInverseMonoid and IsGeneratorsOfInverseSemigroup,
  IsMultiplicativeElementWithOneCollection and IsFinite],
-function(S, coll)
-  return ClosureInverseMonoid(S, coll, SEMIGROUPS.OptionsRec(S));
-end);
+{S, coll} -> ClosureInverseMonoid(S, coll, SEMIGROUPS.OptionsRec(S)));
 
 InstallMethod(ClosureInverseSemigroup,
 "for an inverse semigroup with inverse op and a multiplicative element",
 [IsInverseSemigroup and IsGeneratorsOfInverseSemigroup,
  IsMultiplicativeElement],
-function(S, x)
-  return ClosureInverseSemigroup(S, [x], SEMIGROUPS.OptionsRec(S));
-end);
+{S, x} -> ClosureInverseSemigroup(S, [x], SEMIGROUPS.OptionsRec(S)));
 
 InstallMethod(ClosureInverseMonoid,
 "for an inverse monoid with inverse op and a mult. element with one",
 [IsInverseMonoid and IsGeneratorsOfInverseSemigroup,
  IsMultiplicativeElementWithOne],
-function(S, x)
-  return ClosureInverseMonoid(S, [x], SEMIGROUPS.OptionsRec(S));
-end);
+{S, x} -> ClosureInverseMonoid(S, [x], SEMIGROUPS.OptionsRec(S)));
 
 InstallMethod(ClosureInverseSemigroup,
 "for inverse semigroup with inverse op, multiplicative element, record",
 [IsInverseSemigroup and IsGeneratorsOfInverseSemigroup,
  IsMultiplicativeElement,
  IsRecord],
-function(S, x, opts)
-  return ClosureInverseSemigroup(S, [x], opts);
-end);
+{S, x, opts} -> ClosureInverseSemigroup(S, [x], opts));
 
 InstallMethod(ClosureInverseMonoid,
 "for inverse monoid with inverse op, multiplicative element with one, record",
 [IsInverseMonoid and IsGeneratorsOfInverseSemigroup,
  IsMultiplicativeElementWithOne,
  IsRecord],
-function(S, x, opts)
-  return ClosureInverseMonoid(S, [x], opts);
-end);
+{S, x, opts} -> ClosureInverseMonoid(S, [x], opts));
 
 InstallMethod(ClosureInverseSemigroup,
 "for an inverse semigroup with inverse op, finite mult elt coll, and record",
@@ -746,18 +710,14 @@ InstallMethod(ClosureInverseSemigroup,
 [IsInverseSemigroup and IsGeneratorsOfInverseSemigroup,
  IsListOrCollection and IsEmpty,
  IsRecord],
-function(S, coll, opts)
-  return S;
-end);
+{S, coll, opts} -> S);
 
 InstallMethod(ClosureInverseMonoid,
 "for an inverse monoid, empty list or collection, and record",
 [IsInverseMonoid and IsGeneratorsOfInverseSemigroup,
  IsListOrCollection and IsEmpty,
  IsRecord],
-function(S, coll, opts)
-  return S;
-end);
+{S, coll, opts} -> S);
 
 InstallMethod(ClosureInverseSemigroupOrMonoidNC,
 "for a function, inverse semigroup, empty list, and record",
@@ -765,9 +725,7 @@ InstallMethod(ClosureInverseSemigroupOrMonoidNC,
  IsInverseSemigroup and IsGeneratorsOfInverseSemigroup,
  IsList and IsEmpty,
  IsRecord],
-function(Constructor, S, coll, opts)
-  return S;
-end);
+ {Constructor, S, coll, opts} -> S);
 
 #############################################################################
 ## 7. Subsemigroups
@@ -835,16 +793,12 @@ end);
 
 InstallMethod(SubsemigroupByProperty, "for a semigroup and function",
 [IsSemigroup, IsFunction],
-function(S, func)
-  return SubsemigroupByProperty(S, func, Size(S));
-end);
+{S, func} -> SubsemigroupByProperty(S, func, Size(S)));
 
 InstallMethod(InverseSubsemigroupByProperty,
 "for inverse semigroup with inverse op and function",
 [IsInverseSemigroup and IsGeneratorsOfInverseSemigroup, IsFunction],
-function(S, func)
-  return InverseSubsemigroupByProperty(S, func, Size(S));
-end);
+{S, func} -> InverseSubsemigroupByProperty(S, func, Size(S)));
 
 #############################################################################
 ## 8. Random semigroups and elements
@@ -854,13 +808,11 @@ InstallMethod(Random,
 "for a semigroup with AsList",
 [IsSemigroup and HasAsList],
 20,  # to beat other random methods
-function(S)
-  return AsList(S)[Random(1, Size(S))];
-end);
+S -> AsList(S)[Random(1, Size(S))]);
 
 InstallMethod(SEMIGROUPS_ProcessRandomArgsCons,
 [IsSemigroup, IsList],
-function(filt, params)
+function(_, params)
   if Length(params) < 1 then  # nr gens
     params[1] := Random(1, 20);
   elif not IsPosInt(params[1]) then
@@ -879,9 +831,7 @@ end);
 
 InstallMethod(SEMIGROUPS_ProcessRandomArgsCons,
 [IsMonoid, IsList],
-function(filt, params)
-  return SEMIGROUPS_ProcessRandomArgsCons(IsSemigroup, params);
-end);
+{_, params} -> SEMIGROUPS_ProcessRandomArgsCons(IsSemigroup, params));
 
 SEMIGROUPS.DefaultRandomInverseSemigroup := function(filt, params)
   if Length(params) = 2 then
@@ -1197,22 +1147,17 @@ end);
 
 InstallMethod(AsSemigroup, "for a filter, pos int, a semigroup",
 [IsOperation, IsPosInt, IsSemigroup],
-function(filt, threshold, S)
-  return Range(IsomorphismSemigroup(filt, threshold, S));
-end);
+{filt, threshold, S} -> Range(IsomorphismSemigroup(filt, threshold, S)));
 
 InstallMethod(AsSemigroup,
 "for a filter, pos int, pos int, a semigroup",
 [IsOperation, IsPosInt, IsPosInt, IsSemigroup],
-function(filt, threshold, period, S)
-  return Range(IsomorphismSemigroup(filt, threshold, period, S));
-end);
+{filt, threshold, period, S}
+-> Range(IsomorphismSemigroup(filt, threshold, period, S)));
 
 InstallMethod(AsSemigroup, "for a filter, ring, and semigroup",
 [IsOperation, IsRing, IsSemigroup],
-function(filt, R, S)
-  return Range(IsomorphismSemigroup(filt, R, S));
-end);
+{filt, R, S} -> Range(IsomorphismSemigroup(filt, R, S)));
 
 InstallMethod(AsMonoid, "for a filter and a semigroup",
 [IsOperation, IsSemigroup],
@@ -1233,22 +1178,17 @@ end);
 
 InstallMethod(AsMonoid, "for a filter, pos int, and a semigroup",
 [IsOperation, IsPosInt, IsSemigroup],
-function(filt, threshold, S)
-  return Range(IsomorphismMonoid(filt, threshold, S));
-end);
+{filt, threshold, S} -> Range(IsomorphismMonoid(filt, threshold, S)));
 
 InstallMethod(AsMonoid,
 "for a filter, pos int, pos int, and a semigroup",
 [IsOperation, IsPosInt, IsPosInt, IsSemigroup],
-function(filt, threshold, period, S)
-  return Range(IsomorphismMonoid(filt, threshold, period, S));
-end);
+{filt, threshold, period, S}
+-> Range(IsomorphismMonoid(filt, threshold, period, S)));
 
 InstallMethod(AsMonoid, "for a filter, ring, and semigroup",
 [IsOperation, IsRing, IsSemigroup],
-function(filt, R, S)
-  return Range(IsomorphismMonoid(filt, R, S));
-end);
+{filt, R, S} -> Range(IsomorphismMonoid(filt, R, S)));
 
 #############################################################################
 ## 10. Operators

@@ -325,9 +325,7 @@ function(d, q)
 end);
 
 InstallMethod(MunnSemigroup, "for a semilattice", [IsSemigroup],
-function(S)
-  return InverseSemigroup(GeneratorsOfMunnSemigroup(S), rec(small := true));
-end);
+S -> InverseSemigroup(GeneratorsOfMunnSemigroup(S), rec(small := true)));
 
 InstallMethod(GeneratorsOfMunnSemigroup, "for a semilattice", [IsSemigroup],
 function(S)
@@ -399,8 +397,7 @@ function(S)
   return out;
 end);
 
-InstallMethod(OrderEndomorphisms, "for a positive integer",
-[IsPosInt],
+InstallMethod(OrderEndomorphisms, "for a positive integer", [IsPosInt],
 function(n)
   local gens, S, i;
 
@@ -418,8 +415,7 @@ function(n)
   return S;
 end);
 
-InstallMethod(PartialOrderEndomorphisms, "for a positive integer",
-[IsPosInt],
+InstallMethod(PartialOrderEndomorphisms, "for a positive integer", [IsPosInt],
 function(n)
   local x, gens, S, i;
 
@@ -436,8 +432,7 @@ function(n)
   return S;
 end);
 
-InstallMethod(OrderAntiEndomorphisms, "for a positive integer",
-[IsPosInt],
+InstallMethod(OrderAntiEndomorphisms, "for a positive integer", [IsPosInt],
 function(n)
   local S;
   S := Monoid(OrderEndomorphisms(n), Transformation(Reversed([1 .. n])));
@@ -987,12 +982,8 @@ function(m, n)
   return S;
 end);
 
-InstallMethod(PlanarPartitionMonoid,
-"for a positive integer",
-[IsPosInt],
-function(n)
-  return PlanarModularPartitionMonoid(1, n);
-end);
+InstallMethod(PlanarPartitionMonoid, "for a positive integer",
+[IsPosInt], n -> PlanarModularPartitionMonoid(1, n));
 
 InstallMethod(ModularPartitionMonoid,
 "for a positive integer and positive integer",

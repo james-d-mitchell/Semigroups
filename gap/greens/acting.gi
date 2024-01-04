@@ -124,27 +124,23 @@ end;
 
 # same method for regular/inverse
 
-SEMIGROUPS.CreateDClass := function(arg)
-  return SEMIGROUPS.CreateXClass(arg, DClassType, GreensDRelation);
-end;
+SEMIGROUPS.CreateDClass := arg ->
+  SEMIGROUPS.CreateXClass(arg, DClassType, GreensDRelation);
 
 # same method for regular/inverse
 
-SEMIGROUPS.CreateRClass := function(arg)
-  return SEMIGROUPS.CreateXClass(arg, RClassType, GreensRRelation);
-end;
+SEMIGROUPS.CreateRClass := arg ->
+  SEMIGROUPS.CreateXClass(arg, RClassType, GreensRRelation);
 
 # same method for regular/inverse
 
-SEMIGROUPS.CreateLClass := function(arg)
-  return SEMIGROUPS.CreateXClass(arg, LClassType, GreensLRelation);
-end;
+SEMIGROUPS.CreateLClass := arg ->
+  SEMIGROUPS.CreateXClass(arg, LClassType, GreensLRelation);
 
 # same method for regular/inverse
 
-SEMIGROUPS.CreateHClass := function(arg)
-  return SEMIGROUPS.CreateXClass(arg, HClassType, GreensHRelation);
-end;
+SEMIGROUPS.CreateHClass := arg ->
+  SEMIGROUPS.CreateXClass(arg, HClassType, GreensHRelation);
 
 SEMIGROUPS.SetLambda := function(C)
   local S, o;
@@ -482,9 +478,7 @@ end);
 InstallMethod(SemigroupDataIndex,
 "for an acting semigroup Green's class",
 [IsActingSemigroupGreensClass],
-function(C)
-  return Position(SemigroupData(Parent(C)), Representative(C));
-end);
+C -> Position(SemigroupData(Parent(C)), Representative(C)));
 
 # different method for regular/inverse/ideals
 
@@ -770,9 +764,7 @@ end);
 
 InstallMethod(GreensDClassOfElementNC, "for an acting semigroup and element",
 [IsActingSemigroup, IsMultiplicativeElement],
-function(S, x)
-  return GreensDClassOfElementNC(S, x, true);
-end);
+{S, x} -> GreensDClassOfElementNC(S, x, true));
 
 # same method for regular/ideals, different method for inverse
 
@@ -805,9 +797,7 @@ end);
 
 InstallMethod(GreensLClassOfElementNC, "for an acting semigroup and element",
 [IsActingSemigroup, IsMultiplicativeElement],
-function(S, x)
-  return GreensLClassOfElementNC(S, x, true);
-end);
+{S, x} -> GreensLClassOfElementNC(S, x, true));
 
 # same method for regular/ideals, different method for inverse
 
@@ -839,15 +829,14 @@ end);
 
 InstallMethod(GreensLClassOfElementNC, "for D-class and multiplicative element",
 [IsGreensDClass and IsActingSemigroupGreensClass, IsMultiplicativeElement],
-function(D, x)
-  return GreensLClassOfElementNC(D, x, true);
-end);
+{D, x} -> GreensLClassOfElementNC(D, x, true));
 
 # same method for regular/ideals, different method for inverse
 
 InstallMethod(GreensLClassOfElementNC,
 "for D-class, multiplicative element, and bool",
-[IsGreensDClass and IsActingSemigroupGreensClass, IsMultiplicativeElement,
+[IsGreensDClass and IsActingSemigroupGreensClass,
+ IsMultiplicativeElement,
  IsBool],
 function(D, x, isGreensClassNC)
   local L;
@@ -881,9 +870,7 @@ end);
 
 InstallMethod(GreensRClassOfElementNC, "for an acting semigroup and element",
 [IsActingSemigroup, IsMultiplicativeElement],
-function(S, x)
-  return GreensRClassOfElementNC(S, x, true);
-end);
+{S, x} -> GreensRClassOfElementNC(S, x, true));
 
 # same method for regular/inverse/ideals
 
@@ -915,15 +902,14 @@ end);
 
 InstallMethod(GreensRClassOfElementNC, "for D-class and multiplicative element",
 [IsGreensDClass and IsActingSemigroupGreensClass, IsMultiplicativeElement],
-function(D, x)
-  return GreensRClassOfElementNC(D, x, true);
-end);
+{D, x} -> GreensRClassOfElementNC(D, x, true));
 
 # same method for regular/inverse/ideals
 
 InstallMethod(GreensRClassOfElementNC,
 "for a D-class, multiplicative element, and bool",
-[IsGreensDClass and IsActingSemigroupGreensClass, IsMultiplicativeElement,
+[IsGreensDClass and IsActingSemigroupGreensClass,
+ IsMultiplicativeElement,
  IsBool],
 function(D, x, isGreensClassNC)
   local R;
@@ -949,9 +935,7 @@ end);
 
 InstallMethod(GreensHClassOfElementNC, "for an acting semigroup and element",
 [IsActingSemigroup, IsMultiplicativeElement],
-function(S, x)
-  return GreensHClassOfElementNC(S, x, true);
-end);
+{S, x} -> GreensHClassOfElementNC(S, x, true));
 
 # same method for regular/ideals, different for inverse
 
@@ -982,9 +966,7 @@ end);
 
 InstallMethod(GreensHClassOfElementNC, "for a D/H-class and element",
 [IsActingSemigroupGreensClass and IsGreensClass, IsMultiplicativeElement],
-function(C, x)
-  return GreensHClassOfElementNC(C, x, true);
-end);
+{C, x} -> GreensHClassOfElementNC(C, x, true));
 
 # same method for regular/ideals, different method for inverse
 
@@ -1006,7 +988,8 @@ end);
 # same method for regular/ideals, different method for inverse
 
 InstallMethod(GreensHClassOfElementNC, "for an L-class, element, and bool",
-[IsActingSemigroupGreensClass and IsGreensLClass, IsMultiplicativeElement,
+[IsActingSemigroupGreensClass and IsGreensLClass,
+ IsMultiplicativeElement,
  IsBool],
 function(L, x, isGreensClassNC)
   local H;
@@ -1020,7 +1003,8 @@ end);
 # same method for regular/ideals, different method for inverse
 
 InstallMethod(GreensHClassOfElementNC, "for an R-class, element, and bool",
-[IsActingSemigroupGreensClass and IsGreensRClass, IsMultiplicativeElement,
+[IsActingSemigroupGreensClass and IsGreensRClass,
+ IsMultiplicativeElement,
  IsBool],
 function(R, x, isGreensClassNC)
   local H;
@@ -1622,9 +1606,7 @@ D -> Length(RhoCosets(D)) * Length(RhoOrbSCC(D)));
 # same method for regular/inverse/ideals
 
 InstallMethod(NrHClasses, "for an acting semigroup", [IsActingSemigroup],
-function(S)
-  return Sum(List(GreensDClasses(S), NrHClasses));
-end);
+S -> Sum(List(GreensDClasses(S), NrHClasses)));
 
 # same method for regular/ideals, different method for inverse
 

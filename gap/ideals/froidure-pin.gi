@@ -54,15 +54,21 @@ function(I)
   en := EnumeratorCanonical(SupersemigroupOfIdeal(I));
 
   record := rec();
-  record.NumberElement := function(enum, elt)
+  # TODO store I in record, and use that in the functions below
+  # TODO store en in record, and use that in the functions below
+  record.NumberElement := function(_, elt)
     return Position(PositionsInSupersemigroup(I), Position(en, elt));
   end;
 
-  record.ElementNumber := function(enum, nr)
+  # TODO store I in record, and use that in the functions below
+  # TODO store en in record, and use that in the functions below
+  record.ElementNumber := function(_, nr)
     return en[PositionsInSupersemigroup(I)[nr]];
   end;
 
-  record.IsBound\[\] := function(enum, nr)
+  # TODO store I in record, and use that in the functions below
+  # TODO store en in record, and use that in the functions below
+  record.IsBound\[\] := function(_, nr)
     return IsBound(PositionsInSupersemigroup(I)[nr]);
   end;
 
@@ -73,18 +79,14 @@ end);
 
 InstallMethod(Size, "for a semigroup ideal with generators",
 [IsSemigroupIdeal and HasGeneratorsOfSemigroupIdeal],
-function(I)
-  return Length(Enumerator(I));
-end);
+I -> Length(Enumerator(I)));
 
 InstallMethod(\in,
 "for a multiplicative element and semigroup ideal with generators",
 [IsMultiplicativeElement,
  IsSemigroup and CanUseFroidurePin and IsSemigroupIdeal
  and HasGeneratorsOfSemigroupIdeal],
-function(x, I)
-  return Position(Enumerator(I), x) <> fail;
-end);
+{x, I} -> Position(Enumerator(I), x) <> fail);
 
 # The method for GeneratorsOfSemigroup for a semigroup ideal must
 # not rely in any way on the output of the Froidure-Pin algorithm when run on

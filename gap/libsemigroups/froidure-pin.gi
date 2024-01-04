@@ -337,7 +337,7 @@ InstallMethod(PositionOp,
 [IsSemigroup and CanUseLibsemigroupsFroidurePin,
  IsMultiplicativeElement,
  IsZeroCyc],
-function(S, x, n)
+function(S, x, _)
   local pos;
   if IsPartialPermSemigroup(S) then
     if DegreeOfPartialPermSemigroup(S) < DegreeOfPartialPerm(x)
@@ -566,9 +566,7 @@ end);
 InstallMethod(IsEnumerated,
 "for a semigroup with CanUseLibsemigroupsFroidurePin",
 [IsSemigroup and CanUseLibsemigroupsFroidurePin],
-function(S)
-  return FroidurePinMemFnRec(S).finished(LibsemigroupsFroidurePin(S));
-end);
+S -> FroidurePinMemFnRec(S).finished(LibsemigroupsFroidurePin(S)));
 
 ###########################################################################
 ## Cayley graphs etc
@@ -652,21 +650,22 @@ function(S)
 
   enum := rec();
 
-  enum.NumberElement := function(enum, x)
+    # TODO S should be stored in enum, and then used below
+  enum.NumberElement := function(_, x)
     return PositionSortedOp(S, x);
   end;
 
-  enum.ElementNumber := function(enum, nr)
+  enum.ElementNumber := function(_, nr)
     return sorted_at(T, nr - 1);
   end;
 
   enum.Length := enum -> Size(S);
 
-  enum.Membership := function(x, enum)
+  enum.Membership := function(x, _)
     return PositionCanonical(S, x) <> fail;
   end;
 
-  enum.IsBound\[\] := function(enum, nr)
+  enum.IsBound\[\] := function(_, nr)
     return nr <= Size(S);
   end;
 
@@ -695,9 +694,8 @@ function(S)
 
   enum := rec();
 
-  enum.NumberElement := function(enum, x)
-    return PositionCanonical(S, x);
-  end;
+  # TODO S should be stored in enum and used in NumberElement
+  enum.NumberElement := {_, x} -> PositionCanonical(S, x);
 
   if IsFpSemigroup(S) or IsFpMonoid(S) or IsQuotientSemigroup(S) then
     factorisation := FroidurePinMemFnRec(S).minimal_factorisation;
@@ -719,7 +717,8 @@ function(S)
     end;
   fi;
 
-  enum.Length := function(enum)
+  # TODO S should be stored in enum and used in Length
+  enum.Length := function(_)
     if not IsFinite(S) then
       return infinity;
     else
@@ -727,13 +726,11 @@ function(S)
     fi;
   end;
 
-  enum.Membership := function(x, enum)
-    return PositionCanonical(S, x) <> fail;
-  end;
+  # TODO S should be stored in enum and used in Membership
+  enum.Membership := {x, enum} -> PositionCanonical(S, x) <> fail;
 
-  enum.IsBound\[\] := function(enum, nr)
-    return nr <= Size(S);
-  end;
+  # TODO S should be stored in enum and used in IsBound
+  enum.IsBound\[\] := {enum, nr} -> nr <= Size(S);
 
   enum := EnumeratorByFunctions(S, enum);
   SetIsSemigroupEnumerator(enum, true);

@@ -109,9 +109,7 @@ end);
 
 InstallMethod(IsIsomorphicSemigroup, "for semigroups",
 [IsSemigroup, IsSemigroup],
-function(S, T)
-  return IsomorphismSemigroups(S, T) <> fail;
-end);
+{S, T} -> IsomorphismSemigroups(S, T) <> fail);
 
 InstallMethod(IsomorphismSemigroups, "for finite simple semigroups",
 [IsSimpleSemigroup and IsFinite, IsSimpleSemigroup and IsFinite],

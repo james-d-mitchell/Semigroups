@@ -59,9 +59,7 @@ S -> NrEquivalenceClasses(UnderlyingCongruence(S)));
 
 InstallMethod(Size, "for an fp semigroup with nice monomorphism",
 [IsFpSemigroup and HasNiceMonomorphism],
-function(S)
-  return Size(Range(NiceMonomorphism(S)));
-end);
+S -> Size(Range(NiceMonomorphism(S))));
 
 InstallMethod(AsList, "for an fp semigroup with nice monomorphism",
 [IsFpSemigroup and HasNiceMonomorphism],
@@ -94,7 +92,8 @@ function(S)
     return x ^ enum!.map in Range(enum!.map);
   end;
 
-  enum.IsBound\[\] := function(enum, nr)
+  # TODO store S in enum and use this below
+  enum.IsBound\[\] := function(_, nr)
     return nr <= Size(S);
   end;
 
@@ -400,7 +399,7 @@ end);
 
 InstallMethod(SEMIGROUPS_ProcessRandomArgsCons,
 [IsFpSemigroup, IsList],
-function(filt, params)
+function(_, params)
   if Length(params) < 1 then  # nr gens
     params[1] := Random(1, 20);
     params[2] := Random(1, 8);
@@ -415,15 +414,13 @@ end);
 
 InstallMethod(SEMIGROUPS_ProcessRandomArgsCons,
 [IsFpMonoid, IsList],
-function(filt, params)
-  return SEMIGROUPS_ProcessRandomArgsCons(IsFpSemigroup, params);
-end);
+{_, params} -> SEMIGROUPS_ProcessRandomArgsCons(IsFpSemigroup, params));
 
 # this doesn't work very well
 
 InstallMethod(RandomSemigroupCons, "for IsFpSemigroup and a list",
 [IsFpSemigroup, IsList],
-function(filt, params)
+function(_, params)
   return AsSemigroup(IsFpSemigroup,
                      CallFuncList(RandomSemigroup,
                                   Concatenation([IsTransformationSemigroup],
@@ -434,7 +431,7 @@ end);
 
 InstallMethod(RandomMonoidCons, "for IsFpMonoid and a list",
 [IsFpMonoid, IsList],
-function(filt, params)
+function(_, params)
   return AsMonoid(IsFpMonoid,
                   CallFuncList(RandomMonoid,
                                Concatenation([IsTransformationMonoid],
@@ -445,7 +442,7 @@ end);
 
 InstallMethod(RandomInverseSemigroupCons, "for IsFpSemigroup and a list",
 [IsFpSemigroup, IsList],
-function(filt, params)
+function(_, params)
   return AsSemigroup(IsFpSemigroup,
                      CallFuncList(RandomInverseSemigroup,
                                   Concatenation([IsPartialPermSemigroup],
@@ -456,7 +453,7 @@ end);
 
 InstallMethod(RandomInverseMonoidCons, "for IsFpMonoid and a list",
 [IsFpMonoid, IsList],
-function(filt, params)
+function(_, params)
   return AsMonoid(IsFpMonoid,
                   CallFuncList(RandomInverseMonoid,
                                Concatenation([IsPartialPermMonoid],
@@ -464,10 +461,7 @@ function(filt, params)
 end);
 
 InstallMethod(IsomorphismSemigroup, "for IsFpSemigroup and a semigroup",
-[IsFpSemigroup, IsSemigroup],
-function(filt, S)
-  return IsomorphismFpSemigroup(S);
-end);
+[IsFpSemigroup, IsSemigroup], {_, S} -> IsomorphismFpSemigroup(S));
 
 InstallMethod(AsMonoid, "for an fp semigroup",
 [IsFpSemigroup],
@@ -479,10 +473,7 @@ function(S)
 end);
 
 InstallMethod(IsomorphismMonoid, "for IsFpMonoid and a semigroup",
-[IsFpMonoid, IsSemigroup],
-function(filt, S)
-  return IsomorphismFpMonoid(S);
-end);
+[IsFpMonoid, IsSemigroup], {_, S} -> IsomorphismFpMonoid(S));
 
 # same method for ideals
 
@@ -1315,7 +1306,7 @@ IsCollsElms, [IsFpSemigroup, IsElementOfFpSemigroup],
 # generators !!!
 InstallMethod(Factorization, "for an fp monoid and element",
 IsCollsElms, [IsFpMonoid, IsElementOfFpMonoid],
-function(S, x)
+function(_, x)
   local y;
   y := ExtRepOfObj(x);
   if IsEmpty(y) then
@@ -1336,7 +1327,7 @@ InstallMethod(MinimalFactorization, "for a free semigroup and word",
 # generators !!!
 InstallMethod(Factorization, "for a free monoid and word",
 [IsFreeMonoid, IsWord],
-function(S, x)
+function(_, x)
   if IsOne(x) then
     return [1];
   else

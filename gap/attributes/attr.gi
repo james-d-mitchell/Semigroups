@@ -156,9 +156,7 @@ function(S)
 end);
 
 InstallMethod(NrIdempotents, "for a semigroup", [IsSemigroup],
-function(S)
-  return Length(Idempotents(S));
-end);
+S -> Length(Idempotents(S)));
 
 InstallMethod(GroupOfUnits, "for a semigroup", [IsSemigroup],
 function(S)
@@ -1124,9 +1122,7 @@ end);
 InstallMethod(TransposedMultiplicationTableWithCanonicalPositions,
 "for a semigroup with CanUseFroidurePin",
 [IsSemigroup and CanUseFroidurePin],
-function(S)
-  return TransposedMat(MultiplicationTableWithCanonicalPositions(S));
-end);
+S -> TransposedMat(MultiplicationTableWithCanonicalPositions(S)));
 
 InstallMethod(MinimalFaithfulTransformationDegree, "for a right zero semigroup",
 [IsRightZeroSemigroup],

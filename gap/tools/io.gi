@@ -531,7 +531,8 @@ function(str)
     fi;
   end;
 
-  record.ShallowCopy := function(iter)
+  # TODO store str in iter
+  record.ShallowCopy := function(_)
     local file, line;
     file := IO_CompressedFile(UserHomeExpand(str), "r");
     line := SEMIGROUPS.ReadMultiplicationTableLine(Chomp(IO_ReadLine(file)), n);

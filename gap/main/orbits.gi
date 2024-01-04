@@ -243,9 +243,7 @@ function(arg)
     return fail;
   fi;
   o!.looking := true;
-  o!.lookingfor := function(o, x)
-    return x = val;
-  end;
+  o!.lookingfor := {_, x} -> x = val;
   o!.lookfunc := o!.lookingfor;
   Enumerate(o);
   pos := PositionOfFound(o);

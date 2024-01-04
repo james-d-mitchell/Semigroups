@@ -271,11 +271,11 @@ function(list, S)
                          CodegreeOfPartialPermSemigroup(S));
   combine := x -> PartialPerm(Concatenation(List(x, y -> y[1])),
                               Concatenation(List(x, y -> y[2])));
-  convert := function(element, degree, offset)
+  convert := function(element, _, offset)
     return [DomainOfPartialPerm(element) + offset,
             ImageListOfPartialPerm(element) + offset];
   end;
-  restrict := function(element, offset, degree)
+  restrict := function(element, offset, _)
     local dom, start, stop, ran;
     dom := DomainOfPartialPerm(element);
     start := PositionSorted(dom, offset + 1);
@@ -307,7 +307,7 @@ function(list, S)
   fi;
 
   combine := x -> Bipartition(Concatenation(x));
-  convert := function(element, degree, offset)
+  convert := function(element, _, offset)
     local x, i, j;
     x := List(ExtRepOfObj(element), ShallowCopy);
     for i in [1 .. Length(x)] do
