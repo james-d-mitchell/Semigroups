@@ -1001,8 +1001,8 @@ function(lhop, rhop)
     od;
     rowBlocks := Compacted(rowBlocks);
   od;
-  colBlocks := SortedList(List(colBlocks, block -> SortedList(block)));
-  rowBlocks := SortedList(List(rowBlocks, block -> SortedList(block)));
+  colBlocks := SortedList(List(colBlocks, SortedList));
+  rowBlocks := SortedList(List(rowBlocks, SortedList));
   # Make the congruence and return it
   return RMSCongruenceByLinkedTripleNC(Range(lhop), n, colBlocks, rowBlocks);
 end);
@@ -1046,8 +1046,8 @@ function(lhop, rhop)
     od;
     rowBlocks := Compacted(rowBlocks);
   od;
-  colBlocks := SortedList(List(colBlocks, block -> SortedList(block)));
-  rowBlocks := SortedList(List(rowBlocks, block -> SortedList(block)));
+  colBlocks := SortedList(List(colBlocks, SortedList));
+  rowBlocks := SortedList(List(rowBlocks, SortedList));
   # Make the congruence and return it
   return RZMSCongruenceByLinkedTriple(Range(lhop), n, colBlocks, rowBlocks);
 end);

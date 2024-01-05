@@ -218,7 +218,7 @@ function(x)
 
   out := Concatenation (out);
   if out[Length(out)] = '*' then
-    Unbind(out[Length(out)]);
+    Remove(out);  # removes the last entry
   fi;
 
   return out;

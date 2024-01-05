@@ -23,7 +23,7 @@ function(S)
   if IsDualSemigroupRep(S) then
     if HasGeneratorsOfSemigroup(S) then
       return Semigroup(List(GeneratorsOfSemigroup(S),
-                            x -> UnderlyingElementOfDualSemigroupElement(x)));
+                            UnderlyingElementOfDualSemigroupElement));
     fi;
     ErrorNoReturn("this dual semigroup cannot be constructed ",
                   "without knowing generators");

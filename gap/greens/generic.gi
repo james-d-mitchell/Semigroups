@@ -483,7 +483,7 @@ InstallMethod(Idempotents, "for a Green's class",
 #############################################################################
 
 InstallMethod(IsRegularGreensClass, "for a Green's class",
-[IsGreensClass], C -> First(Enumerator(C), x -> IsIdempotent(x)) <> fail);
+[IsGreensClass], C -> First(Enumerator(C), IsIdempotent) <> fail);
 
 #############################################################################
 ## 7. Properties of Green's classes . . .

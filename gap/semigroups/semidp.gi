@@ -52,7 +52,7 @@ SEMIGROUPS.DirectProductOp := function(S, degree, convert, combine, restrict)
   fi;
 
   n := Length(S);
-  gens_old := List(S, i -> f(i));
+  gens_old := List(S, f);
   gens_new := List([1 .. n], i -> []);
   indecomp := List([1 .. n], i -> []);
   pre_mult := List([1 .. n], i -> []);
