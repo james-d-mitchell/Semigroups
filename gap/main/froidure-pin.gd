@@ -58,6 +58,8 @@ DeclareOperation("IteratorCanonical", [IsSemigroup and CanUseFroidurePin]);
 DeclareProperty("IsSemigroupEnumerator", IsEnumeratorByFunctions);
 
 DeclareAttribute("RulesOfSemigroup", IsSemigroup and CanUseFroidurePin);
+# TODO implement this!
+DeclareAttribute("RulesOfMonoid", IsMonoid and CanUseFroidurePin);
 
 DeclareOperation("IdempotentsSubset",
                  [IsSemigroup and CanUseFroidurePin, IsHomogeneousList]);

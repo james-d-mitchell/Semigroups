@@ -156,7 +156,10 @@ GAPBIND14_MODULE(libsemigroups) {
       .def("set_number_of_generators", &ToddCoxeter::set_number_of_generators)
       .def("number_of_generators", &ToddCoxeter::number_of_generators)
       .def("prefill",
-           gapbind14::overload_cast<table_type const&>(&ToddCoxeter::prefill));
+           gapbind14::overload_cast<table_type const&>(&ToddCoxeter::prefill))
+      .def("add_pair", gapbind14::overload_cast<word_type const&, word_type const&>(&ToddCoxeter::add_pair))
+    .def("number_of_classes",
+    &ToddCoxeter::number_of_classes);
 
   using libsemigroups::Presentation;
 

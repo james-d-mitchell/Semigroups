@@ -23,6 +23,7 @@ DeclareAttribute("PosetOfPrincipalCongruences", IsCongruencePoset);
 DeclareAttribute("JoinSemilatticeOfCongruences", IsCongruencePoset);
 DeclareAttribute("MinimalCongruences", IsCongruencePoset);
 DeclareAttribute("MinimalCongruences", IsListOrCollection);
+DeclareAttribute("MaximalCongruences", IsCongruencePoset);
 
 DeclareAttribute("CongruencesOfPoset", IsCongruencePoset);
 
@@ -77,11 +78,15 @@ DeclareAttribute("RightCongruencesOfSemigroup", IsSemigroup);
 DeclareAttribute("MinimalCongruencesOfSemigroup", IsSemigroup);
 DeclareAttribute("MinimalLeftCongruencesOfSemigroup", IsSemigroup);
 DeclareAttribute("MinimalRightCongruencesOfSemigroup", IsSemigroup);
+DeclareAttribute("MaximalCongruencesOfSemigroup", IsSemigroup);
+DeclareAttribute("MaximalLeftCongruencesOfSemigroup", IsSemigroup);
+DeclareAttribute("MaximalRightCongruencesOfSemigroup", IsSemigroup);
 
 DeclareOperation("MinimalCongruencesOfSemigroup",
                  [IsSemigroup, IsListOrCollection]);
 DeclareOperation("MinimalCongruencesOfSemigroup",
                  [IsSemigroup, IsIterator]);
+# TODO maximal version
 
 DeclareOperation("MinimalLeftCongruencesOfSemigroup",
                  [IsSemigroup, IsListOrCollection]);
