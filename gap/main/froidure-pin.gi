@@ -512,6 +512,40 @@ function(S)
                           InfoLevel(InfoSemigroups) > 0).rules;
 end);
 
+InstallMethod(RulesOfMonoid,
+"for a monoid with CanUseFroidurePin",
+[CanUseFroidurePin and IsMonoid],
+function(S)
+  local one, map, rules, rule;
+  if not IsFinite(S) then
+    Error("the argument (a monoid) is not finite");
+  fi;
+  one := Position(GeneratorsOfSemigroup(S), One(S));
+  map := function(word)
+    local result, letter;
+    result := [];
+    for letter in word do
+      if letter = one then
+        # do nothing
+      elif letter < one then
+        Add(result, letter);
+      else
+        Add(result, letter - 1);
+      fi;
+    od;
+    return result;
+  end;
+
+  rules := [];
+  for rule in RulesOfSemigroup(S) do
+    rule := List(rule, map);
+    if rule[1] <> rule[2] then
+      Add(rules, rule);
+    fi;
+  od;
+  return rules;
+end);
+
 InstallMethod(IdempotentsSubset,
 "for a semigroup with CanUseGapFroidurePin + known generators, hom. list",
 [CanUseGapFroidurePin and HasGeneratorsOfSemigroup,

@@ -38,6 +38,9 @@ function(S, n, extra, kind)
   elif (HasIsFreeSemigroup(S) and IsFreeSemigroup(S))
       or (HasIsFreeMonoid(S) and IsFreeMonoid(S)) then
     rules := [];
+  elif IsMonoid(S) then
+    Assert(1, CanUseFroidurePin(S));
+    rules := RulesOfMonoid(S);
   else
     Assert(1, CanUseFroidurePin(S));
     rules := RulesOfSemigroup(S);
@@ -48,19 +51,15 @@ function(S, n, extra, kind)
     libsemigroups.presentation_add_rule(P, r[1] - 1, r[2] - 1);
   od;
 
-  if not IsEmpty(rules) then
-    libsemigroups.Presentation.alphabet_from_rules(P);
-  elif (HasIsFreeMonoid(S) and IsFreeMonoid(S)) or IsFpMonoid(S) then
+  if IsMonoid(S) then
     libsemigroups.Presentation.set_alphabet(
       P, [0 .. Size(GeneratorsOfMonoid(S)) - 1]);
-  elif (HasIsFreeSemigroup(S) and IsFreeSemigroup(S)) or IsFpSemigroup(S) then
+  else
     libsemigroups.Presentation.set_alphabet(
       P, [0 .. Size(GeneratorsOfSemigroup(S)) - 1]);
   fi;
   libsemigroups.Presentation.validate(P);
-  # RulesOfSemigroup always returns the rules of an isomorphic fp semigroup
-  libsemigroups.Presentation.contains_empty_word(
-    P, IsFpMonoid(S) or (HasIsFreeMonoid(S) and IsFreeMonoid(S)));
+  libsemigroups.Presentation.contains_empty_word(P, IsMonoid(S));
 
   sims1 := libsemigroups.Sims1.make(kind);
   libsemigroups.Sims1.short_rules(sims1, P);
