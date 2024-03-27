@@ -290,10 +290,12 @@ end);
 InstallMethod(PosetOfCongruences, "for a list or collection",
 [IsListOrCollection],
 function(coll)
-  local congs, nrcongs, children, parents, i, ignore, j, poset;
+  local congs, nrcongs, children, parents, last_report, total_time, ignore, elapsed, percent, poset, i, j;
+
   congs := AsList(coll);
   nrcongs := Length(congs);
 
+  Info(InfoSemigroups, 1, "Computing partial order of congruences . . .");
   # Setup children and parents lists
   children := [];
   parents := [];
@@ -302,6 +304,9 @@ function(coll)
     parents[i] := Set([i]);
   od;
 
+  last_report := IO_gettimeofday();
+  last_report := last_report.tv_sec;
+  total_time := 0;
   # Find children of each cong in turn
   for i in [1 .. nrcongs] do
     # Ignore known parents
@@ -312,6 +317,20 @@ function(coll)
         AddSet(parents[j], i);
       fi;
     od;
+    if InfoLevel(InfoSemigroups) = 4 then
+      elapsed := IO_gettimeofday();
+      elapsed := elapsed.tv_sec - last_report;
+      if elapsed > 0 then
+        total_time := total_time + elapsed;
+        last_report := elapsed + last_report;
+        percent := SplitString(String(Float(100 * i / nrcongs)), ".")[1];
+        PrintFormatted("#I  Comparison {} of {} (~{}%) ({}s)!\n",
+                       i * nrcongs,
+                       nrcongs * nrcongs,
+                       percent,
+                       Int(total_time));
+      fi;
+    fi;
   od;
 
   # We are done: make the object and return
