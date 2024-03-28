@@ -22,6 +22,7 @@ DeclareAttribute("UnderlyingSemigroupOfCongruencePoset", IsCongruencePoset);
 DeclareAttribute("PosetOfPrincipalCongruences", IsCongruencePoset);
 DeclareAttribute("JoinSemilatticeOfCongruences", IsCongruencePoset);
 DeclareAttribute("MinimalCongruences", IsCongruencePoset);
+DeclareAttribute("MinimalCongruences", IsListOrCollection);
 
 DeclareAttribute("CongruencesOfPoset", IsCongruencePoset);
 

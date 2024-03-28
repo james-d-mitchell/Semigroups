@@ -310,8 +310,8 @@ gap> Size(minr);
 9
 gap> PositionsProperty(minl, c -> IsSubrelation(min[1], c));
 [ 1, 2, 3 ]
-gap> PositionsProperty(minr, c -> IsSubrelation(min[1], c)) in [[7], [8]];
-true
+gap> PositionsProperty(minr, c -> IsSubrelation(min[1], c));
+[ 3 ]
 
 # Biggish example which forces garbage collection
 gap> S := Semigroup([Transformation([4, 2, 4, 4, 1]),

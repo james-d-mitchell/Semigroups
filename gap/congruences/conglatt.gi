@@ -693,12 +693,59 @@ InstallMethod(MinimalCongruences, "for a congruence poset",
 [IsCongruencePoset],
 poset -> CongruencesOfPoset(poset){Positions(InDegrees(poset), 1)});
 
+InstallMethod(MinimalCongruences, "for a list or collection",
+[IsListOrCollection],
+function(coll)
+  local congs, nrcongs, minimal_indices, indices, valid, first_invalid, i, j, minimal, L;
+  congs := AsList(coll);
+  nrcongs := Length(congs);
+
+  indices := [];
+  valid := [];
+  first_invalid := fail;
+  L := [1 .. nrcongs];
+  SortBy(L, i -> -NrEquivalenceClasses(congs[i]));
+  for i in L do
+    if RemInt(i, 1000) = 0 then
+      Print(i, " ", Length(indices), " ", SizeBlist(valid) , " ", nrcongs, "\n");
+    fi;
+    for j in [1 .. Length(indices)] do
+      if valid[j] and IsSubrelation(congs[indices[j]], congs[i]) then
+        valid[j] := false;
+      fi;
+
+      if not valid[j] and (first_invalid = fail or j < first_invalid) then
+          first_invalid := j;
+      fi;
+    od;
+    minimal := true;
+    for j in [1 .. Length(indices)] do
+      if valid[j] and IsSubrelation(congs[i], congs[indices[j]]) then
+        minimal := false;
+        break;
+      fi;
+    od;
+    if minimal then
+      if first_invalid = fail then
+        Add(indices, i);
+        Add(valid, true);
+      else
+        indices[first_invalid] := i;
+        valid[first_invalid] := true;
+        first_invalid := fail;
+      fi;
+    fi;
+  od;
+  #return congs{ListBlist(indices, valid)};
+  return congs{ListBlist(indices, valid)};
+end);
+
 InstallMethod(MinimalCongruencesOfSemigroup, "for a semigroup", [IsSemigroup],
 function(S)
   if HasLatticeOfCongruences(S) then
     return MinimalCongruences(LatticeOfCongruences(S));
   fi;
-  return MinimalCongruences(PosetOfPrincipalCongruences(S));
+  return MinimalCongruences(PrincipalCongruencesOfSemigroup(S));
 end);
 
 InstallMethod(MinimalLeftCongruencesOfSemigroup, "for a semigroup",
@@ -707,7 +754,7 @@ function(S)
   if HasLatticeOfLeftCongruences(S) then
     return MinimalCongruences(LatticeOfLeftCongruences(S));
   fi;
-  return MinimalCongruences(PosetOfPrincipalLeftCongruences(S));
+  return MinimalCongruences(PrincipalLeftCongruencesOfSemigroup(S));
 end);
 
 InstallMethod(MinimalRightCongruencesOfSemigroup, "for a semigroup",
@@ -716,23 +763,23 @@ function(S)
   if HasLatticeOfRightCongruences(S) then
     return MinimalCongruences(LatticeOfRightCongruences(S));
   fi;
-  return MinimalCongruences(PosetOfPrincipalRightCongruences(S));
+  return MinimalCongruences(PrincipalRightCongruencesOfSemigroup(S));
 end);
 
 InstallMethod(MinimalCongruencesOfSemigroup,
 "for a semigroup and list or collection",
 [IsSemigroup, IsListOrCollection],
-{S, pairs} -> MinimalCongruences(PosetOfPrincipalCongruences(S, pairs)));
+{S, pairs} -> MinimalCongruences(PrincipalCongruencesOfSemigroup(S, pairs)));
 
 InstallMethod(MinimalRightCongruencesOfSemigroup,
 "for a semigroup and list or collection",
 [IsSemigroup, IsListOrCollection],
-{S, pairs} -> MinimalCongruences(PosetOfPrincipalRightCongruences(S, pairs)));
+{S, pairs} -> MinimalCongruences(PrincipalRightCongruencesOfSemigroup(S, pairs)));
 
 InstallMethod(MinimalLeftCongruencesOfSemigroup,
 "for a semigroup and list or collection",
 [IsSemigroup, IsListOrCollection],
-{S, pairs} -> MinimalCongruences(PosetOfPrincipalLeftCongruences(S, pairs)));
+{S, pairs} -> MinimalCongruences(PrincipalLeftCongruencesOfSemigroup(S, pairs)));
 
 ########################################################################
 # PosetOfPrincipalRight/LeftCongruences
