@@ -58,8 +58,8 @@ function(S, n, extra, kind)
     libsemigroups.Presentation.set_alphabet(
       P, [0 .. Size(GeneratorsOfSemigroup(S)) - 1]);
   fi;
-  libsemigroups.Presentation.validate(P);
   libsemigroups.Presentation.contains_empty_word(P, IsMonoid(S));
+  libsemigroups.Presentation.validate(P);
 
   sims1 := libsemigroups.Sims1.make(kind);
   libsemigroups.Sims1.short_rules(sims1, P);

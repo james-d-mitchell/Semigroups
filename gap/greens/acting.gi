@@ -1277,10 +1277,11 @@ InstallMethod(RelativeRClassReps, "for an acting semigroup and subsemigroup",
 [IsActingSemigroup, IsActingSemigroup],
 function(S, T)
   local data;
-  if not IsSubsemigroup(S, T) then
-    ErrorNoReturn("the 2nd argument (an acting semigroup) must be ",
-                  "a subsemigroup of the 1st argument (an acting semigroup)");
-  fi;
+  # TODO NC version!
+  # if not IsSubsemigroup(S, T) then
+  #   ErrorNoReturn("the 2nd argument (an acting semigroup) must be ",
+  #                 "a subsemigroup of the 1st argument (an acting semigroup)");
+  # fi;
 
   data := Enumerate(SemigroupData(S, RelativeLambdaOrb(S, T)));
   return List(data, x -> x[4]);
