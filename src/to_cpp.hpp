@@ -200,7 +200,7 @@ namespace gapbind14 {
         }
         for (size_t j = 0; j < m; j++) {
           if (ELM_BLIST(row, j + 1) == True) {
-            x.set(i, j, 1);
+            x(i, j) = 1;
           }
         }
       }

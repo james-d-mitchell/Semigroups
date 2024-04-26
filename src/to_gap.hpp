@@ -169,7 +169,7 @@ namespace gapbind14 {
         Obj blist = NewBag(T_BLIST, SIZE_PLEN_BLIST(n));
         SET_LEN_BLIST(blist, n);
         for (size_t j = 0; j < n; j++) {
-          if (x.first.get(i, j)) {
+          if (x.first(i, j)) {
             SET_BIT_BLIST(blist, j + 1);
           }
         }
