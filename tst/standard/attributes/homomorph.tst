@@ -125,9 +125,14 @@ migroup homom. by images)
 gap> PreImagesElm(hom, 2);
 Error, the 2nd argument is not an element of the range of the 1st argument (se\
 migroup homom. by images)
+#@if CompareVersionNumbers(ReplacedString(GAPInfo.Version, "dev", ""), "4.17")
+gap> PreImagesSet(hom, [2]);
+Error, <elms> is not a subset of the range of <map>
+#@else
 gap> PreImagesSet(hom, [2]);
 Error, no method found! For debugging hints type ?Recovery from NoMethodFound
 Error, no 1st choice method found for `PreImagesSet' on 2 arguments
+#@fi
 gap> IsSurjective(hom);
 true
 gap> IsInjective(hom);
@@ -497,9 +502,18 @@ gap> PreImagesSet(hom, [imgs[1]]);
   Transformation( [ 3, 2, 2 ] ), Transformation( [ 3, 2, 3 ] ), 
   Transformation( [ 3, 3, 1 ] ), Transformation( [ 3, 3, 2 ] ), 
   Transformation( [ 3, 3, 3 ] ) ]
+gap> Transformation([3, 3, 4, 3]) in Image(hom);
+false
+gap> Transformation([3, 3, 4, 3]) in Range(hom);
+true
+#@if CompareVersionNumbers(ReplacedString(GAPInfo.Version, "dev", ""), "4.17")
+gap> PreImagesSet(hom, [Transformation([3, 3, 4, 3])]);
+[  ]
+#@else
 gap> PreImagesSet(hom, [Transformation([3, 3, 4, 3])]);
 Error, the 2nd argument is not mapped to by the 1st argument (semigroup homom.\
  by images)
+#@fi
 gap> PreImage(hom);
 <full transformation monoid of degree 3>
 
